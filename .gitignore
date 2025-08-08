@@ -1,0 +1,226 @@
+# Laravel CAS Server - Git Ignore File
+
+# Environment Files
+.env
+.env.local
+.env.production
+.env.staging
+.env.testing
+.env.backup
+.env.docker
+.env.signature.example
+
+# Laravel Framework
+/vendor/
+/node_modules/
+/public/hot
+/public/storage
+/storage/*.key
+/storage/app/*
+!/storage/app/.gitkeep
+/storage/framework/cache/*
+!/storage/framework/cache/.gitkeep
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitkeep
+/storage/framework/testing/*
+!/storage/framework/testing/.gitkeep
+/storage/framework/views/*
+!/storage/framework/views/.gitkeep
+/storage/logs/*
+!/storage/logs/.gitkeep
+/bootstrap/cache/*
+!/bootstrap/cache/.gitkeep
+
+# Laravel Mix / Vite
+/public/css/
+/public/js/
+/public/mix-manifest.json
+/public/build/
+
+# Composer
+composer.phar
+composer.lock
+
+# NPM
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# IDE Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Laravel Specific
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+.phpunit.result.cache
+.phpunit.cache
+auth.json
+
+# Docker Related
+docker-compose.override.yml
+.docker/
+docker/mysql/
+docker/postgres/data/
+docker/redis/data/
+
+# Backup Files
+*.backup
+*.bak
+*.sql
+/backups/
+/dumps/
+
+# SSL Certificates and Keys
+*.pem
+*.key
+*.crt
+*.csr
+*.p12
+docker/nginx/ssl/*
+!docker/nginx/ssl/.gitkeep
+
+# Log Files
+*.log
+laravel.log
+php_errors.log
+access.log
+error.log
+nginx.log
+supervisor.log
+
+# Temporary Files
+*.tmp
+*.temp
+.tmp/
+.temp/
+
+# Cache Files
+.cache/
+.parcel-cache/
+.sass-cache/
+.eslintcache
+
+# Laravel Telescope
+/storage/telescope/
+
+# Laravel Horizon
+/storage/horizon/
+
+# CAS Specific Files
+/attached_assets/
+/laravel-cas-client-package/
+/laravel-cas-client-package.zip
+/customer-portal/
+/laravel-customer-portal/
+/new-laravel-customer-portal/
+/logs/
+/migrations/
+laravel-server.pid
+laravel.pid
+
+# Documentation Build Files
+/docs/build/
+/docs/.vitepress/cache/
+/docs/.vitepress/dist/
+
+# Database Files
+*.sqlite
+*.sqlite3
+*.db
+
+# Testing
+coverage/
+.coverage
+.nyc_output
+.phpunit.result.cache
+tests/_output/
+tests/_support/_generated/
+
+# Deployment
+.deployer/
+deploy.log
+deployment.log
+
+# Security
+secrets.txt
+keys.txt
+passwords.txt
+*.asc
+*.gpg
+
+# Generated Icons
+generated-icon.png
+favicon.ico
+
+# Compiled Assets
+/public/assets/
+/resources/js/compiled/
+/resources/css/compiled/
+
+# Development Tools
+.editorconfig
+.eslintrc*
+.stylelintrc*
+.prettierrc*
+phpcs.xml
+phpmd.xml
+psalm.xml
+
+# Project Specific
+*.md.backup
+COMPLETE_*.md
+*_COMPLETE.md
+*_FIX.md
+*_GUIDE.md
+*_STATUS.md
+*_VERIFICATION.php
+debug-*.php
+test-*.php
+setup-*.php
+register-*.php
+demonstrate-*.php
+fix-*.php
+fresh-*.sql
+complete-*.php
+final-*.php
+run-*.php
+
+# Archive Files
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+
+# System Files
+.htaccess.backup
+robots.txt.backup
+sitemap.xml
+
+# Laravel Nova (if used)
+/nova/
+
+# Laravel Spark (if used)
+/spark/
+
+# Other Framework Files
+/.fleet
+/.vscode
+/.idea

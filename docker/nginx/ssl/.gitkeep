@@ -1,0 +1,9 @@
+# SSL certificates directory
+# Place your SSL certificates here for HTTPS configuration
+# 
+# Expected files:
+# - cas.crt (SSL certificate)
+# - cas.key (Private key)
+#
+# For development, you can generate self-signed certificates:
+# openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout cas.key -out cas.crt

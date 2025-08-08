@@ -1,0 +1,575 @@
+@extends('public.documentation.layout')
+
+@section('title', 'Laravel CAS SSO Integration Guide')
+@section('description', 'Complete guide for integrating Laravel applications with CAS Single Sign-On authentication system.')
+
+@section('content')
+<div class="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex items-center mb-4">
+            <div class="bg-red-100 w-12 h-12 rounded-lg flex items-center justify-center mr-4">
+                <i class="fab fa-laravel text-red-600 text-2xl"></i>
+            </div>
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900">{{ $laravelGuide['title'] }}</h1>
+                <p class="text-gray-600 mt-1">{{ $laravelGuide['description'] }}</p>
+            </div>
+        </div>
+        
+        <div class="flex items-center space-x-4 text-sm text-gray-600">
+            <span><i class="fas fa-clock mr-1"></i>Setup time: 5 minutes</span>
+            <span><i class="fas fa-code mr-1"></i>Difficulty: Easy</span>
+            <span><i class="fas fa-tag mr-1"></i>Laravel 8+</span>
+        </div>
+    </div>
+
+    <!-- Table of Contents -->
+    <div class="bg-gray-50 rounded-lg p-6 mb-8">
+        <h2 class="text-lg font-semibold mb-4">Table of Contents</h2>
+        <nav class="space-y-2">
+            <a href="#installation" class="block text-blue-600 hover:text-blue-800">1. Installation</a>
+            <a href="#configuration" class="block text-blue-600 hover:text-blue-800">2. Configuration</a>
+            <a href="#middleware" class="block text-blue-600 hover:text-blue-800">3. Middleware Setup</a>
+            <a href="#routes" class="block text-blue-600 hover:text-blue-800">4. Route Protection</a>
+            <a href="#examples" class="block text-blue-600 hover:text-blue-800">5. Code Examples</a>
+            <a href="#advanced" class="block text-blue-600 hover:text-blue-800">6. Advanced Usage</a>
+        </nav>
+    </div>
+
+    <!-- Installation -->
+    <section id="installation" class="mb-12">
+        <h2 class="text-2xl font-bold mb-4">1. Installation</h2>
+        
+        <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+            <div class="flex">
+                <div class="ml-3">
+                    <p class="text-sm text-blue-700">
+                        <strong>Prerequisites:</strong> Laravel 8+ and PHP 8.0+
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Package Download -->
+        <div class="bg-gradient-to-r from-red-50 to-red-100 border border-red-200 rounded-lg p-6 mb-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-lg font-semibold text-red-900 mb-2">📦 CAS Laravel Client Package</h3>
+                    <p class="text-red-700 mb-3">Complete Laravel integration package with all necessary files, middleware, and configuration.</p>
+                    <ul class="text-sm text-red-600 space-y-1">
+                        <li>✓ CAS Authentication Service</li>
+                        <li>✓ HMAC Signature Validation</li>
+                        <li>✓ Middleware Components</li>
+                        <li>✓ Configuration Files</li>
+                        <li>✓ Service Provider</li>
+                        <li>✓ Example Controllers</li>
+                    </ul>
+                </div>
+                <div class="text-center">
+                    <a href="/downloads/one-system-client-package.zip"
+                       class="inline-flex items-center bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors font-medium">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Download Package
+                    </a>
+                    <p class="text-xs text-red-500 mt-1">v2.0 - Updated for new architecture</p>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="text-xl font-semibold mb-3">Installation Steps</h3>
+        
+        <div class="space-y-4">
+            <div class="flex items-start">
+                <div class="flex-shrink-0 w-8 h-8 bg-red-100 rounded-full flex items-center justify-center mr-4 mt-1">
+                    <span class="text-red-600 font-semibold text-sm">1</span>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-gray-900 mb-2">Download and Extract Package</h4>
+                    <div class="code-block mb-3">
+                        <pre class="language-bash"><code># Extract the downloaded package to your Laravel project
+unzip one-system-client-package.zip -d temp-cas/
+cp -r temp-cas/* your-laravel-project/
+rm -rf temp-cas/</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-start">
+                <div class="flex-shrink-0 w-8 h-8 bg-red-100 rounded-full flex items-center justify-center mr-4 mt-1">
+                    <span class="text-red-600 font-semibold text-sm">2</span>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-gray-900 mb-2">Register Service Provider</h4>
+                    <p class="text-gray-600 mb-3">Add the CAS service provider to your <code class="bg-gray-100 px-2 py-1 rounded">config/app.php</code>:</p>
+                    <div class="code-block mb-3">
+                        <pre class="language-php"><code>'providers' => [
+    // Other providers...
+    App\Providers\CasClientServiceProvider::class,
+],</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-start">
+                <div class="flex-shrink-0 w-8 h-8 bg-red-100 rounded-full flex items-center justify-center mr-4 mt-1">
+                    <span class="text-red-600 font-semibold text-sm">3</span>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-gray-900 mb-2">Publish Configuration</h4>
+                    <div class="code-block mb-3">
+                        <pre class="language-bash"><code>php artisan vendor:publish --tag=cas-client-config</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Configuration -->
+    <section id="configuration" class="mb-12">
+        <h2 class="text-2xl font-bold mb-4">2. Configuration</h2>
+        
+        <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-6">
+            <div class="flex">
+                <div class="ml-3">
+                    <p class="text-sm text-green-700">
+                        <strong>New Architecture:</strong> Our CAS system now uses modular Admin/User/Public separation with enhanced security features.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <p class="text-gray-700 mb-6">Configure your CAS client by updating the <code class="bg-gray-100 px-2 py-1 rounded">config/cas-client.php</code> file:</p>
+        
+        <div class="code-block mb-6">
+            <pre class="language-php"><code>&lt;?php
+
+return [
+    /*
+    |--------------------------------------------------------------------------
+    | CAS Server Configuration - Updated Architecture
+    |--------------------------------------------------------------------------
+    */
+    'server_url' => env('CAS_SERVER_URL', 'https://your-cas-server.com'),
+    'client_id' => env('CAS_CLIENT_ID'),
+    'client_secret' => env('CAS_CLIENT_SECRET'),
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Enhanced Authentication Settings
+    |--------------------------------------------------------------------------
+    */
+    'token_expiry' => env('CAS_TOKEN_EXPIRY', 3600), // 1 hour
+    'signature_validation' => env('CAS_SIGNATURE_VALIDATION', true),
+    'hmac_algorithm' => 'sha256', // HMAC-SHA256 for enhanced security
+    
+    /*
+    |--------------------------------------------------------------------------
+    | New Route Configuration - Organized Structure
+    |--------------------------------------------------------------------------
+    */
+    'routes' => [
+        'sso_token' => '/api/sso/token',           // Enhanced client credentials flow
+        'sso_validate' => '/api/sso/validate',     // Token validation endpoint
+        'callback' => '/auth/sso/callback',        // SSO callback handler
+        'user_dashboard' => '/user/dashboard',     // User dashboard route
+        'logout' => '/auth/logout',                // Logout endpoint
+    ],
+    
+    /*
+    |--------------------------------------------------------------------------
+    | PostgreSQL Schema Configuration
+    |--------------------------------------------------------------------------
+    */
+    'database' => [
+        'connection' => env('CAS_DB_CONNECTION', 'cas_system'),
+        'schemas' => [
+            'admin' => 'cas_admin',
+            'user' => 'cas_user', 
+            'public' => 'cas_public',
+            'audit' => 'cas_audit'
+        ]
+    ],
+    
+    /*
+    |--------------------------------------------------------------------------
+    | IP Whitelist &amp; Security Settings
+    |--------------------------------------------------------------------------
+    */
+    'security' => [
+        'ip_whitelist_enabled' => env('CAS_IP_WHITELIST', true),
+        'audit_logging' => env('CAS_AUDIT_LOGGING', true),
+        'rate_limiting' => env('CAS_RATE_LIMITING', true),
+    ]
+];</code></pre>
+        </div>
+
+        <h3 class="text-xl font-semibold mb-3">Environment Variables - Updated</h3>
+        <p class="text-gray-700 mb-4">Add these variables to your <code class="bg-gray-100 px-2 py-1 rounded">.env</code> file:</p>
+        
+        <div class="code-block mb-6">
+            <pre class="language-env"><code># CAS Configuration - Enhanced Architecture
+CAS_SERVER_URL=https://your-cas-server.com
+CAS_CLIENT_ID=your-client-id
+CAS_CLIENT_SECRET=your-client-secret
+CAS_TOKEN_EXPIRY=3600
+CAS_SIGNATURE_VALIDATION=true
+
+# Database Configuration
+CAS_DB_CONNECTION=cas_system
+CAS_DB_HOST=127.0.0.1
+CAS_DB_PORT=5432
+CAS_DB_DATABASE=cas_system
+CAS_DB_USERNAME=cas_user
+CAS_DB_PASSWORD=secure_password
+
+# Security Settings
+CAS_IP_WHITELIST=true
+CAS_AUDIT_LOGGING=true
+CAS_RATE_LIMITING=true</code></pre>
+        </div>
+    </section>
+
+    <!-- Middleware -->
+    <section id="middleware" class="mb-12">
+        <h2 class="text-2xl font-bold mb-4">3. Middleware Setup</h2>
+        
+        <h3 class="text-xl font-semibold mb-3">Register Middleware</h3>
+        <p class="text-gray-700 mb-4">Add the CAS middleware to your <code class="bg-gray-100 px-2 py-1 rounded">app/Http/Kernel.php</code>:</p>
+        
+        <div class="code-block mb-6">
+            <pre class="language-php"><code>protected $routeMiddleware = [
+    // ... existing middleware
+    'cas.auth' => \CasSystem\LaravelClient\Middleware\CasAuth::class,
+    'cas.role' => \CasSystem\LaravelClient\Middleware\CasRole::class,
+];</code></pre>
+        </div>
+
+        <h3 class="text-xl font-semibold mb-3">Custom Middleware (Manual Installation)</h3>
+        <p class="text-gray-700 mb-4">If you're using manual installation, create the middleware file:</p>
+        
+        <div class="code-block mb-6">
+            <pre class="language-php"><code>&lt;?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use App\Services\CAS\CasClient;
+
+class CasAuth
+{
+    public function handle(Request $request, Closure $next)
+    {
+        $user = session('cas_user');
+        $token = session('cas_token');
+        
+        if (!$user || !$token) {
+            // Redirect to CAS login
+            $loginUrl = CasClient::getLoginUrl($request->url());
+            return redirect($loginUrl);
+        }
+        
+        // Validate token if needed
+        if (!CasClient::validateToken($token)) {
+            session()->forget(['cas_user', 'cas_token']);
+            $loginUrl = CasClient::getLoginUrl($request->url());
+            return redirect($loginUrl);
+        }
+        
+        return $next($request);
+    }
+}</code></pre>
+        </div>
+    </section>
+
+    <!-- Routes -->
+    <section id="routes" class="mb-12">
+        <h2 class="text-2xl font-bold mb-4">4. Route Protection</h2>
+        
+        <h3 class="text-xl font-semibold mb-3">Basic Route Protection</h3>
+        <div class="code-block mb-6">
+            <pre class="language-php"><code>// In routes/web.php
+Route::middleware(['cas.auth'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index']);
+    Route::get('/profile', [ProfileController::class, 'show']);
+    Route::get('/settings', [SettingsController::class, 'index']);
+});</code></pre>
+        </div>
+
+        <h3 class="text-xl font-semibold mb-3">Role-Based Protection</h3>
+        <div class="code-block mb-6">
+            <pre class="language-php"><code>// Protect routes with specific roles
+Route::middleware(['cas.auth', 'cas.role:admin,manager'])->group(function () {
+    Route::get('/admin', [AdminController::class, 'index']);
+    Route::get('/reports', [ReportsController::class, 'index']);
+});
+
+// Single role protection
+Route::middleware(['cas.auth', 'cas.role:admin'])->group(function () {
+    Route::get('/admin/users', [AdminController::class, 'users']);
+});</code></pre>
+        </div>
+
+        <h3 class="text-xl font-semibold mb-3">Authentication Routes</h3>
+        <div class="code-block mb-6">
+            <pre class="language-php"><code>// Authentication routes (add these to your routes/web.php)
+Route::get('/cas/login', function () {
+    $returnUrl = request('return_url', route('dashboard'));
+    $loginUrl = CasClient::getLoginUrl($returnUrl);
+    return redirect($loginUrl);
+})->name('cas.login');
+
+Route::get('/cas/callback', function () {
+    $token = request('token');
+    $user = CasClient::validateToken($token);
+    
+    if ($user) {
+        session(['cas_user' => $user, 'cas_token' => $token]);
+        return redirect(request('return_url', route('dashboard')));
+    }
+    
+    return redirect()->route('login')->with('error', 'Authentication failed');
+})->name('cas.callback');
+
+Route::get('/cas/logout', function () {
+    session()->forget(['cas_user', 'cas_token']);
+    return redirect('/');
+})->name('cas.logout');</code></pre>
+        </div>
+    </section>
+
+    <!-- Examples -->
+    <section id="examples" class="mb-12">
+        <h2 class="text-2xl font-bold mb-4">5. Code Examples</h2>
+        
+        <h3 class="text-xl font-semibold mb-3">Controller Example</h3>
+        <div class="code-block mb-6">
+            <pre class="language-php"><code>&lt;?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use CasSystem\LaravelClient\Facades\CasClient;
+
+class DashboardController extends Controller
+{
+    public function index()
+    {
+        $user = session('cas_user');
+        $token = session('cas_token');
+        
+        // You can also get user info directly from CAS
+        $userInfo = CasClient::getUserInfo($token);
+        
+        return view('dashboard', compact('user', 'userInfo'));
+    }
+    
+    public function profile()
+    {
+        $user = session('cas_user');
+        
+        // Access user properties
+        $username = $user['username'];
+        $email = $user['email'];
+        $role = $user['role'];
+        $firstName = $user['first_name'];
+        $lastName = $user['last_name'];
+        
+        return view('profile', compact('user'));
+    }
+}</code></pre>
+        </div>
+
+        <h3 class="text-xl font-semibold mb-3">Blade Template Example</h3>
+        <div class="code-block mb-6">
+            <pre class="language-php"><code>{{-- resources/views/dashboard.blade.php --}}
+@@extends('layouts.app')
+
+@@section('content')
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">Dashboard</div>
+                <div class="card-body">
+                    @@if(session('cas_user'))
+                        <h4>Welcome, @{{ session('cas_user')['first_name'] }}!</h4>
+                        <p>Email: @{{ session('cas_user')['email'] }}</p>
+                        <p>Role: @{{ session('cas_user')['role'] }}</p>
+                        <p>Username: @{{ session('cas_user')['username'] }}</p>
+                        
+                        <div class="mt-4">
+                            <a href="@{{ route('profile') }}" class="btn btn-primary">View Profile</a>
+                            <a href="@{{ route('cas.logout') }}" class="btn btn-secondary">Logout</a>
+                        </div>
+                    @@else
+                        <p>Please <a href="@{{ route('cas.login') }}">login</a> to continue.</p>
+                    @@endif
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@@endsection</code></pre>
+        </div>
+
+        <h3 class="text-xl font-semibold mb-3">Service Provider Example</h3>
+        <div class="code-block mb-6">
+            <pre class="language-php"><code>&lt;?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+use CasSystem\LaravelClient\Services\CasClient;
+
+class CasServiceProvider extends ServiceProvider
+{
+    public function register()
+    {
+        $this->app->singleton(CasClient::class, function ($app) {
+            return new CasClient([
+                'server_url' => config('cas.server_url'),
+                'client_id' => config('cas.client_id'),
+                'client_username' => config('cas.client_username'),
+                'client_password' => config('cas.client_password'),
+                'signature_secret' => config('cas.signature_secret'),
+            ]);
+        });
+    }
+}</code></pre>
+        </div>
+    </section>
+
+    <!-- Advanced Usage -->
+    <section id="advanced" class="mb-12">
+        <h2 class="text-2xl font-bold mb-4">6. Advanced Usage</h2>
+        
+        <h3 class="text-xl font-semibold mb-3">Custom User Model</h3>
+        <div class="code-block mb-6">
+            <pre class="language-php"><code>&lt;?php
+
+namespace App\Models;
+
+use Illuminate\Foundation\Auth\User as Authenticatable;
+
+class CasUser extends Authenticatable
+{
+    protected $fillable = [
+        'username', 'email', 'first_name', 'last_name', 'role'
+    ];
+    
+    public function getFullNameAttribute()
+    {
+        return $this->first_name . ' ' . $this->last_name;
+    }
+    
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+    
+    public function hasRole($role)
+    {
+        return $this->role === $role;
+    }
+}</code></pre>
+        </div>
+
+        <h3 class="text-xl font-semibold mb-3">Token Refresh</h3>
+        <div class="code-block mb-6">
+            <pre class="language-php"><code>&lt;?php
+
+namespace App\Services;
+
+use CasSystem\LaravelClient\Services\CasClient;
+
+class TokenRefreshService
+{
+    public function refreshToken($currentToken)
+    {
+        try {
+            $newToken = CasClient::refreshToken($currentToken);
+            session(['cas_token' => $newToken]);
+            return $newToken;
+        } catch (\Exception $e) {
+            // Token refresh failed, redirect to login
+            session()->forget(['cas_user', 'cas_token']);
+            throw $e;
+        }
+    }
+}</code></pre>
+        </div>
+
+        <h3 class="text-xl font-semibold mb-3">API Integration</h3>
+        <div class="code-block mb-6">
+            <pre class="language-php"><code>&lt;?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use CasSystem\LaravelClient\Services\CasClient;
+
+class AuthController extends Controller
+{
+    public function login(Request $request)
+    {
+        $credentials = $request->only('username', 'password');
+        
+        try {
+            $response = CasClient::authenticate($credentials);
+            
+            return response()->json([
+                'token' => $response['token'],
+                'user' => $response['user'],
+                'expires_at' => $response['expires_at'],
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Authentication failed'], 401);
+        }
+    }
+    
+    public function validateToken(Request $request)
+    {
+        $token = $request->bearerToken();
+        
+        try {
+            $user = CasClient::validateToken($token);
+            return response()->json(['user' => $user]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Invalid token'], 401);
+        }
+    }
+}</code></pre>
+        </div>
+    </section>
+
+    <!-- Troubleshooting -->
+    <section class="mb-12">
+        <h2 class="text-2xl font-bold mb-4">Troubleshooting</h2>
+        
+        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+            <h3 class="text-lg font-semibold mb-2">Common Issues</h3>
+            <ul class="space-y-2 text-sm">
+                <li><strong>Authentication loops:</strong> Check your callback URL configuration</li>
+                <li><strong>Token validation fails:</strong> Verify your signature secret</li>
+                <li><strong>Session expires quickly:</strong> Increase session lifetime in config</li>
+                <li><strong>CORS errors:</strong> Add your domain to CAS server's allowed origins</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Next Steps -->
+    <div class="bg-blue-50 rounded-lg p-6">
+        <h2 class="text-xl font-semibold mb-4">Next Steps</h2>
+        <ul class="space-y-2">
+            <li>• <a href="{{ route('docs.api.overview') }}" class="text-blue-600 hover:text-blue-800">Explore the API Reference</a></li>
+            <li>• <a href="{{ route('docs.examples') }}" class="text-blue-600 hover:text-blue-800">View More Examples</a></li>
+            <li>• <a href="/" class="text-blue-600 hover:text-blue-800">Test with CAS Dashboard</a></li>
+        </ul>
+    </div>
+</div>
+@endsection
