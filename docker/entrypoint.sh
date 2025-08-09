@@ -2,7 +2,7 @@
 
 set -e
 
-echo "Starting Laravel CAS Server entrypoint..."
+echo "Starting One System entrypoint..."
 
 echo "Waiting for database connection..."
 until php artisan db:show --database=pgsql; do
