@@ -47,9 +47,9 @@ prepare_environment() {
     log_info "Preparing environment..."
     
     if [ ! -f "$ENV_FILE" ]; then
-        if [ -f ".env.docker" ]; then
-            cp .env.docker "$ENV_FILE"
-            log_success "Environment file copied from .env.docker"
+        if [ -f ".env" ]; then
+            cp .env "$ENV_FILE"
+            log_success "Environment file copied from .env"
         else
             log_error "No environment file found. Please create .env file."
             exit 1
