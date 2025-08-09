@@ -16,13 +16,10 @@ class DatabaseStatusCommand extends Command
         $this->info("=" . str_repeat("=", 50));
 
         try {
-            $connection = DB::connection()->getPdo();
-
-            // Basic connection info
             $this->info("Connection Details:");
             $this->line("✓ Database: Connected successfully");
-            $this->line("Driver: " . $connection->getDriverName());
-            $this->line("Database: " . $connection->getDatabaseName());
+            $this->line("Driver: " . DB::getDriverName());
+            $this->line("Database: " . DB::getDatabaseName());
 
             // Get PostgreSQL version and status
             $version = DB::select('SELECT version() as version')[0];

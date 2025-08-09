@@ -20,12 +20,11 @@ class HealthCheckCommand extends Command
 
         $this->info("1. Database Health:");
         try {
-            $connection = DB::connection()->getPdo();
             $this->line("   ✓ Database connection: OK");
 
             $schemas = ['cas_user', 'cas_admin', 'cas_audit'];
             foreach ($schemas as $schema) {
-                $testQuery = $connection->select("SELECT 1 FROM information_schema.schemata WHERE schema_name = ?", [$schema]);
+                $testQuery = DB::select("SELECT 1 FROM information_schema.schemata WHERE schema_name = ?", [$schema]);
                 if (empty($testQuery)) {
                     $this->line("   ✗ Schema {$schema}: MISSING");
                     $overallHealth = false;

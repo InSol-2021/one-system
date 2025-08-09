@@ -8,7 +8,8 @@ use App\Http\Controllers\Public\DocumentationController;
 use App\Http\Controllers\Admin\AuditLogController;
 use App\Http\Controllers\Admin\IpWhitelistController;
 use App\Http\Controllers\User\UserDashboardController;
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 Route::get('/', function () {
     return view('home');
@@ -123,13 +124,10 @@ Route::get('/docs/deployment', [DocumentationController::class, 'deployment'])->
 Route::get('/docs/troubleshooting', [DocumentationController::class, 'troubleshooting'])->name('docs.troubleshooting');
 Route::get('/docs/examples', [DocumentationController::class, 'examples'])->name('docs.examples');
 
-// API endpoint routes with parameters
 Route::get('/docs/api/{endpoint}', [DocumentationController::class, 'apiEndpoint'])->name('docs.api');
 
-// Generic section route (catch-all)
 Route::get('/docs/{section}', [DocumentationController::class, 'section'])->name('docs.section');
 
-// Package Download Routes
 Route::get('/downloads/one-system-client-package.zip', function() {
     $file = public_path('downloads/one-system-client-package.zip');
     if (!file_exists($file)) {
@@ -138,15 +136,10 @@ Route::get('/downloads/one-system-client-package.zip', function() {
     return response()->download($file);
 })->name('downloads.laravel-package');
 
-// Health Check Routes
 Route::get('/health/database', function() {
     try {
-        // Test database connection
-        $connection = DB::connection()->getPdo();
-
-        // Test basic queries
-        $userCount = $connection->table('cas_user.users')->count();
-        $clientCount = $connection->table('cas_admin.client_systems')->count();
+        $userCount = DB::table('cas_user.users')->count();
+        $clientCount = DB::table('cas_admin.client_systems')->count();
 
         return response()->json([
             'status' => 'healthy',
@@ -169,8 +162,6 @@ Route::get('/health/database', function() {
 
 Route::get('/health', function() {
     try {
-        $connection = DB::connection()->getPdo();
-
         return response()->json([
             'status' => 'healthy',
             'services' => [
@@ -196,22 +187,20 @@ Route::get('/health', function() {
 
 Route::get('/health/full', function() {
     try {
-        $connection = DB::connection()->getPdo();
+        $userCount = DB::table('cas_user.users')->count();
+        $activeUsers = DB::table('cas_user.users')->where('is_active', true)->count();
+        $adminUsers = DB::table('cas_user.users')->where('role', 'admin')->count();
 
-        $userCount = $connection->table('cas_user.users')->count();
-        $activeUsers = $connection->table('cas_user.users')->where('is_active', true)->count();
-        $adminUsers = $connection->table('cas_user.users')->where('role', 'admin')->count();
+        $clientCount = DB::table('cas_admin.client_systems')->count();
+        $activeClients = DB::table('cas_admin.client_systems')->where('is_active', true)->count();
 
-        $clientCount = $connection->table('cas_admin.client_systems')->count();
-        $activeClients = $connection->table('cas_admin.client_systems')->where('is_active', true)->count();
-
-        $auditLogCount = $connection->table('cas_audit.audit_logs')->count();
-        $recentAudits = $connection->table('cas_audit.audit_logs')
+        $auditLogCount = DB::table('cas_audit.audit_logs')->count();
+        $recentAudits = DB::table('cas_audit.audit_logs')
             ->where('created_at', '>=', now()->subDays(7))
             ->count();
 
-        $ipWhitelistCount = $connection->table('cas_admin.ip_whitelist')->count();
-        $activeIpRules = $connection->table('cas_admin.ip_whitelist')->where('is_active', true)->count();
+        $ipWhitelistCount = DB::table('cas_admin.ip_whitelist')->count();
+        $activeIpRules = DB::table('cas_admin.ip_whitelist')->where('is_active', true)->count();
 
         $systemInfo = [
             'php_version' => PHP_VERSION,
