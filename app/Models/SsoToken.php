@@ -10,11 +10,6 @@ class SsoToken extends Model
     use HasFactory;
 
     /**
-     * The database connection name.
-     */
-    protected $connection = 'cas_system';
-
-    /**
      * The table associated with the model.
      */
     protected $table = 'cas_user.sso_tokens';

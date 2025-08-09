@@ -15,11 +15,6 @@ class UserSecurity extends Model
     protected $table = 'cas_user.user_security';
 
     /**
-     * The connection name for the model.
-     */
-    protected $connection = 'cas_system';
-
-    /**
      * The attributes that are mass assignable.
      */
     protected $fillable = [

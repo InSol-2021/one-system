@@ -15,11 +15,6 @@ class SecuritySetting extends Model
     protected $table = 'cas_admin.security_settings';
 
     /**
-     * The connection name for the model.
-     */
-    protected $connection = 'cas_system';
-
-    /**
      * The attributes that are mass assignable.
      */
     protected $fillable = [

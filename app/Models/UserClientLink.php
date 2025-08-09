@@ -14,11 +14,6 @@ class UserClientLink extends Model
      */
     protected $table = 'cas_user.user_client_links';
 
-    /**
-     * The connection name for the model.
-     */
-    protected $connection = 'cas_system';
-
     protected $fillable = [
         'user_id',
         'client_system_id',

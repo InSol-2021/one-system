@@ -10,11 +10,6 @@ class AuditLog extends Model
     use HasFactory;
 
     /**
-     * The connection name for the model.
-     */
-    protected $connection = 'cas_system';
-
-    /**
      * The table associated with the model.
      */
     protected $table = 'cas_audit.audit_logs';

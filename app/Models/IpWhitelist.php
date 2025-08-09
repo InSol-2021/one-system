@@ -13,11 +13,6 @@ class IpWhitelist extends Model
      * The table associated with the model.
      */
     protected $table = 'cas_admin.ip_whitelist';
-    
-    /**
-     * The connection name for the model.
-     */
-    protected $connection = 'cas_system';
 
     protected $fillable = [
         'ip_address',
