@@ -3,7 +3,10 @@
 namespace App\Livewire\Admin;
 
 use Livewire\Component;
-use Illuminate\Support\Facades\DB;
+use App\Models\User;
+use App\Models\ClientSystem;
+use App\Models\AuditLog;
+use App\Models\IpWhitelist;
 use Carbon\Carbon;
 
 class DashboardComponent extends Component
@@ -28,37 +31,29 @@ class DashboardComponent extends Component
     private function getSystemStats()
     {
         try {
-            // User statistics
-            $totalUsers = DB::table('users')->count();
-            $adminUsers = DB::table('users')->where('role', 'admin')->count();
-            $regularUsers = DB::table('users')->where('role', 'user')->count();
+            $totalUsers = User::count();
+            $adminUsers = User::where('role', 'admin')->count();
+            $regularUsers = User::where('role', 'user')->count();
 
-            // Client system statistics
-            $totalClientSystems = DB::table('client_systems')->count();
-            $activeClientSystems = DB::table('client_systems')->where('is_active', true)->count();
+            $totalClientSystems = ClientSystem::count();
+            $activeClientSystems = ClientSystem::where('is_active', true)->count();
 
-            // Authentication statistics (last 24 hours)
-            $totalLogins24h = DB::table('audit_logs')
-                ->where('event_type', 'login')
+            $totalLogins24h = AuditLog::where('event_type', 'login')
                 ->where('created_at', '>=', now()->subDay())
                 ->count();
 
-            $successfulLogins24h = DB::table('audit_logs')
-                ->where('event_type', 'login')
+            $successfulLogins24h = AuditLog::where('event_type', 'login')
                 ->where('success', true)
                 ->where('created_at', '>=', now()->subDay())
                 ->count();
 
             $failedLogins24h = $totalLogins24h - $successfulLogins24h;
 
-            // SSO token statistics (last 24 hours)
-            $ssoTokens24h = DB::table('audit_logs')
-                ->where('event_type', 'sso_token_generated')
+            $ssoTokens24h = AuditLog::where('event_type', 'sso_token_generated')
                 ->where('created_at', '>=', now()->subDay())
                 ->count();
 
-            // IP whitelist entries
-            $ipWhitelistEntries = DB::table('ip_whitelist')->count();
+            $ipWhitelistEntries = IpWhitelist::count();
 
             return [
                 'users' => [
@@ -105,13 +100,11 @@ class DashboardComponent extends Component
                 $date = now()->subDays($i);
                 $dateStr = $date->format('Y-m-d');
 
-                $logins = DB::table('audit_logs')
-                    ->where('event_type', 'login')
+                $logins = AuditLog::where('event_type', 'login')
                     ->whereDate('created_at', $date)
                     ->count();
 
-                $ssoTokens = DB::table('audit_logs')
-                    ->where('event_type', 'sso_token_generated')
+                $ssoTokens = AuditLog::where('event_type', 'sso_token_generated')
                     ->whereDate('created_at', $date)
                     ->count();
 
@@ -132,17 +125,23 @@ class DashboardComponent extends Component
     private function getRecentActivity()
     {
         try {
-            return DB::table('audit_logs')
-                ->leftJoin('users', 'audit_logs.user_id', '=', 'users.id')
-                ->leftJoin('client_systems', 'audit_logs.client_system_id', '=', 'client_systems.id')
-                ->select([
-                    'audit_logs.*',
-                    'users.username',
-                    'client_systems.name as client_system_name'
-                ])
-                ->orderBy('audit_logs.created_at', 'desc')
+            return AuditLog::with(['user:id,username', 'clientSystem:id,name'])
+                ->orderBy('created_at', 'desc')
                 ->limit(10)
-                ->get();
+                ->get()
+                ->map(function ($log) {
+                    return [
+                        'id' => $log->id,
+                        'event_type' => $log->event_type,
+                        'action' => $log->action,
+                        'description' => $log->description,
+                        'success' => $log->success,
+                        'ip_address' => $log->ip_address,
+                        'created_at' => $log->created_at,
+                        'username' => $log->user?->username ?? 'System',
+                        'client_system_name' => $log->clientSystem?->name ?? 'N/A'
+                    ];
+                });
         } catch (\Exception $e) {
             return collect([]);
         }
