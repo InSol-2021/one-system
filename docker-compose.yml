@@ -17,11 +17,11 @@ services:
       - redis
     networks:
       - cas-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+#    healthcheck:
+#      test: ["CMD", "curl", "-f", "http://localhost/health"]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 3
 
 #  postgres:
 #    image: postgres:16-alpine
@@ -62,11 +62,11 @@ services:
       - "6379:6379"
     networks:
       - cas-network
-    healthcheck:
-      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
-      interval: 10s
-      timeout: 3s
-      retries: 5
+#    healthcheck:
+#      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+#      interval: 10s
+#      timeout: 3s
+#      retries: 5
 
   nginx-lb:
     image: nginx:alpine
