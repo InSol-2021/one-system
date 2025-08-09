@@ -87,7 +87,7 @@ deploy_services() {
     docker compose down --remove-orphans
     
     log_info "Building Docker images..."
-    docker compose build --no-cache
+    docker compose build
     
     log_info "Starting services..."
     docker compose up -d
