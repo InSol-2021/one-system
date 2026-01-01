@@ -269,7 +269,7 @@
         <!-- Resources -->
         <div class="sidebar-section">
             <div class="sidebar-title">Resources</div>
-            <a href="/downloads/one-system-client-package.zip" class="sidebar-link">
+            <a href="/downloads/laravel-cas-client-package.zip" class="sidebar-link">
                 <i class="fas fa-download sidebar-icon"></i>
                 Download Packages
             </a>
