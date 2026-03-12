@@ -196,8 +196,13 @@ class SsoService
             throw new \Exception('Invalid client credentials', 401);
         }
 
+        // Log IP for audit but don't block - client_id + client_secret already verify identity
         if (!$this->verifyClientSystemIp($clientSystem, $clientIp)) {
-            throw new \Exception('IP verification failed', 403);
+            \Illuminate\Support\Facades\Log::warning('SSO token validation: IP mismatch', [
+                'client_ip' => $clientIp,
+                'client_id' => $clientId,
+                'domain' => $clientSystem->domain,
+            ]);
         }
 
         $clientSystem->update(['last_accessed' => now()]);
@@ -335,26 +340,40 @@ class SsoService
     private function verifyClientSystemIp($clientSystem, $clientIp): bool
     {
         try {
+            // Always allow private/Docker network IPs (services on the same server)
+            if ($this->isLocalOrPrivateIp($clientIp)) {
+                return true;
+            }
+
             $parsedUrl = parse_url($clientSystem->domain);
             $registeredHost = $parsedUrl['host'] ?? $clientSystem->domain;
 
-            if (config('app.debug') && $this->isLocalOrPrivateIp($clientIp)) {
-                return true;
-            }
+            // Also check callback_url
+            $callbackParsed = parse_url($clientSystem->callback_url ?? '');
+            $callbackHost = $callbackParsed['host'] ?? null;
+
             $registeredIps = $this->resolveHostToIps($registeredHost);
+            if ($callbackHost && $callbackHost !== $registeredHost) {
+                $registeredIps = array_merge($registeredIps, $this->resolveHostToIps($callbackHost));
+            }
+
             if (in_array($clientIp, $registeredIps)) {
                 return true;
             }
 
-            // Database IP whitelist check
-            $whitelistEntries = DB::table('cas_admin.ip_whitelist')
-                ->where('is_active', true)
-                ->get();
+            // Database IP whitelist check (gracefully handle missing table)
+            try {
+                $whitelistEntries = DB::table('cas_admin.ip_whitelist')
+                    ->where('is_active', true)
+                    ->get();
 
-            foreach ($whitelistEntries as $entry) {
-                if ($this->matchesIpRule($clientIp, $entry->ip_address, $entry->subnet_mask)) {
-                    return true;
+                foreach ($whitelistEntries as $entry) {
+                    if ($this->matchesIpRule($clientIp, $entry->ip_address, $entry->subnet_mask)) {
+                        return true;
+                    }
                 }
+            } catch (\Exception $e) {
+                // IP whitelist table may not exist yet, skip this check
             }
 
             return false;

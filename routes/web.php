@@ -91,9 +91,7 @@ Route::get('/admin/security-settings', function() { return view('admin.security-
 
 // Logout Routes
 Route::post('/auth/logout', [AuthController::class, 'logout'])->name('logout');
-Route::get('/auth/logout', function() {
-    return redirect()->route('login')->withErrors(['error' => 'Please use the logout button to sign out safely.']);
-})->name('logout.get');
+Route::get('/auth/logout', [AuthController::class, 'logout'])->name('logout.get');
 
 // Password Reset Routes
 Route::get('/auth/forgot-password', [ForgotPasswordController::class, 'showForgotForm'])->name('password.request');
