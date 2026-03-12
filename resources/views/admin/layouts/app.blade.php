@@ -33,7 +33,7 @@
 
 </head>
 <body class="bg-gray-50 min-h-screen">
-    <nav class="bg-blue-800 shadow-lg">
+    <nav class="bg-blue-800 shadow-lg" x-data="{ mobileOpen: false }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex">
@@ -142,6 +142,38 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Mobile hamburger button -->
+                <div class="flex items-center sm:hidden">
+                    <button @click="mobileOpen = !mobileOpen" class="inline-flex items-center justify-center p-2 rounded-md text-blue-200 hover:text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white transition-colors">
+                        <svg x-show="!mobileOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                        <svg x-show="mobileOpen" x-cloak class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile menu panel -->
+        <div x-show="mobileOpen" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2" x-cloak class="sm:hidden bg-blue-900 border-t border-blue-700">
+            <div class="pt-2 pb-3 space-y-1 px-3">
+                <a href="/admin/dashboard" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->is('admin/dashboard*') || request()->is('admin') ? 'bg-blue-700 text-white' : 'text-blue-100 hover:bg-blue-700 hover:text-white' }} transition-colors">Dashboard</a>
+                <a href="/admin/client-systems" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->is('admin/client-systems*') ? 'bg-blue-700 text-white' : 'text-blue-100 hover:bg-blue-700 hover:text-white' }} transition-colors">Client Systems</a>
+                <a href="/admin/users" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->is('admin/users*') ? 'bg-blue-700 text-white' : 'text-blue-100 hover:bg-blue-700 hover:text-white' }} transition-colors">Users</a>
+                <a href="/admin/ip-whitelist" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->is('admin/ip-whitelist*') ? 'bg-blue-700 text-white' : 'text-blue-100 hover:bg-blue-700 hover:text-white' }} transition-colors">IP Whitelist</a>
+                <a href="/admin/audit-logs" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->is('admin/audit-logs*') ? 'bg-blue-700 text-white' : 'text-blue-100 hover:bg-blue-700 hover:text-white' }} transition-colors">Audit Logs</a>
+                <a href="/admin/sso-settings" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->is('admin/sso-settings*') ? 'bg-blue-700 text-white' : 'text-blue-100 hover:bg-blue-700 hover:text-white' }} transition-colors">SSO Settings</a>
+            </div>
+            <div class="pt-3 pb-3 border-t border-blue-700 px-4 space-y-2">
+                <a href="/admin/profile" class="block px-3 py-2 rounded-md text-base font-medium text-blue-100 hover:bg-blue-700 hover:text-white transition-colors">My Profile</a>
+                <a href="/admin/security-settings" class="block px-3 py-2 rounded-md text-base font-medium text-blue-100 hover:bg-blue-700 hover:text-white transition-colors">Security Settings</a>
+                <form method="POST" action="/auth/logout" class="block">
+                    @csrf
+                    <button type="submit" class="w-full text-left px-3 py-2 rounded-md text-base font-medium text-red-300 hover:bg-red-900/50 hover:text-red-200 transition-colors">Logout</button>
+                </form>
             </div>
         </div>
     </nav>

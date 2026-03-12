@@ -14,7 +14,7 @@
     @livewireStyles
 </head>
 <body class="bg-gray-50 min-h-screen">
-    <nav class="bg-slate-800 shadow-lg border-b border-slate-700">
+    <nav class="bg-slate-800 shadow-lg border-b border-slate-700" x-data="{ mobileOpen: false }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex">
@@ -73,6 +73,48 @@
                         @endif
                     @endif
                 </div>
+
+                <!-- Mobile hamburger button -->
+                <div class="flex items-center sm:hidden">
+                    <button @click="mobileOpen = !mobileOpen" class="inline-flex items-center justify-center p-2 rounded-md text-slate-300 hover:text-white hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-emerald-400 transition-colors">
+                        <svg x-show="!mobileOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                        <svg x-show="mobileOpen" x-cloak class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile menu panel -->
+        <div x-show="mobileOpen" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2" x-cloak class="sm:hidden bg-slate-900 border-t border-slate-700">
+            <div class="pt-2 pb-3 space-y-1 px-3">
+                <a href="/user/dashboard" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->is('user/dashboard*') ? 'bg-slate-700 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white' }} transition-colors">SSO Dashboard</a>
+                <a href="/user/profile" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->is('user/profile*') ? 'bg-slate-700 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white' }} transition-colors">Profile & Security</a>
+            </div>
+            <div class="pt-3 pb-3 border-t border-slate-700 px-4">
+                @if(session('user_id'))
+                    @php
+                        $mobileUser = \App\Models\User::find(session('user_id'));
+                    @endphp
+                    @if($mobileUser)
+                        <div class="flex items-center px-3 py-2 mb-2">
+                            <div class="w-8 h-8 bg-emerald-500/30 rounded-lg flex items-center justify-center text-white font-semibold text-sm border border-emerald-400/40 mr-3">
+                                {{ strtoupper(substr($mobileUser->first_name, 0, 1)) }}{{ strtoupper(substr($mobileUser->last_name, 0, 1)) }}
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-white">{{ $mobileUser->first_name }} {{ $mobileUser->last_name }}</p>
+                                <p class="text-xs text-slate-400">{{ $mobileUser->email }}</p>
+                            </div>
+                        </div>
+                    @endif
+                @endif
+                <form method="POST" action="{{ route('logout') }}" class="block">
+                    @csrf
+                    <button type="submit" class="w-full text-left px-3 py-2 rounded-md text-base font-medium text-red-300 hover:bg-red-900/50 hover:text-red-200 transition-colors">Logout</button>
+                </form>
             </div>
         </div>
     </nav>
