@@ -1,0 +1,17 @@
+{
+  "name": "@cas-system/js-client",
+  "version": "2.0.0",
+  "description": "Browser JavaScript SDK for CAS (Central Authentication Service) SSO integration",
+  "main": "src/cas-client.js",
+  "browser": "src/cas-client.js",
+  "scripts": {
+    "build": "echo 'No build step needed — vanilla JS'"
+  },
+  "keywords": ["cas", "sso", "authentication", "browser", "single-sign-on", "javascript"],
+  "author": "CAS System",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cas-system/js-client"
+  }
+}

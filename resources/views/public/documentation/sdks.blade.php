@@ -38,6 +38,8 @@
                 <span>PHP 8.1+</span>
                 <span>&middot;</span>
                 <a href="{{ route('docs.laravel') }}" class="text-blue-600 hover:text-blue-800 font-medium">View Guide &rarr;</a>
+                <span>&middot;</span>
+                <a href="/downloads/one-system-client-package.zip" class="text-emerald-600 hover:text-emerald-800 font-medium">Download .zip &darr;</a>
             </div>
         </div>
 
@@ -62,6 +64,8 @@
                 <span>Express / Koa</span>
                 <span>&middot;</span>
                 <a href="{{ route('docs.nodejs') }}" class="text-blue-600 hover:text-blue-800 font-medium">View Guide &rarr;</a>
+                <span>&middot;</span>
+                <a href="/downloads/nodejs-cas-client.zip" class="text-emerald-600 hover:text-emerald-800 font-medium">Download .zip &darr;</a>
             </div>
         </div>
 
@@ -86,6 +90,8 @@
                 <span>Django / Flask</span>
                 <span>&middot;</span>
                 <a href="{{ route('docs.python') }}" class="text-blue-600 hover:text-blue-800 font-medium">View Guide &rarr;</a>
+                <span>&middot;</span>
+                <a href="/downloads/python-cas-client.zip" class="text-emerald-600 hover:text-emerald-800 font-medium">Download .zip &darr;</a>
             </div>
         </div>
 
@@ -110,6 +116,8 @@
                 <span>ASP.NET MVC</span>
                 <span>&middot;</span>
                 <a href="{{ route('docs.dotnet') }}" class="text-blue-600 hover:text-blue-800 font-medium">View Guide &rarr;</a>
+                <span>&middot;</span>
+                <a href="/downloads/dotnet-cas-client.zip" class="text-emerald-600 hover:text-emerald-800 font-medium">Download .zip &darr;</a>
             </div>
         </div>
 
@@ -134,6 +142,8 @@
                 <span>Spring Boot</span>
                 <span>&middot;</span>
                 <a href="{{ route('docs.java') }}" class="text-blue-600 hover:text-blue-800 font-medium">View Guide &rarr;</a>
+                <span>&middot;</span>
+                <a href="/downloads/java-cas-client.zip" class="text-emerald-600 hover:text-emerald-800 font-medium">Download .zip &darr;</a>
             </div>
         </div>
 
@@ -158,6 +168,8 @@
                 <span>CDN or npm</span>
                 <span>&middot;</span>
                 <a href="{{ route('docs.javascript') }}" class="text-blue-600 hover:text-blue-800 font-medium">View Guide &rarr;</a>
+                <span>&middot;</span>
+                <a href="/downloads/javascript-cas-client.zip" class="text-emerald-600 hover:text-emerald-800 font-medium">Download .zip &darr;</a>
             </div>
         </div>
     </div>

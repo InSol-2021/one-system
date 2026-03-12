@@ -142,6 +142,25 @@ Route::get('/downloads/one-system-client-package.zip', function() {
     return response()->download($file);
 })->name('downloads.laravel-package');
 
+// SDK Package Downloads
+$sdkPackages = [
+    'nodejs-cas-client' => 'downloads.nodejs-package',
+    'python-cas-client' => 'downloads.python-package',
+    'java-cas-client' => 'downloads.java-package',
+    'dotnet-cas-client' => 'downloads.dotnet-package',
+    'javascript-cas-client' => 'downloads.javascript-package',
+];
+
+foreach ($sdkPackages as $package => $routeName) {
+    Route::get("/downloads/{$package}.zip", function() use ($package) {
+        $file = public_path("downloads/{$package}.zip");
+        if (!file_exists($file)) {
+            abort(404, 'Package not found');
+        }
+        return response()->download($file);
+    })->name($routeName);
+}
+
 Route::get('/health/database', function() {
     try {
         $userCount = DB::table('cas_user.users')->count();

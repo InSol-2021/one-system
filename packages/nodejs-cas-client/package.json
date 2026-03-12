@@ -1,0 +1,25 @@
+{
+  "name": "@cas-system/node-client",
+  "version": "2.0.0",
+  "description": "Node.js client for CAS (Central Authentication Service) SSO integration",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
+  "scripts": {
+    "test": "node test/test.js",
+    "lint": "eslint src/"
+  },
+  "keywords": ["cas", "sso", "authentication", "jwt", "single-sign-on"],
+  "author": "CAS System",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "jsonwebtoken": "^9.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cas-system/node-client"
+  }
+}
