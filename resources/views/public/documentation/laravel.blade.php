@@ -44,7 +44,7 @@
             <span class="text-xs font-medium text-slate-600">Terminal</span>
         </div>
         <div class="bg-slate-900 p-5 overflow-x-auto">
-            <pre class="text-sm leading-relaxed font-mono text-slate-300"><code>composer require cas-system/laravel-client</code></pre>
+            <pre class="text-sm leading-relaxed font-mono text-slate-300"><code>composer require insol-dev/central-authentication-server</code></pre>
         </div>
     </div>
     <p class="text-sm text-slate-600 leading-relaxed">After installation, publish the configuration file:</p>

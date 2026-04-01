@@ -25,12 +25,12 @@
                 </div>
                 <div>
                     <h3 class="text-sm font-semibold text-slate-900">Laravel Client</h3>
-                    <p class="text-xs text-slate-400">cas-system/laravel-client</p>
+                    <p class="text-xs text-slate-400">insol-dev/central-authentication-server</p>
                 </div>
                 <span class="ml-auto text-xs font-medium bg-slate-100 text-slate-600 px-2 py-0.5 rounded">v2.1.0</span>
             </div>
             <div class="rounded-lg bg-slate-900 p-3 mb-3">
-                <code class="text-xs text-slate-300 font-mono">composer require cas-system/laravel-client</code>
+                <code class="text-xs text-slate-300 font-mono">composer require insol-dev/central-authentication-server</code>
             </div>
             <div class="flex items-center gap-3 text-xs text-slate-500">
                 <span>Laravel 10+</span>

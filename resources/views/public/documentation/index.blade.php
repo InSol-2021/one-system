@@ -212,7 +212,7 @@
         </div>
         <div class="bg-slate-900 p-5 overflow-x-auto">
             <pre id="code-block" class="text-sm leading-relaxed font-mono"><code><span class="text-slate-500">// Install the package</span>
-<span class="text-blue-400">composer require</span> <span class="text-amber-300">cas-system/laravel-client</span>
+<span class="text-blue-400">composer require</span> <span class="text-amber-300">insol-dev/central-authentication-server</span>
 
 <span class="text-slate-500">// Protect routes with CAS middleware</span>
 <span class="text-violet-400">Route</span>::<span class="text-green-400">middleware</span>([<span class="text-amber-300">'cas.auth'</span>])-><span class="text-green-400">group</span>(<span class="text-blue-400">function</span> () {
