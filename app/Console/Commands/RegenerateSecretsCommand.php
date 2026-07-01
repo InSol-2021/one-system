@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class RegenerateSecretsCommand extends Command
@@ -39,13 +40,13 @@ class RegenerateSecretsCommand extends Command
             
             // Generate new client secret
             $newClientSecret = 'cs_' . Str::random(32);
-            $updates['client_secret'] = $newClientSecret;
+            $updates['client_secret'] = Hash::make($newClientSecret); // stored hashed at rest
             $this->line("✓ Generated new client secret");
-            
+
             // Generate new webhook secret if requested
             if ($regenerateWebhook) {
                 $newWebhookSecret = 'wh_' . Str::random(32);
-                $updates['webhook_secret'] = $newWebhookSecret;
+                $updates['webhook_secret'] = Hash::make($newWebhookSecret); // stored hashed at rest
                 $this->line("✓ Generated new webhook secret");
             }
             
@@ -80,20 +81,35 @@ class RegenerateSecretsCommand extends Command
             $this->info("=" . str_repeat("=", 50));
             $this->info("✓ Secrets regenerated successfully!");
             $this->line("");
+            $this->warn("Copy these now — secrets are stored hashed and will NOT be retrievable again:");
             $this->line("New client secret: {$newClientSecret}");
-            
+
             if ($regenerateWebhook && isset($newWebhookSecret)) {
                 $this->line("New webhook secret: {$newWebhookSecret}");
             }
-            
+
             $this->line("");
-            $this->warn("Important: Update these secrets in your client system configuration immediately!");
-            
+            $this->warn("Update your client system configuration with the new secret(s) immediately.");
+
             return 0;
             
         } catch (\Exception $e) {
             $this->error("Error regenerating secrets: " . $e->getMessage());
             return 1;
         }
+    }
+
+    /**
+     * Mask a secret so it is never printed in full to the console/logs.
+     */
+    private function maskSecret(string $secret): string
+    {
+        $visible = 4;
+
+        if (strlen($secret) <= $visible) {
+            return str_repeat('*', strlen($secret));
+        }
+
+        return substr($secret, 0, $visible) . str_repeat('*', max(0, strlen($secret) - $visible));
     }
 }

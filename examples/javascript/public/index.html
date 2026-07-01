@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>One System CAS — JavaScript Sample</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 560px; margin: 4rem auto; padding: 0 1rem; color: #1a1a1a; }
+    h1 { font-size: 1.4rem; }
+    button { font-size: 1rem; padding: 0.6rem 1.2rem; border: 0; border-radius: 6px; cursor: pointer; }
+    .primary { background: #2563eb; color: #fff; }
+    .secondary { background: #e5e7eb; color: #111; }
+    pre { background: #f3f4f6; padding: 1rem; border-radius: 6px; overflow: auto; }
+    .hidden { display: none; }
+    .muted { color: #6b7280; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <h1>One System CAS — JavaScript Sample</h1>
+  <p class="muted">
+    A real app with its OWN local accounts <em>and</em> One System CAS Single-Sign-On.
+    Sign in with a local username/password (validated against a SQLite store) or via CAS.
+    CAS token validation runs on a tiny Express backend (<code>POST /api/auth/validate</code>)
+    that holds the <code>client_secret</code> — never the browser.
+  </p>
+
+  <!-- Logged-out view -->
+  <div id="logged-out" class="hidden">
+    <p>You are not signed in.</p>
+    <a href="/login"><button class="primary">Sign in with a local account</button></a>
+    <button class="secondary" id="login-btn">Login with One System CAS</button>
+  </div>
+
+  <!-- Logged-in view -->
+  <div id="logged-in" class="hidden">
+    <p>Signed in as <strong id="username"></strong> <span class="muted" id="auth-method"></span>.</p>
+    <pre id="user-json"></pre>
+    <button class="secondary" id="logout-btn">Logout</button>
+  </div>
+
+  <!-- 1. Load the UMD browser SDK from the LOCAL package (served by Express). -->
+  <script src="/vendor/cas-client.js"></script>
+  <script>
+    // 2. Build the CasClient from PUBLIC config served by the backend.
+    //    (The backend deliberately omits client_secret from /api/config.)
+    let cas;
+
+    async function init() {
+      const cfg = await fetch('/api/config').then((r) => r.json());
+      cas = new CasClient(cfg); // global `CasClient` from the UMD script above
+
+      // Ask the backend (server-side session) whether we're already signed in.
+      // This is the source of truth across reloads.
+      const me = await fetch('/api/me').then((r) => (r.ok ? r.json() : null));
+      if (me && me.user) {
+        showLoggedIn(me.user);
+        return;
+      }
+
+      // Deep-link from the local login page ("/?sso=1"): start CAS login directly.
+      if (new URLSearchParams(window.location.search).get('sso') === '1') {
+        cas.login('/');
+        return;
+      }
+
+      showLoggedOut();
+    }
+
+    function showLoggedOut() {
+      document.getElementById('logged-out').classList.remove('hidden');
+      document.getElementById('logged-in').classList.add('hidden');
+    }
+
+    function showLoggedIn(user) {
+      document.getElementById('username').textContent = user.username || user.email || user.id;
+      // A local account has a numeric `id` and no email/CAS fields; CAS users
+      // carry richer profile data. This is just a friendly label.
+      const viaCas = !!(user.email || user.roles || user.sub);
+      document.getElementById('auth-method').textContent = viaCas ? '(via CAS SSO)' : '(local account)';
+      document.getElementById('user-json').textContent = JSON.stringify(user, null, 2);
+      document.getElementById('logged-in').classList.remove('hidden');
+      document.getElementById('logged-out').classList.add('hidden');
+    }
+
+    // (a) Trigger CAS login. The SDK redirects the browser to
+    //     {CAS_BASE}/sso/login?client_id=... ; CAS redirects back to /cas/callback?token=...
+    document.getElementById('login-btn').addEventListener('click', function () {
+      cas.login('/'); // come back to this page after the callback completes
+    });
+
+    // (d) Logout: clear OUR session, then let the SDK clear CAS + redirect home.
+    document.getElementById('logout-btn').addEventListener('click', async function () {
+      await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' });
+      cas.logout('/'); // SDK clears its session and POSTs {CAS_BASE}/api/logout
+    });
+
+    init();
+  </script>
+</body>
+</html>

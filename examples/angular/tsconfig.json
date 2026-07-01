@@ -1,0 +1,36 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "outDir": "./dist/out-tsc",
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": false,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "declaration": false,
+    "experimentalDecorators": true,
+    "moduleResolution": "bundler",
+    "importHelpers": true,
+    "target": "ES2022",
+    "module": "ES2022",
+    "useDefineForClassFields": false,
+    "lib": ["ES2022", "dom"]
+
+    // ── Local CAS SDK link ─────────────────────────────────────────────
+    // No tsconfig "paths" mapping is needed. The `file:` dependency in
+    // package.json symlinks the package into node_modules/@one-system/
+    // angular-cas-client, and that package's main/types already point at
+    // raw TypeScript (src/index.ts). Angular therefore compiles the SDK
+    // from source AND resolves its @angular/* peer imports against THIS
+    // example's node_modules — no publishing, no separate build step.
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
+  }
+}

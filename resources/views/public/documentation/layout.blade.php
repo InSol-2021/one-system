@@ -5,282 +5,292 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', 'Documentation') - CAS Authentication System</title>
-    <meta name="description" content="@yield('description', 'Comprehensive documentation for CAS Single Sign-On authentication system')">
+    <title>@yield('title', 'Documentation') — One System</title>
+    <meta name="description" content="@yield('description', 'Documentation for the One System single sign-on authentication platform')">
 
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-    
-    <!-- FontAwesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Scripts and Styles -->
+    <link href="https://fonts.bunny.net/css?family=ibm-plex-sans:400,500,600,700|ibm-plex-mono:400,500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    
+
     <style>
-        /* Documentation Specific Styles */
+        /* Documentation shell — One System */
         .docs-sidebar {
             width: 280px;
-            background: #f8fafc;
-            border-right: 1px solid #e2e8f0;
+            background-color: var(--color-surface);
+            border-right: 1px solid var(--color-line);
             height: 100vh;
             position: fixed;
             top: 0;
             left: 0;
-            z-index: 10;
+            z-index: 30;
             overflow-y: auto;
         }
-        
+
         .docs-content {
             margin-left: 280px;
             min-height: 100vh;
+            background-color: var(--color-canvas);
         }
-        
+
         .sidebar-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid #e2e8f0;
-            background: white;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--color-line);
+            background-color: var(--color-surface);
+            position: sticky;
+            top: 0;
+            z-index: 1;
         }
-        
+
         .sidebar-section {
             padding: 1rem 0;
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 1px solid var(--color-line);
         }
-        
+
         .sidebar-section:last-child {
             border-bottom: none;
         }
-        
+
         .sidebar-title {
             padding: 0 1.5rem 0.5rem 1.5rem;
-            font-size: 0.875rem;
+            font-size: 0.7rem;
             font-weight: 600;
-            color: #64748b;
+            color: var(--color-faint);
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.08em;
         }
-        
+
         .sidebar-link {
             display: flex;
             align-items: center;
-            padding: 0.75rem 1.5rem;
-            color: #475569;
+            padding: 0.55rem 1.5rem;
+            color: var(--color-ink-2);
             text-decoration: none;
-            transition: all 0.2s;
-            border-left: 3px solid transparent;
+            font-size: 0.875rem;
+            border-left: 2px solid transparent;
+            transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
         }
-        
+
         .sidebar-link:hover {
-            background: #e2e8f0;
-            color: #1e293b;
+            background-color: var(--color-surface-2);
+            color: var(--color-ink);
         }
-        
+
         .sidebar-link.active {
-            background: #dbeafe;
-            color: #1d4ed8;
-            border-left-color: #3b82f6;
+            background-color: var(--color-accent-soft);
+            color: var(--color-accent-strong);
+            border-left-color: var(--color-accent);
             font-weight: 500;
         }
-        
+
         .sidebar-icon {
             width: 20px;
             margin-right: 0.75rem;
             text-align: center;
+            color: var(--color-muted);
         }
-        
-        .code-block {
-            background: #1e293b;
-            color: #e2e8f0;
-            border-radius: 0.5rem;
-            padding: 0.5rem; /* Reduced from 1rem */
-            overflow-x: auto;
+
+        .sidebar-link:hover .sidebar-icon,
+        .sidebar-link.active .sidebar-icon {
+            color: inherit;
         }
-        
-        .code-block pre {
-            margin: 0;
-            padding: 0.5rem; /* moved inner padding to pre if needed, or keep 0 */
-            font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
-            font-size: 0.875rem;
-            line-height: 1.5;
+
+        /* Sidebar badges — monochrome, accent for emphasis only */
+        .sidebar-badge {
+            display: inline-flex;
+            align-items: center;
+            margin-left: auto;
+            padding: 0.1rem 0.45rem;
+            border-radius: 999px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            background-color: var(--color-surface-2);
+            border: 1px solid var(--color-line);
+            color: var(--color-muted);
         }
-        
-        /* Mobile responsiveness */
+
+        .sidebar-badge.is-accent {
+            background-color: var(--color-accent-soft);
+            border-color: var(--color-accent-line);
+            color: var(--color-accent-strong);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+        }
+
+        /* Mobile */
         @media (max-width: 768px) {
             .docs-sidebar {
                 transform: translateX(-100%);
-                transition: transform 0.3s;
+                transition: transform 0.3s ease;
             }
-            
+
             .docs-sidebar.mobile-open {
                 transform: translateX(0);
             }
-            
+
             .docs-content {
                 margin-left: 0;
             }
-            
+
             .mobile-menu-btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
                 position: fixed;
                 top: 1rem;
                 left: 1rem;
-                z-index: 20;
-                background: #3b82f6;
-                color: white;
-                border: none;
-                border-radius: 0.5rem;
-                padding: 0.75rem;
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+                z-index: 40;
+                width: 2.75rem;
+                height: 2.75rem;
+                background-color: var(--color-accent);
+                color: #fff;
+                border: 1px solid var(--color-accent-strong);
+                border-radius: var(--radius-sm);
+                box-shadow: var(--shadow-sm);
+                cursor: pointer;
             }
-        }
-        
-        /* Language badges */
-        .language-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.25rem 0.5rem;
-            background: #f1f5f9;
-            border: 1px solid #cbd5e1;
-            border-radius: 0.375rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: #475569;
-            margin-left: auto;
-        }
-        
-        .language-badge.popular {
-            background: #dbeafe;
-            border-color: #3b82f6;
-            color: #1d4ed8;
-        }
-        
-        .language-badge.new {
-            background: #dcfce7;
-            border-color: #22c55e;
-            color: #15803d;
         }
     </style>
 </head>
-<body class="bg-white">
-    <!-- Mobile Menu Button -->
-    <button class="mobile-menu-btn md:hidden" onclick="toggleMobileSidebar()">
+<body class="bg-[var(--color-canvas)] text-[var(--color-ink)]">
+    <!-- Mobile menu button -->
+    <button type="button" class="mobile-menu-btn" onclick="toggleMobileSidebar()" aria-label="Toggle navigation">
         <i class="fas fa-bars"></i>
     </button>
 
-    <!-- Documentation Sidebar -->
+    <!-- Documentation sidebar -->
     <nav class="docs-sidebar" id="docs-sidebar">
         <!-- Header -->
         <div class="sidebar-header">
-            <a href="{{ route('docs') }}" class="flex items-center">
-                <i class="fas fa-shield-alt text-blue-600 text-xl mr-3"></i>
-                <div>
-                    <div class="font-bold text-gray-900">CAS Docs</div>
-                    <div class="text-sm text-gray-500">v2.0 Enterprise</div>
-                </div>
+            <a href="{{ route('docs') }}" class="flex items-center gap-3">
+                <span class="os-icon-tile os-icon-tile-ink" style="width:2.25rem;height:2.25rem;font-size:0.95rem;">
+                    <i class="fas fa-shield-halved"></i>
+                </span>
+                <span>
+                    <span class="block font-semibold text-[var(--color-ink)] leading-tight">One System</span>
+                    <span class="block text-xs text-[var(--color-muted)]">Documentation</span>
+                </span>
             </a>
         </div>
 
-        <!-- 1. Overview -->
+        <!-- Documentation -->
         <div class="sidebar-section">
             <div class="sidebar-title">Documentation</div>
             <a href="{{ route('docs') }}" class="sidebar-link {{ request()->routeIs('docs') ? 'active' : '' }}">
-                <i class="fas fa-home sidebar-icon"></i>
+                <i class="fas fa-house sidebar-icon"></i>
                 1. Overview
             </a>
-
-            <!-- 2. Architecture -->
             <a href="{{ route('docs.architecture') }}" class="sidebar-link {{ request()->routeIs('docs.architecture') ? 'active' : '' }}">
                 <i class="fas fa-sitemap sidebar-icon"></i>
                 2. Architecture
             </a>
-
-            <!-- 3. Security Features -->
             <a href="{{ route('docs.security') }}" class="sidebar-link {{ request()->routeIs('docs.security') ? 'active' : '' }}">
-                <i class="fas fa-shield-alt sidebar-icon"></i>
-                3. Security Features
+                <i class="fas fa-shield-halved sidebar-icon"></i>
+                3. Security features
             </a>
-
-            <!-- 4. Deploy Locally (Development) -->
             <a href="{{ route('docs.quick-start') }}" class="sidebar-link {{ request()->routeIs('docs.quick-start') ? 'active' : '' }}">
                 <i class="fas fa-rocket sidebar-icon"></i>
-                4. Deploy Locally (Dev)
+                4. Deploy locally (dev)
             </a>
-
-            <!-- 5. Deploying to Linux OS (Production) -->
             <a href="{{ route('docs.deployment') }}" class="sidebar-link {{ request()->routeIs('docs.deployment') ? 'active' : '' }}">
                 <i class="fas fa-server sidebar-icon"></i>
-                5. Deploy to Linux (Prod)
+                5. Deploy to Linux (prod)
             </a>
         </div>
 
-        <!-- 6. Integration Guides -->
+        <!-- Integration guides -->
         <div class="sidebar-section">
-            <div class="sidebar-title">6. Integration Guides</div>
+            <div class="sidebar-title">6. Integration guides</div>
             <a href="{{ route('docs.sdks') }}" class="sidebar-link {{ request()->routeIs('docs.sdks') ? 'active' : '' }}">
                 <i class="fas fa-cube sidebar-icon"></i>
-                SDKs & Packages
+                SDKs &amp; packages
             </a>
             <a href="{{ route('docs.laravel') }}" class="sidebar-link {{ request()->routeIs('docs.laravel') ? 'active' : '' }}">
-                <i class="fab fa-laravel sidebar-icon text-red-500"></i>
+                <i class="fab fa-laravel sidebar-icon"></i>
                 Laravel
-                <span class="language-badge popular">Popular</span>
+                <span class="sidebar-badge is-accent">Popular</span>
             </a>
             <a href="{{ route('docs.nodejs') }}" class="sidebar-link {{ request()->routeIs('docs.nodejs') ? 'active' : '' }}">
-                <i class="fab fa-node-js sidebar-icon text-green-500"></i>
+                <i class="fab fa-node-js sidebar-icon"></i>
                 Node.js
             </a>
             <a href="{{ route('docs.javascript') }}" class="sidebar-link {{ request()->routeIs('docs.javascript') ? 'active' : '' }}">
-                <i class="fab fa-js-square sidebar-icon text-yellow-500"></i>
+                <i class="fab fa-js sidebar-icon"></i>
                 JavaScript
             </a>
+            <a href="{{ route('docs.react') }}" class="sidebar-link {{ request()->routeIs('docs.react') ? 'active' : '' }}">
+                <i class="fab fa-react sidebar-icon"></i>
+                React
+                <span class="sidebar-badge">New</span>
+            </a>
+            <a href="{{ route('docs.nextjs') }}" class="sidebar-link {{ request()->routeIs('docs.nextjs') ? 'active' : '' }}">
+                <i class="fas fa-n sidebar-icon"></i>
+                Next.js
+                <span class="sidebar-badge">New</span>
+            </a>
+            <a href="{{ route('docs.angular') }}" class="sidebar-link {{ request()->routeIs('docs.angular') ? 'active' : '' }}">
+                <i class="fab fa-angular sidebar-icon"></i>
+                Angular
+                <span class="sidebar-badge">New</span>
+            </a>
+            <a href="{{ route('docs.vue') }}" class="sidebar-link {{ request()->routeIs('docs.vue') ? 'active' : '' }}">
+                <i class="fab fa-vuejs sidebar-icon"></i>
+                Vue
+                <span class="sidebar-badge">New</span>
+            </a>
             <a href="{{ route('docs.python') }}" class="sidebar-link {{ request()->routeIs('docs.python') ? 'active' : '' }}">
-                <i class="fab fa-python sidebar-icon text-blue-500"></i>
+                <i class="fab fa-python sidebar-icon"></i>
                 Python
             </a>
             <a href="{{ route('docs.java') }}" class="sidebar-link {{ request()->routeIs('docs.java') ? 'active' : '' }}">
-                <i class="fab fa-java sidebar-icon text-orange-500"></i>
+                <i class="fab fa-java sidebar-icon"></i>
                 Java
             </a>
             <a href="{{ route('docs.dotnet') }}" class="sidebar-link {{ request()->routeIs('docs.dotnet') ? 'active' : '' }}">
-                <i class="fab fa-microsoft sidebar-icon text-blue-600"></i>
+                <i class="fab fa-microsoft sidebar-icon"></i>
                 .NET / C#
+            </a>
+            <a href="{{ route('docs.rust') }}" class="sidebar-link {{ request()->routeIs('docs.rust') ? 'active' : '' }}">
+                <i class="fab fa-rust sidebar-icon"></i>
+                Rust
+                <span class="sidebar-badge">New</span>
             </a>
             <a href="{{ route('docs.api.overview') }}" class="sidebar-link {{ request()->routeIs('docs.api.overview') ? 'active' : '' }}">
                 <i class="fas fa-code sidebar-icon"></i>
-                API Reference
+                API reference
             </a>
         </div>
 
-        <!-- 7-8. User Guides -->
+        <!-- User guides -->
         <div class="sidebar-section">
-            <div class="sidebar-title">User Guides</div>
+            <div class="sidebar-title">User guides</div>
             <a href="{{ route('docs.admin-panel') }}" class="sidebar-link {{ request()->routeIs('docs.admin-panel') ? 'active' : '' }}">
-                <i class="fas fa-tachometer-alt sidebar-icon"></i>
-                7. Admin Guide
+                <i class="fas fa-gauge-high sidebar-icon"></i>
+                7. Admin guide
             </a>
             <a href="{{ route('docs.user-guide') }}" class="sidebar-link {{ request()->routeIs('docs.user-guide') ? 'active' : '' }}">
                 <i class="fas fa-user sidebar-icon"></i>
-                8. User Guide
+                8. User guide
             </a>
         </div>
 
-        <!-- 9-11. Security, Troubleshooting, Code Examples -->
+        <!-- Reference -->
         <div class="sidebar-section">
             <div class="sidebar-title">Reference</div>
             <a href="{{ route('docs.security-guide') }}" class="sidebar-link {{ request()->routeIs('docs.security-guide') ? 'active' : '' }}">
                 <i class="fas fa-lock sidebar-icon"></i>
-                9. Security Guide
+                9. Security guide
             </a>
             <a href="{{ route('docs.troubleshooting') }}" class="sidebar-link {{ request()->routeIs('docs.troubleshooting') ? 'active' : '' }}">
-                <i class="fas fa-tools sidebar-icon"></i>
+                <i class="fas fa-screwdriver-wrench sidebar-icon"></i>
                 10. Troubleshooting
             </a>
             <a href="{{ route('docs.examples') }}" class="sidebar-link {{ request()->routeIs('docs.examples') ? 'active' : '' }}">
                 <i class="fas fa-book-open sidebar-icon"></i>
-                11. Code Examples
+                11. Code examples
             </a>
         </div>
 
@@ -292,28 +302,28 @@
                 Webhooks
             </a>
             <a href="{{ route('docs.changelog') }}" class="sidebar-link {{ request()->routeIs('docs.changelog') ? 'active' : '' }}">
-                <i class="fas fa-history sidebar-icon"></i>
+                <i class="fas fa-clock-rotate-left sidebar-icon"></i>
                 Changelog
             </a>
-            <a href="/downloads/laravel-cas-client-package.zip" class="sidebar-link">
+            <a href="{{ route('downloads.laravel-package') }}" class="sidebar-link">
                 <i class="fas fa-download sidebar-icon"></i>
-                Download Packages
+                Download packages
             </a>
             <a href="{{ url('/') }}" class="sidebar-link">
                 <i class="fas fa-arrow-left sidebar-icon"></i>
-                Back to CAS System
+                Back to One System
             </a>
         </div>
     </nav>
 
-    <!-- Main Content -->
+    <!-- Main content -->
     <main class="docs-content">
-        <!-- Mobile Overlay -->
-        <div class="md:hidden fixed inset-0 bg-black bg-opacity-50 z-5 hidden" id="mobile-overlay" onclick="toggleMobileSidebar()"></div>
-        
-        <!-- Page Header (if needed) -->
+        <!-- Mobile overlay -->
+        <div class="md:hidden fixed inset-0 bg-[var(--color-ink)]/40 z-20 hidden" id="mobile-overlay" onclick="toggleMobileSidebar()"></div>
+
+        <!-- Page header (if needed) -->
         @hasSection('page-header')
-            <div class="bg-white border-b border-gray-200 px-6 py-4">
+            <div class="bg-[var(--color-surface)] border-b border-[var(--color-line)] px-6 py-4">
                 @yield('page-header')
             </div>
         @endif
@@ -324,36 +334,36 @@
         </div>
 
         <!-- Footer -->
-        <footer class="border-t border-gray-200 bg-gray-50 px-6 py-8 mt-12">
-            <div class="max-w-4xl">
+        <footer class="border-t border-[var(--color-line)] bg-[var(--color-surface)] px-6 py-10 mt-12">
+            <div class="">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div>
-                        <h3 class="font-semibold text-gray-900 mb-4">Documentation</h3>
-                        <ul class="space-y-2 text-sm text-gray-600">
-                            <li><a href="{{ route('docs') }}" class="hover:text-blue-600">Getting Started</a></li>
-                            <li><a href="{{ route('docs.api.overview') }}" class="hover:text-blue-600">API Reference</a></li>
-                            <li><a href="{{ route('docs.security') }}" class="hover:text-blue-600">Security Guide</a></li>
+                        <h3 class="font-semibold text-[var(--color-ink)] mb-4">Documentation</h3>
+                        <ul class="space-y-2 text-sm text-[var(--color-muted)]">
+                            <li><a href="{{ route('docs') }}" class="hover:text-[var(--color-accent)]">Getting started</a></li>
+                            <li><a href="{{ route('docs.api.overview') }}" class="hover:text-[var(--color-accent)]">API reference</a></li>
+                            <li><a href="{{ route('docs.security') }}" class="hover:text-[var(--color-accent)]">Security guide</a></li>
                         </ul>
                     </div>
                     <div>
-                        <h3 class="font-semibold text-gray-900 mb-4">Popular Integrations</h3>
-                        <ul class="space-y-2 text-sm text-gray-600">
-                            <li><a href="{{ route('docs.laravel') }}" class="hover:text-blue-600">Laravel Package</a></li>
-                            <li><a href="{{ route('docs.nodejs') }}" class="hover:text-blue-600">Node.js SDK</a></li>
-                            <li><a href="{{ route('docs.python') }}" class="hover:text-blue-600">Python Library</a></li>
+                        <h3 class="font-semibold text-[var(--color-ink)] mb-4">Popular integrations</h3>
+                        <ul class="space-y-2 text-sm text-[var(--color-muted)]">
+                            <li><a href="{{ route('docs.laravel') }}" class="hover:text-[var(--color-accent)]">Laravel package</a></li>
+                            <li><a href="{{ route('docs.nodejs') }}" class="hover:text-[var(--color-accent)]">Node.js SDK</a></li>
+                            <li><a href="{{ route('docs.python') }}" class="hover:text-[var(--color-accent)]">Python library</a></li>
                         </ul>
                     </div>
                     <div>
-                        <h3 class="font-semibold text-gray-900 mb-4">Support</h3>
-                        <ul class="space-y-2 text-sm text-gray-600">
-                            <li><a href="/docs/troubleshooting" class="hover:text-blue-600">Troubleshooting</a></li>
-                            <li><a href="{{ route('docs.examples') }}" class="hover:text-blue-600">Code Examples</a></li>
-                            <li><a href="{{ url('/') }}" class="hover:text-blue-600">CAS System</a></li>
+                        <h3 class="font-semibold text-[var(--color-ink)] mb-4">Support</h3>
+                        <ul class="space-y-2 text-sm text-[var(--color-muted)]">
+                            <li><a href="{{ route('docs.troubleshooting') }}" class="hover:text-[var(--color-accent)]">Troubleshooting</a></li>
+                            <li><a href="{{ route('docs.examples') }}" class="hover:text-[var(--color-accent)]">Code examples</a></li>
+                            <li><a href="{{ url('/') }}" class="hover:text-[var(--color-accent)]">One System</a></li>
                         </ul>
                     </div>
                 </div>
-                <div class="border-t border-gray-200 mt-8 pt-8 text-center text-sm text-gray-500">
-                    <p>&copy; {{ date('Y') }} CAS Authentication System. Enterprise-grade security with comprehensive documentation.</p>
+                <div class="border-t border-[var(--color-line)] mt-8 pt-8 text-center text-sm text-[var(--color-muted)]">
+                    <p>&copy; {{ date('Y') }} One System. Enterprise-grade single sign-on with comprehensive documentation.</p>
                 </div>
             </div>
         </footer>
@@ -363,30 +373,31 @@
         function toggleMobileSidebar() {
             const sidebar = document.getElementById('docs-sidebar');
             const overlay = document.getElementById('mobile-overlay');
-            
+
             sidebar.classList.toggle('mobile-open');
             overlay.classList.toggle('hidden');
         }
-        
-        // Close mobile sidebar when clicking on content area
-        document.addEventListener('click', function(event) {
+
+        // Close mobile sidebar when clicking outside of it
+        document.addEventListener('click', function (event) {
             if (window.innerWidth <= 768) {
                 const sidebar = document.getElementById('docs-sidebar');
                 const overlay = document.getElementById('mobile-overlay');
-                
-                if (!sidebar.contains(event.target) && !event.target.classList.contains('mobile-menu-btn')) {
+                const menuBtn = event.target.closest('.mobile-menu-btn');
+
+                if (!sidebar.contains(event.target) && !menuBtn) {
                     sidebar.classList.remove('mobile-open');
                     overlay.classList.add('hidden');
                 }
             }
         });
-        
-        // Handle responsive behavior on window resize
-        window.addEventListener('resize', function() {
+
+        // Reset sidebar state on resize to desktop
+        window.addEventListener('resize', function () {
             if (window.innerWidth > 768) {
                 const sidebar = document.getElementById('docs-sidebar');
                 const overlay = document.getElementById('mobile-overlay');
-                
+
                 sidebar.classList.remove('mobile-open');
                 overlay.classList.add('hidden');
             }

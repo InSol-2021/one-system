@@ -1,171 +1,176 @@
 @extends('public.documentation.layout')
 
-@section('title', 'Webhooks — CAS SSO')
-@section('description', 'Configure webhook endpoints to receive real-time notifications for authentication events.')
+@section('title', 'Webhooks — One System')
+@section('description', 'Configure webhook endpoints to receive real-time notifications for One System authentication events.')
 
 @section('content')
-<section class="border-b border-slate-200 pb-10 mb-12">
-    <div class="max-w-3xl">
-        <p class="text-sm font-medium text-blue-600 tracking-wide uppercase mb-3">Technical Reference</p>
-        <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight leading-tight mb-4">Webhooks</h1>
-        <p class="text-lg text-slate-500 leading-relaxed">Receive real-time HTTP callbacks when authentication events occur in the CAS system.</p>
-    </div>
-</section>
+<div class="">
 
-{{-- Overview --}}
-<section class="mb-12">
-    <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-4">How It Works</h2>
-    <p class="text-sm text-slate-600 leading-relaxed mb-6">When an event fires — such as a user login, logout, or failed authentication attempt — CAS sends a <code class="text-xs bg-slate-100 px-1.5 py-0.5 rounded font-mono">POST</code> request to your registered webhook URL with a JSON payload describing the event. All payloads include an HMAC-SHA256 signature in the <code class="text-xs bg-slate-100 px-1.5 py-0.5 rounded font-mono">X-CAS-Signature</code> header for verification.</p>
+    {{-- Page header --}}
+    <section class="border-b border-[var(--color-line)] pb-10 mb-12">
+        <div class="flex items-center gap-2 text-sm text-[var(--color-muted)] mb-4">
+            <a href="{{ route('docs') }}" class="hover:text-[var(--color-accent)]">Docs</a>
+            <i class="fas fa-chevron-right text-[0.65rem] text-[var(--color-faint)]"></i>
+            <span>Webhooks</span>
+        </div>
+        <p class="os-eyebrow mb-3">Technical reference</p>
+        <h1 class="text-4xl font-semibold text-[var(--color-ink)] tracking-tight leading-tight mb-4">Webhooks</h1>
+        <p class="text-lg text-[var(--color-muted)] leading-relaxed">Receive real-time HTTP callbacks when authentication events occur in One System.</p>
+    </section>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <div class="p-4 rounded-xl border border-slate-200">
-            <div class="w-9 h-9 bg-blue-50 rounded-lg flex items-center justify-center mb-3">
-                <i class="fas fa-bolt text-blue-600 text-sm"></i>
+    {{-- Overview --}}
+    <section class="mb-12">
+        <h2 class="text-xs font-semibold text-[var(--color-faint)] uppercase tracking-widest mb-4">How it works</h2>
+        <p class="text-sm text-[var(--color-ink-2)] leading-relaxed mb-6">When an event fires — a user sign-in, sign-out, or failed authentication attempt — One System sends a <code class="os-code-inline">POST</code> request to your registered webhook URL with a JSON payload describing the event. Every payload carries an HMAC-SHA256 signature in the <code class="os-code-inline">X-One-System-Signature</code> header so you can verify it came from One System.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div class="os-card os-card-pad">
+                <span class="os-icon-tile os-icon-tile-ink mb-3"><i class="fas fa-bolt"></i></span>
+                <h3 class="text-sm font-semibold text-[var(--color-ink)] mb-1">Real-time</h3>
+                <p class="text-xs text-[var(--color-muted)]">Events fire within milliseconds of the triggering action.</p>
             </div>
-            <h3 class="text-sm font-semibold text-slate-900 mb-1">Real-Time</h3>
-            <p class="text-xs text-slate-500">Events fire within milliseconds of the triggering action.</p>
-        </div>
-        <div class="p-4 rounded-xl border border-slate-200">
-            <div class="w-9 h-9 bg-emerald-50 rounded-lg flex items-center justify-center mb-3">
-                <i class="fas fa-redo text-emerald-600 text-sm"></i>
+            <div class="os-card os-card-pad">
+                <span class="os-icon-tile os-icon-tile-ink mb-3"><i class="fas fa-rotate-right"></i></span>
+                <h3 class="text-sm font-semibold text-[var(--color-ink)] mb-1">Auto retry</h3>
+                <p class="text-xs text-[var(--color-muted)]">Failed deliveries are retried 3 times with exponential backoff.</p>
             </div>
-            <h3 class="text-sm font-semibold text-slate-900 mb-1">Auto Retry</h3>
-            <p class="text-xs text-slate-500">Failed deliveries are retried 3 times with exponential backoff.</p>
-        </div>
-        <div class="p-4 rounded-xl border border-slate-200">
-            <div class="w-9 h-9 bg-violet-50 rounded-lg flex items-center justify-center mb-3">
-                <i class="fas fa-shield-alt text-violet-600 text-sm"></i>
+            <div class="os-card os-card-pad">
+                <span class="os-icon-tile os-icon-tile-ink mb-3"><i class="fas fa-shield-halved"></i></span>
+                <h3 class="text-sm font-semibold text-[var(--color-ink)] mb-1">Signed</h3>
+                <p class="text-xs text-[var(--color-muted)]">HMAC-SHA256 signatures prevent spoofing and tampering.</p>
             </div>
-            <h3 class="text-sm font-semibold text-slate-900 mb-1">Signed</h3>
-            <p class="text-xs text-slate-500">HMAC-SHA256 signatures prevent spoofing and tampering.</p>
         </div>
-    </div>
-</section>
+    </section>
 
-{{-- Event Types --}}
-<section class="mb-12">
-    <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-4">Event Types</h2>
-    <div class="rounded-xl border border-slate-200 overflow-hidden">
-        <table class="w-full text-sm">
-            <thead class="bg-slate-50 border-b border-slate-200">
-                <tr>
-                    <th class="text-left px-5 py-3 font-semibold text-slate-600">Event</th>
-                    <th class="text-left px-5 py-3 font-semibold text-slate-600">Description</th>
-                    <th class="text-left px-5 py-3 font-semibold text-slate-600">Trigger</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100">
-                <tr>
-                    <td class="px-5 py-3"><code class="text-xs bg-slate-100 px-1.5 py-0.5 rounded font-mono">user.login</code></td>
-                    <td class="px-5 py-3 text-slate-600">Successful authentication</td>
-                    <td class="px-5 py-3 text-slate-500">SSO token issued</td>
-                </tr>
-                <tr>
-                    <td class="px-5 py-3"><code class="text-xs bg-slate-100 px-1.5 py-0.5 rounded font-mono">user.logout</code></td>
-                    <td class="px-5 py-3 text-slate-600">User session ended</td>
-                    <td class="px-5 py-3 text-slate-500">Token invalidated</td>
-                </tr>
-                <tr>
-                    <td class="px-5 py-3"><code class="text-xs bg-red-50 px-1.5 py-0.5 rounded font-mono text-red-700">user.login_failed</code></td>
-                    <td class="px-5 py-3 text-slate-600">Failed login attempt</td>
-                    <td class="px-5 py-3 text-slate-500">Invalid credentials</td>
-                </tr>
-                <tr>
-                    <td class="px-5 py-3"><code class="text-xs bg-red-50 px-1.5 py-0.5 rounded font-mono text-red-700">user.locked</code></td>
-                    <td class="px-5 py-3 text-slate-600">Account locked out</td>
-                    <td class="px-5 py-3 text-slate-500">5 failed attempts</td>
-                </tr>
-                <tr>
-                    <td class="px-5 py-3"><code class="text-xs bg-slate-100 px-1.5 py-0.5 rounded font-mono">user.2fa_enabled</code></td>
-                    <td class="px-5 py-3 text-slate-600">2FA activated</td>
-                    <td class="px-5 py-3 text-slate-500">User enabled TOTP</td>
-                </tr>
-                <tr>
-                    <td class="px-5 py-3"><code class="text-xs bg-slate-100 px-1.5 py-0.5 rounded font-mono">token.expired</code></td>
-                    <td class="px-5 py-3 text-slate-600">Token reached expiry</td>
-                    <td class="px-5 py-3 text-slate-500">JWT TTL elapsed</td>
-                </tr>
-                <tr>
-                    <td class="px-5 py-3"><code class="text-xs bg-slate-100 px-1.5 py-0.5 rounded font-mono">client.registered</code></td>
-                    <td class="px-5 py-3 text-slate-600">New client system added</td>
-                    <td class="px-5 py-3 text-slate-500">Admin action</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</section>
-
-{{-- Payload Example --}}
-<section class="mb-12">
-    <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-4">Payload Format</h2>
-    <div class="rounded-xl border border-slate-200 overflow-hidden">
-        <div class="flex items-center justify-between px-4 py-2.5 bg-slate-50 border-b border-slate-200">
-            <span class="text-xs font-medium text-slate-600">user.login event payload</span>
-            <span class="text-xs text-slate-400">application/json</span>
+    {{-- Event Types --}}
+    <section class="mb-12">
+        <h2 class="text-xs font-semibold text-[var(--color-faint)] uppercase tracking-widest mb-4">Event types</h2>
+        <div class="os-card overflow-hidden">
+            <table class="w-full text-sm">
+                <thead class="bg-[var(--color-surface-2)] border-b border-[var(--color-line)]">
+                    <tr>
+                        <th class="text-left px-5 py-3 font-semibold text-[var(--color-ink-2)]">Event</th>
+                        <th class="text-left px-5 py-3 font-semibold text-[var(--color-ink-2)]">Description</th>
+                        <th class="text-left px-5 py-3 font-semibold text-[var(--color-ink-2)]">Trigger</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-[var(--color-line)] text-[var(--color-ink-2)]">
+                    <tr>
+                        <td class="px-5 py-3"><code class="os-code-inline">user.login</code></td>
+                        <td class="px-5 py-3">Successful authentication</td>
+                        <td class="px-5 py-3 text-[var(--color-muted)]">SSO token issued</td>
+                    </tr>
+                    <tr>
+                        <td class="px-5 py-3"><code class="os-code-inline">user.logout</code></td>
+                        <td class="px-5 py-3">User session ended</td>
+                        <td class="px-5 py-3 text-[var(--color-muted)]">Token invalidated</td>
+                    </tr>
+                    <tr>
+                        <td class="px-5 py-3"><code class="os-code-inline">user.login_failed</code></td>
+                        <td class="px-5 py-3">Failed sign-in attempt</td>
+                        <td class="px-5 py-3 text-[var(--color-muted)]">Invalid credentials</td>
+                    </tr>
+                    <tr>
+                        <td class="px-5 py-3"><code class="os-code-inline">user.locked</code></td>
+                        <td class="px-5 py-3">Account locked out</td>
+                        <td class="px-5 py-3 text-[var(--color-muted)]">5 failed attempts</td>
+                    </tr>
+                    <tr>
+                        <td class="px-5 py-3"><code class="os-code-inline">user.2fa_enabled</code></td>
+                        <td class="px-5 py-3">2FA activated</td>
+                        <td class="px-5 py-3 text-[var(--color-muted)]">User enabled TOTP</td>
+                    </tr>
+                    <tr>
+                        <td class="px-5 py-3"><code class="os-code-inline">token.expired</code></td>
+                        <td class="px-5 py-3">Token reached expiry</td>
+                        <td class="px-5 py-3 text-[var(--color-muted)]">JWT TTL elapsed</td>
+                    </tr>
+                    <tr>
+                        <td class="px-5 py-3"><code class="os-code-inline">client.registered</code></td>
+                        <td class="px-5 py-3">New client system added</td>
+                        <td class="px-5 py-3 text-[var(--color-muted)]">Admin action</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-        <div class="bg-slate-900 p-5 overflow-x-auto">
-            <pre class="text-sm leading-relaxed font-mono text-slate-300"><code>{
-  "<span class="text-amber-300">event</span>": "<span class="text-green-400">user.login</span>",
-  "<span class="text-amber-300">timestamp</span>": "<span class="text-green-400">2026-03-10T12:00:00Z</span>",
-  "<span class="text-amber-300">data</span>": {
-    "<span class="text-amber-300">user_id</span>": <span class="text-blue-400">42</span>,
-    "<span class="text-amber-300">email</span>": "<span class="text-green-400">john@example.com</span>",
-    "<span class="text-amber-300">ip_address</span>": "<span class="text-green-400">192.168.1.10</span>",
-    "<span class="text-amber-300">user_agent</span>": "<span class="text-green-400">Mozilla/5.0 ...</span>",
-    "<span class="text-amber-300">client_system</span>": "<span class="text-green-400">customer-portal</span>",
-    "<span class="text-amber-300">2fa_used</span>": <span class="text-blue-400">true</span>
+    </section>
+
+    {{-- Payload Example --}}
+    <section class="mb-12">
+        <h2 class="text-xs font-semibold text-[var(--color-faint)] uppercase tracking-widest mb-4">Payload format</h2>
+        <div class="os-codeblock">
+            <div class="os-codeblock-head">
+                <span>user.login event payload</span>
+                <span>application/json</span>
+            </div>
+            <pre><code>{
+  "event": "user.login",
+  "timestamp": "2026-03-10T12:00:00Z",
+  "data": {
+    "user_id": 42,
+    "email": "john@example.com",
+    "ip_address": "192.168.1.10",
+    "user_agent": "Mozilla/5.0 ...",
+    "client_system": "customer-portal",
+    "2fa_used": true
   }
 }</code></pre>
         </div>
-    </div>
-</section>
+    </section>
 
-{{-- Signature Verification --}}
-<section class="mb-12">
-    <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-4">Signature Verification</h2>
-    <p class="text-sm text-slate-600 leading-relaxed mb-4">Every webhook request contains an <code class="text-xs bg-slate-100 px-1.5 py-0.5 rounded font-mono">X-CAS-Signature</code> header. Verify it before processing the payload.</p>
-    <div class="rounded-xl border border-slate-200 overflow-hidden">
-        <div class="flex items-center px-4 py-2.5 bg-slate-50 border-b border-slate-200">
-            <i class="fab fa-php text-indigo-500 text-sm mr-2"></i>
-            <span class="text-xs font-medium text-slate-600">PHP verification example</span>
-        </div>
-        <div class="bg-slate-900 p-5 overflow-x-auto">
-            <pre class="text-sm leading-relaxed font-mono text-slate-300"><code><span class="text-red-300">$payload</span>   = <span class="text-green-400">file_get_contents</span>(<span class="text-amber-300">'php://input'</span>);
-<span class="text-red-300">$signature</span> = <span class="text-red-300">$_SERVER</span>[<span class="text-amber-300">'HTTP_X_CAS_SIGNATURE'</span>];
-<span class="text-red-300">$expected</span>  = <span class="text-green-400">hash_hmac</span>(<span class="text-amber-300">'sha256'</span>, <span class="text-red-300">$payload</span>, <span class="text-red-300">$webhookSecret</span>);
+    {{-- Signature Verification --}}
+    <section class="mb-12">
+        <h2 class="text-xs font-semibold text-[var(--color-faint)] uppercase tracking-widest mb-4">Signature verification</h2>
+        <p class="text-sm text-[var(--color-ink-2)] leading-relaxed mb-4">Every webhook request includes an <code class="os-code-inline">X-One-System-Signature</code> header. Verify it against your signing secret before processing the payload.</p>
+        <div class="os-codeblock">
+            <div class="os-codeblock-head">
+                <span><i class="fab fa-php mr-1.5"></i>PHP verification example</span>
+            </div>
+            <pre><code>$payload   = file_get_contents('php://input');
+$signature = $_SERVER['HTTP_X_ONE_SYSTEM_SIGNATURE'];
+$expected  = hash_hmac('sha256', $payload, $webhookSecret);
 
-<span class="text-violet-400">if</span> (<span class="text-green-400">hash_equals</span>(<span class="text-red-300">$expected</span>, <span class="text-red-300">$signature</span>)) {
-    <span class="text-slate-500">// Safe to process</span>
-    <span class="text-red-300">$event</span> = <span class="text-green-400">json_decode</span>(<span class="text-red-300">$payload</span>, <span class="text-blue-400">true</span>);
+if (hash_equals($expected, $signature)) {
+    // Safe to process
+    $event = json_decode($payload, true);
 }</code></pre>
         </div>
-    </div>
-</section>
-
-{{-- Configuration --}}
-<section class="border-t border-slate-200 pt-10">
-    <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-4">Registering a Webhook</h2>
-    <p class="text-sm text-slate-600 leading-relaxed mb-6">Register webhook endpoints from the CAS Admin Panel under <strong>Settings &rarr; Webhooks</strong>, or via the API:</p>
-    <div class="rounded-xl border border-slate-200 overflow-hidden mb-6">
-        <div class="flex items-center px-4 py-2.5 bg-slate-50 border-b border-slate-200">
-            <span class="inline-flex items-center px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded mr-2">POST</span>
-            <span class="text-xs font-medium text-slate-600">/api/webhooks</span>
+        <div class="os-alert mt-4">
+            <i class="fas fa-circle-info mt-0.5 text-[var(--color-accent)]"></i>
+            <span>Store the signing secret in your client's environment (for example <code class="os-code-inline">ONE_SYSTEM_WEBHOOK_SECRET</code>) — never hard-code it in source. One System holds only a hashed copy server-side.</span>
         </div>
-        <div class="bg-slate-900 p-5 overflow-x-auto">
-            <pre class="text-sm leading-relaxed font-mono text-slate-300"><code>{
-  "<span class="text-amber-300">url</span>": "<span class="text-green-400">https://your-app.com/webhooks/cas</span>",
-  "<span class="text-amber-300">events</span>": [<span class="text-green-400">"user.login"</span>, <span class="text-green-400">"user.logout"</span>, <span class="text-green-400">"user.locked"</span>],
-  "<span class="text-amber-300">secret</span>": "<span class="text-green-400">whsec_your_signing_secret</span>"
+    </section>
+
+    {{-- Configuration --}}
+    <section class="border-t border-[var(--color-line)] pt-10">
+        <h2 class="text-xs font-semibold text-[var(--color-faint)] uppercase tracking-widest mb-4">Registering a webhook</h2>
+        <p class="text-sm text-[var(--color-ink-2)] leading-relaxed mb-6">Register webhook endpoints from the admin panel under <strong>Settings &rarr; Webhooks</strong>, or via the API. The API call is service-to-service, so it must come from a whitelisted IP and authenticate with your client credentials:</p>
+        <div class="os-codeblock mb-6">
+            <div class="os-codeblock-head">
+                <span><span class="os-badge os-badge-accent mr-2">POST</span>/api/webhooks</span>
+            </div>
+            <pre><code>{
+  "url": "https://your-app.com/webhooks/one-system",
+  "events": ["user.login", "user.logout", "user.locked"],
+  "secret": "whsec_your_signing_secret"
 }</code></pre>
         </div>
-    </div>
-    <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
-        <div class="flex items-start gap-2">
-            <i class="fas fa-exclamation-triangle text-amber-500 mt-0.5"></i>
-            <div class="text-sm text-amber-800">
-                <strong>Security</strong> — Always verify the <code class="text-xs bg-amber-100 px-1 py-0.5 rounded font-mono">X-CAS-Signature</code> header before processing events. Never trust unverified payloads.
+        <div class="os-alert os-alert-warning">
+            <i class="fas fa-triangle-exclamation mt-0.5"></i>
+            <div>
+                <strong>Security</strong> — always verify the <code class="os-code-inline">X-One-System-Signature</code> header before processing events, serve your webhook endpoint over HTTPS, and never trust unverified payloads.
             </div>
         </div>
+    </section>
+
+    {{-- Navigation --}}
+    <div class="flex justify-between items-center border-t border-[var(--color-line)] pt-6 mt-12">
+        <a href="{{ route('docs.api.overview') }}" class="os-btn os-btn-ghost">
+            <i class="fas fa-arrow-left"></i>API reference
+        </a>
+        <a href="{{ route('docs.security-guide') }}" class="os-btn os-btn-secondary">
+            Security guide<i class="fas fa-arrow-right"></i>
+        </a>
     </div>
-</section>
+</div>
 @endsection

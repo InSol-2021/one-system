@@ -1,6 +1,6 @@
 /**
  * CAS SSO Client for Node.js
- * @module @insol-dev/node-cas-client
+ * @module @one-system/node-cas-client
  */
 
 const crypto = require('crypto');
@@ -9,7 +9,8 @@ const axios = require('axios');
 class CasClient {
   /**
    * @param {Object} config
-   * @param {string} config.serverUrl - CAS server URL (e.g. https://your-cas-server.com)
+   * @param {string} config.serverUrl - CAS server URL used for back-channel/server-to-server calls (e.g. https://your-cas-server.com)
+   * @param {string} [config.publicUrl] - Public, browser-facing CAS base URL used ONLY to build the SSO login redirect. Falls back to serverUrl when unset.
    * @param {string} config.clientId - Registered client ID
    * @param {string} config.clientSecret - Registered client secret
    * @param {string} config.callbackUrl - OAuth callback URL
@@ -42,16 +43,20 @@ class CasClient {
 
   /**
    * Generate CAS SSO login URL
-   * @param {string} [returnUrl] - URL to redirect after login
+   * The CAS server uses the client's registered callback_url, so only
+   * client_id is sent as documented by the protocol.
+   *
+   * The browser must reach CAS at its PUBLIC address, which may differ from the
+   * internal back-channel address used for token validation. Prefer publicUrl
+   * for the redirect and fall back to serverUrl for single-url setups.
    * @returns {string}
    */
-  getLoginUrl(returnUrl) {
+  getLoginUrl() {
     const params = new URLSearchParams({
       client_id: this.config.clientId,
-      response_type: 'token',
-      redirect_uri: returnUrl || this.config.callbackUrl,
     });
-    return `${this.config.serverUrl}/sso/login?${params.toString()}`;
+    const loginBase = this.config.publicUrl || this.config.serverUrl;
+    return `${loginBase}/sso/login?${params.toString()}`;
   }
 
   /**
@@ -112,13 +117,13 @@ class CasClient {
 
       if (this.config.enableSignatureValidation) {
         headers['X-Signature'] = this._generateSignature(
-          'POST', '/api/sso/validate', requestData, timestamp
+          'POST', '/api/validate-token', requestData, timestamp
         );
       }
 
-      const response = await this.httpClient.post('/api/sso/validate', requestData, { headers });
+      const response = await this.httpClient.post('/api/validate-token', requestData, { headers });
 
-      if (response.status === 200 && response.data.user) {
+      if (response.status === 200 && response.data.valid && response.data.user) {
         // Cache user data (60 min TTL)
         const cacheKey = crypto.createHash('md5').update(token).digest('hex');
         this._cache.set(cacheKey, {

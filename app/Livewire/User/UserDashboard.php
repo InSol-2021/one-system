@@ -232,37 +232,59 @@ class UserDashboard extends Component
             return;
         }
 
-        if (empty($this->modalUsername) || empty($this->modalPassword)) {
-            $this->showMessage('Please provide both username and password', 'error');
+        // Username defaults to the signed-in user's identity (it becomes the SSO
+        // identity presented to this client system).
+        $username = trim((string) $this->modalUsername) ?: optional(User::find($userId))->username;
+        if (empty($username)) {
+            $this->showMessage('Please provide a username for this system', 'error');
             $this->processing = false;
             return;
         }
 
         try {
-            $validator = new ClientCredentialValidator();
+            // If a password is supplied, validate it against the client system's own
+            // login (for systems that have local accounts). SSO-only systems have no
+            // such endpoint, so leaving the password blank simply records the SSO link.
+            if (!empty($this->modalPassword)) {
+                $validator = new ClientCredentialValidator();
+                $result = $validator->validateAndStore(
+                    $username,
+                    $this->modalPassword,
+                    $this->selectedSystemId,
+                    $userId
+                );
 
-            $result = $validator->validateAndStore(
-                $this->modalUsername,
-                $this->modalPassword,
-                $this->selectedSystemId,
-                $userId
-            );
+                if (!$result['success']) {
+                    $this->showMessage($result['message'], 'error');
+                    return;
+                }
+                $message = $result['message'];
+            } else {
+                \App\Models\UserClientLink::updateOrCreate(
+                    ['user_id' => $userId, 'client_system_id' => $this->selectedSystemId],
+                    ['linked_username' => $username, 'is_active' => true]
+                );
 
-            if (!$result['success']) {
-                $this->showMessage($result['message'], 'error');
-                return;
+                AuditLog::create([
+                    'user_id' => $userId,
+                    'event_type' => 'user_dashboard',
+                    'action' => 'link_client_system',
+                    'description' => 'User linked a client system for single sign-on',
+                    'details' => ['client_system_id' => $this->selectedSystemId, 'linked_username' => $username],
+                    'success' => true,
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->userAgent(),
+                ]);
+
+                $message = 'System linked successfully';
             }
 
             $this->closeLinkModal();
-
             $this->refreshData = microtime(true);
-
             unset($this->clientSystems);
-
             $this->dispatch('$refresh');
             $this->dispatch('refreshComponent');
-
-            $this->showMessage($result['message'], 'success');
+            $this->showMessage($message, 'success');
 
         } catch (\Exception $e) {
             $this->showMessage('Failed to link client system: ' . $e->getMessage(), 'error');

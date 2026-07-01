@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.angular/
+.env
+*.log
+
+# Local SQLite user store (created at runtime)
+data/
+*.db
+*.db-shm
+*.db-wal

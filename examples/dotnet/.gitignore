@@ -1,0 +1,11 @@
+bin/
+obj/
+.env
+.vs/
+.idea/
+
+# Local-accounts SQLite database (created/seeded at runtime).
+data/
+*.db
+*.db-shm
+*.db-wal

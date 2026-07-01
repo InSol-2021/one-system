@@ -3,13 +3,48 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuditLogController extends Controller
 {
+    /**
+     * Defense-in-depth admin gate. Routes are gated by middleware, but each
+     * public action re-verifies that the acting session user is an active admin.
+     * Returns null when authorized, or a JSON error response when not.
+     */
+    private function ensureAdmin(): ?Response
+    {
+        $userId = session('user_id');
+
+        if (!$userId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthenticated',
+            ], 401);
+        }
+
+        $user = User::find($userId);
+
+        if (!$user || $user->role !== 'admin') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Forbidden',
+            ], 403);
+        }
+
+        return null;
+    }
+
     public function index(Request $request)
     {
+        if ($denied = $this->ensureAdmin()) {
+            return $denied;
+        }
+
         try {
             $query = DB::table('audit_logs as al')
                 ->leftJoin('users as u', 'al.user_id', '=', 'u.id')
@@ -64,15 +99,21 @@ class AuditLogController extends Controller
                 ]
             ]);
         } catch (\Exception $e) {
+            Log::error('Failed to fetch audit logs', ['exception' => $e]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to fetch audit logs: ' . $e->getMessage()
+                'message' => 'Failed to fetch audit logs'
             ], 500);
         }
     }
 
     public function show($id)
     {
+        if ($denied = $this->ensureAdmin()) {
+            return $denied;
+        }
+
         try {
             $log = DB::table('audit_logs as al')
                 ->leftJoin('users as u', 'al.user_id', '=', 'u.id')
@@ -96,15 +137,21 @@ class AuditLogController extends Controller
                 'log' => $log
             ]);
         } catch (\Exception $e) {
+            Log::error('Failed to fetch audit log', ['exception' => $e]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to fetch audit log: ' . $e->getMessage()
+                'message' => 'Failed to fetch audit log'
             ], 500);
         }
     }
 
     public function export(Request $request)
     {
+        if ($denied = $this->ensureAdmin()) {
+            return $denied;
+        }
+
         try {
             $query = DB::table('audit_logs as al')
                 ->leftJoin('users as u', 'al.user_id', '=', 'u.id')
@@ -153,7 +200,7 @@ class AuditLogController extends Controller
 
             $this->logAuditEvent('audit_logs_exported', 'Audit logs exported', [
                 'exported_count' => count($logs),
-                'filters' => $request->all()
+                'filters' => $request->only(['event_type', 'user_id', 'date_from', 'date_to'])
             ]);
 
             return response($csvContent)
@@ -161,15 +208,21 @@ class AuditLogController extends Controller
                 ->header('Content-Disposition', 'attachment; filename="audit_logs_' . date('Y-m-d_H-i-s') . '.csv"');
 
         } catch (\Exception $e) {
+            Log::error('Failed to export audit logs', ['exception' => $e]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to export audit logs: ' . $e->getMessage()
+                'message' => 'Failed to export audit logs'
             ], 500);
         }
     }
 
     public function stats()
     {
+        if ($denied = $this->ensureAdmin()) {
+            return $denied;
+        }
+
         try {
             $stats = [
                 'total_events' => DB::table('audit_logs')->count(),
@@ -208,15 +261,21 @@ class AuditLogController extends Controller
                 'stats' => $stats
             ]);
         } catch (\Exception $e) {
+            Log::error('Failed to fetch audit statistics', ['exception' => $e]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to fetch audit statistics: ' . $e->getMessage()
+                'message' => 'Failed to fetch audit statistics'
             ], 500);
         }
     }
 
     public function cleanup(Request $request)
     {
+        if ($denied = $this->ensureAdmin()) {
+            return $denied;
+        }
+
         try {
             $daysToKeep = $request->days_to_keep ?? 90;
 
@@ -234,9 +293,11 @@ class AuditLogController extends Controller
                 'message' => "Deleted $deletedCount old audit logs"
             ]);
         } catch (\Exception $e) {
+            Log::error('Failed to cleanup audit logs', ['exception' => $e]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to cleanup audit logs: ' . $e->getMessage()
+                'message' => 'Failed to cleanup audit logs'
             ], 500);
         }
     }

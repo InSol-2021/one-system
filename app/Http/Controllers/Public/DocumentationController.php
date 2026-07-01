@@ -165,6 +165,96 @@ class DocumentationController extends Controller
         return view('public.documentation.javascript', compact('javascriptGuide'));
     }
 
+    public function react()
+    {
+        $reactGuide = [
+            'title' => 'React Integration Guide',
+            'description' => 'Complete guide for integrating React applications with CAS SSO using hooks and context',
+            'sections' => [
+                'setup' => 'Package Installation',
+                'provider' => 'CasProvider Setup',
+                'hooks' => 'Hooks (useCasAuth, useCasUser)',
+                'components' => 'Protected Routes & Components',
+                'roles' => 'Role-Based Access',
+                'examples' => 'Code Examples'
+            ]
+        ];
+
+        return view('public.documentation.react', compact('reactGuide'));
+    }
+
+    public function nextjs()
+    {
+        $nextjsGuide = [
+            'title' => 'Next.js Integration Guide',
+            'description' => 'Complete guide for integrating Next.js App Router applications with CAS SSO',
+            'sections' => [
+                'setup' => 'Package Installation',
+                'middleware' => 'Next.js Middleware',
+                'server' => 'Server-Side Auth',
+                'client' => 'Client Components',
+                'api_routes' => 'API Route Handlers',
+                'examples' => 'Code Examples'
+            ]
+        ];
+
+        return view('public.documentation.nextjs', compact('nextjsGuide'));
+    }
+
+    public function angular()
+    {
+        $angularGuide = [
+            'title' => 'Angular Integration Guide',
+            'description' => 'Complete guide for integrating Angular applications with CAS SSO',
+            'sections' => [
+                'setup' => 'Package Installation',
+                'module' => 'Module Configuration',
+                'guards' => 'Route Guards',
+                'interceptors' => 'HTTP Interceptors',
+                'services' => 'Auth Service',
+                'examples' => 'Code Examples'
+            ]
+        ];
+
+        return view('public.documentation.angular', compact('angularGuide'));
+    }
+
+    public function vue()
+    {
+        $vueGuide = [
+            'title' => 'Vue 3 Integration Guide',
+            'description' => 'Complete guide for integrating Vue 3 applications with CAS SSO using Composition API',
+            'sections' => [
+                'setup' => 'Package Installation',
+                'plugin' => 'Vue Plugin Setup',
+                'composables' => 'Composables (useCasAuth, useCasUser)',
+                'router' => 'Router Guards',
+                'pinia' => 'Pinia Store',
+                'examples' => 'Code Examples'
+            ]
+        ];
+
+        return view('public.documentation.vue', compact('vueGuide'));
+    }
+
+    public function rust()
+    {
+        $rustGuide = [
+            'title' => 'Rust Integration Guide',
+            'description' => 'Complete guide for integrating Rust applications with CAS SSO using the rust-cas-client crate',
+            'sections' => [
+                'overview' => 'Overview',
+                'installation' => 'Add the Crate',
+                'configuration' => 'Configuration',
+                'client' => 'Build the Client',
+                'flow' => 'Login, Callback & Logout',
+                'examples' => 'Complete Example'
+            ]
+        ];
+
+        return view('public.documentation.rust', compact('rustGuide'));
+    }
+
     public function section($section)
     {
         $sectionMethods = [
@@ -174,6 +264,11 @@ class DocumentationController extends Controller
             'java' => 'java',
             'python' => 'python',
             'javascript' => 'javascript',
+            'react' => 'react',
+            'nextjs' => 'nextjs',
+            'angular' => 'angular',
+            'vue' => 'vue',
+            'rust' => 'rust',
             'api' => 'api',
             'deployment' => 'deployment',
             'troubleshooting' => 'troubleshooting',

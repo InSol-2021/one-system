@@ -5,19 +5,46 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Models\ClientSystem;
 use App\Models\AuditLog;
 use App\Models\IpWhitelist;
 use App\Models\SsoToken;
+use App\Models\User;
 
 class ClientSystemController extends Controller
 {
-    public function index()
+    /**
+     * Resolve the acting user and ensure they are an authenticated admin.
+     *
+     * Defense-in-depth on top of route middleware: returns a JSON error
+     * response when the session does not map to an active admin user, or null
+     * when the request may proceed.
+     */
+    protected function denyUnlessAdmin(): ?\Illuminate\Http\JsonResponse
     {
         $userId = session('user_id');
+
         if (!$userId) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
+
+        $user = User::find($userId);
+
+        if (!$user || $user->role !== 'admin') {
+            return response()->json(['error' => 'Forbidden'], 403);
+        }
+
+        return null;
+    }
+
+    public function index()
+    {
+        if ($denied = $this->denyUnlessAdmin()) {
+            return $denied;
+        }
+
+        $userId = session('user_id');
 
         try {
             $clientSystems = ClientSystem::select(
@@ -60,19 +87,22 @@ class ClientSystemController extends Controller
                 'client_systems' => $clientSystemsWithStatus
             ]);
         } catch (\Exception $e) {
+            Log::error('Failed to fetch client systems', ['error' => $e->getMessage()]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to fetch client systems: ' . $e->getMessage()
+                'message' => 'Failed to fetch client systems'
             ], 500);
         }
     }
 
     public function store(Request $request)
     {
-        $userId = session('user_id');
-        if (!$userId) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+        if ($denied = $this->denyUnlessAdmin()) {
+            return $denied;
         }
+
+        $userId = session('user_id');
 
         $request->validate([
             'name' => 'required|string|max:255',
@@ -80,15 +110,21 @@ class ClientSystemController extends Controller
             'callback_url' => 'required|url',
         ]);
 
+        $clientId = 'client_' . bin2hex(random_bytes(8));
+        $plainClientSecret = bin2hex(random_bytes(32));
+        $plainWebhookSecret = bin2hex(random_bytes(32));
+
         try {
+            // Plaintext secrets are passed to the model, whose mutators hash
+            // them at rest. The plaintext is returned to the admin once below.
             $clientSystem = ClientSystem::create([
                 'name' => $request->name,
                 'domain' => $request->domain,
                 'callback_url' => $request->callback_url,
-                'client_id' => ClientSystem::generateClientId(),
-                'client_secret' => ClientSystem::generateClientSecret(),
+                'client_id' => $clientId,
+                'client_secret' => $plainClientSecret,
                 'signature_validation_enabled' => true,
-                'webhook_secret' => bin2hex(random_bytes(32)),
+                'webhook_secret' => $plainWebhookSecret,
                 'status' => 'active',
                 'is_active' => true,
                 'credentials_shown' => false,
@@ -124,23 +160,22 @@ class ClientSystemController extends Controller
                     'created_at' => $clientSystem->created_at,
                 ],
                 'sensitive_credentials' => [
-                    'client_secret' => $clientSystem->client_secret,
-                    'webhook_secret' => $clientSystem->webhook_secret,
+                    'client_secret' => $plainClientSecret,
+                    'webhook_secret' => $plainWebhookSecret,
                     'show_once' => true,
                     'warning' => 'These credentials will only be shown once. Copy them now!'
                 ]
             ], 201);
 
         } catch (\Exception $e) {
-            \Log::error('Client system creation failed', [
+            Log::error('Client system creation failed', [
                 'error' => $e->getMessage(),
-                'request_data' => $request->all(),
-                'generated_client_id' => $clientId
+                'generated_client_id' => $clientId,
             ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to create client system: ' . $e->getMessage()
+                'message' => 'Failed to create client system'
             ], 500);
         }
     }
@@ -150,10 +185,11 @@ class ClientSystemController extends Controller
      */
     public function markCredentialsViewed(Request $request, $id)
     {
-        $userId = session('user_id');
-        if (!$userId) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+        if ($denied = $this->denyUnlessAdmin()) {
+            return $denied;
         }
+
+        $userId = session('user_id');
 
         try {
             $updated = ClientSystem::query()
@@ -195,9 +231,11 @@ class ClientSystemController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            Log::error('Failed to mark credentials as viewed', ['error' => $e->getMessage()]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to mark credentials as viewed: ' . $e->getMessage()
+                'message' => 'Failed to mark credentials as viewed'
             ], 500);
         }
     }
@@ -207,10 +245,11 @@ class ClientSystemController extends Controller
      */
     public function regenerateCredentials(Request $request, $id)
     {
-        $userId = session('user_id');
-        if (!$userId) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+        if ($denied = $this->denyUnlessAdmin()) {
+            return $denied;
         }
+
+        $userId = session('user_id');
 
         $request->validate([
             'confirm_regeneration' => 'required|boolean|accepted',
@@ -230,16 +269,14 @@ class ClientSystemController extends Controller
             $newClientSecret = bin2hex(random_bytes(32));
             $newWebhookSecret = bin2hex(random_bytes(32));
 
-            $updated = ClientSystem::query()
-                ->where('id', $id)
-                ->update([
-                    'client_secret' => $newClientSecret,
-                    'webhook_secret' => $newWebhookSecret,
-                    'credentials_shown' => false, // Reset to allow one-time viewing
-                    'credentials_regenerated_at' => now(),
-                    'credentials_regenerated_by' => $userId,
-                    'updated_at' => now()
-                ]);
+            // Assign via the model so the mutators hash the secrets at rest;
+            // the plaintext is returned to the admin once below.
+            $clientSystem->client_secret = $newClientSecret;
+            $clientSystem->webhook_secret = $newWebhookSecret;
+            $clientSystem->credentials_shown = false; // Reset to allow one-time viewing
+            $clientSystem->credentials_regenerated_at = now();
+            $clientSystem->credentials_regenerated_by = $userId;
+            $clientSystem->save();
 
             SsoToken::query()
                 ->where('client_system_id', $id)
@@ -282,19 +319,22 @@ class ClientSystemController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            Log::error('Failed to regenerate credentials', ['error' => $e->getMessage()]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to regenerate credentials: ' . $e->getMessage()
+                'message' => 'Failed to regenerate credentials'
             ], 500);
         }
     }
 
     public function update(Request $request, $id)
     {
-        $userId = session('user_id');
-        if (!$userId) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+        if ($denied = $this->denyUnlessAdmin()) {
+            return $denied;
         }
+
+        $userId = session('user_id');
 
         $request->validate([
             'name' => 'sometimes|string|max:255',
@@ -332,9 +372,8 @@ class ClientSystemController extends Controller
 
     public function destroy($id)
     {
-        $userId = session('user_id');
-        if (!$userId) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+        if ($denied = $this->denyUnlessAdmin()) {
+            return $denied;
         }
 
         $deleted = ClientSystem::query()

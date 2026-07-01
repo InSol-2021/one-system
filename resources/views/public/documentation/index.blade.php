@@ -1,318 +1,291 @@
 @extends('public.documentation.layout')
 
-@section('title', 'CAS SSO Integration Documentation')
-@section('description', 'Complete integration guide for CAS Single Sign-On authentication system supporting Laravel, .NET, Node.js, Java, Python, and more.')
+@section('title', 'One System SSO integration documentation')
+@section('description', 'Complete integration guide for the One System single sign-on service, with SDKs for Laravel, .NET, Node.js, Java, Python, and vanilla JavaScript.')
 
 @section('content')
 {{-- Hero —— lightweight header that sits naturally inside the sidebar layout --}}
-<section class="border-b border-slate-200 pb-10 mb-12">
-    <div class="max-w-3xl">
-        <p class="text-sm font-medium text-blue-600 tracking-wide uppercase mb-3">Documentation</p>
-        <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight leading-tight mb-4">
-            CAS SSO Integration Guide
+<section class="border-b border-[var(--color-line)] pb-10 mb-12">
+    <div class="">
+        <p class="os-eyebrow mb-3">Documentation</p>
+        <h1 class="text-4xl font-semibold text-[var(--color-ink)] tracking-tight leading-tight mb-4">
+            One System SSO integration guide
         </h1>
-        <p class="text-lg text-slate-500 leading-relaxed mb-8">
-            Everything you need to integrate your applications with our Central Authentication Service.
+        <p class="text-lg text-[var(--color-muted)] leading-relaxed mb-8">
+            Everything you need to connect your applications to One System single sign-on.
             Choose your platform, follow the guide, and go live in minutes.
         </p>
         <div class="flex flex-wrap gap-3">
-            <a href="#platforms" class="inline-flex items-center px-5 py-2.5 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-slate-800 transition-colors">
-                <i class="fas fa-rocket mr-2 text-xs"></i>Get Started
+            <a href="#platforms" class="os-btn os-btn-primary">
+                <i class="fas fa-rocket text-xs"></i> Get started
             </a>
-            <a href="{{ route('docs.api.overview') }}" class="inline-flex items-center px-5 py-2.5 bg-white text-slate-700 text-sm font-medium rounded-lg border border-slate-300 hover:bg-slate-50 hover:border-slate-400 transition-colors">
-                <i class="fas fa-code mr-2 text-xs"></i>API Reference
+            <a href="{{ route('docs.api.overview') }}" class="os-btn os-btn-secondary">
+                <i class="fas fa-code text-xs"></i> API reference
             </a>
         </div>
     </div>
 </section>
 
-{{-- Why CAS SSO —— three compact value props --}}
+{{-- Why One System —— three compact value props --}}
 <section class="mb-16">
-    <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-6">Why CAS SSO</h2>
+    <h2 class="os-eyebrow text-[var(--color-muted)] mb-6">Why One System SSO</h2>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="group p-5 rounded-xl border border-slate-200 hover:border-slate-300 transition-colors">
-            <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center mb-4">
-                <i class="fas fa-lock text-blue-600 text-sm"></i>
-            </div>
-            <h3 class="text-sm font-semibold text-slate-900 mb-1.5">Secure Authentication</h3>
-            <p class="text-sm text-slate-500 leading-relaxed">JWT tokens with HMAC&#8209;SHA256 signatures and configurable expiration policies.</p>
+        <div class="os-card os-card-pad os-card-hover">
+            <div class="os-icon-tile mb-4"><i class="fas fa-lock text-sm"></i></div>
+            <h3 class="text-sm font-semibold text-[var(--color-ink)] mb-1.5">Secure authentication</h3>
+            <p class="text-sm text-[var(--color-muted)] leading-relaxed">Single-use HS256 JWTs signed with a server-side secret, validated server to server.</p>
         </div>
-        <div class="group p-5 rounded-xl border border-slate-200 hover:border-slate-300 transition-colors">
-            <div class="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center mb-4">
-                <i class="fas fa-cogs text-emerald-600 text-sm"></i>
-            </div>
-            <h3 class="text-sm font-semibold text-slate-900 mb-1.5">Multi-Platform</h3>
-            <p class="text-sm text-slate-500 leading-relaxed">Native packages for Laravel, .NET, Node.js, Java, Python, and vanilla JS.</p>
+        <div class="os-card os-card-pad os-card-hover">
+            <div class="os-icon-tile mb-4"><i class="fas fa-cubes text-sm"></i></div>
+            <h3 class="text-sm font-semibold text-[var(--color-ink)] mb-1.5">Multi-platform</h3>
+            <p class="text-sm text-[var(--color-muted)] leading-relaxed">Official client packages for Laravel, .NET, Node.js, Java, Python, and vanilla JavaScript.</p>
         </div>
-        <div class="group p-5 rounded-xl border border-slate-200 hover:border-slate-300 transition-colors">
-            <div class="w-10 h-10 bg-violet-50 rounded-lg flex items-center justify-center mb-4">
-                <i class="fas fa-chart-line text-violet-600 text-sm"></i>
-            </div>
-            <h3 class="text-sm font-semibold text-slate-900 mb-1.5">Audit &amp; Monitoring</h3>
-            <p class="text-sm text-slate-500 leading-relaxed">Full audit trail with IP tracking, user agent logging, and real-time dashboards.</p>
+        <div class="os-card os-card-pad os-card-hover">
+            <div class="os-icon-tile mb-4"><i class="fas fa-chart-line text-sm"></i></div>
+            <h3 class="text-sm font-semibold text-[var(--color-ink)] mb-1.5">Audit &amp; monitoring</h3>
+            <p class="text-sm text-[var(--color-muted)] leading-relaxed">Full audit trail with IP tracking, user agent logging, and real-time dashboards.</p>
         </div>
     </div>
 </section>
 
 {{-- Architecture —— two side-by-side cards --}}
 <section class="mb-16">
-    <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-6">Architecture</h2>
+    <h2 class="os-eyebrow text-[var(--color-muted)] mb-6">Architecture</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <a href="{{ route('docs.architecture') }}" class="group block p-6 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-blue-50/30 transition-all">
+        <a href="{{ route('docs.architecture') }}" class="os-card os-card-pad os-card-hover group block">
             <div class="flex items-center gap-3 mb-3">
-                <div class="w-9 h-9 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-sitemap text-blue-600 text-sm"></i>
-                </div>
-                <h3 class="text-base font-semibold text-slate-900">System Architecture</h3>
+                <div class="os-icon-tile os-icon-tile-ink"><i class="fas fa-sitemap text-sm"></i></div>
+                <h3 class="text-base font-semibold text-[var(--color-ink)]">System architecture</h3>
             </div>
-            <p class="text-sm text-slate-500 leading-relaxed mb-3">Admin/User/Public separation, Livewire components, and the comprehensive security layer.</p>
-            <span class="text-sm font-medium text-blue-600 group-hover:text-blue-700 inline-flex items-center">
+            <p class="text-sm text-[var(--color-muted)] leading-relaxed mb-3">Admin, user, and public separation, Livewire components, and the comprehensive security layer.</p>
+            <span class="text-sm font-medium text-[var(--color-accent)] inline-flex items-center">
                 Read more <i class="fas fa-arrow-right ml-1.5 text-xs group-hover:translate-x-0.5 transition-transform"></i>
             </span>
         </a>
-        <a href="{{ route('docs.architecture') }}#database-schema" class="group block p-6 rounded-xl border border-slate-200 hover:border-emerald-300 hover:bg-emerald-50/30 transition-all">
+        <a href="{{ route('docs.architecture') }}#database-schema" class="os-card os-card-pad os-card-hover group block">
             <div class="flex items-center gap-3 mb-3">
-                <div class="w-9 h-9 bg-emerald-100 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-database text-emerald-600 text-sm"></i>
-                </div>
-                <h3 class="text-base font-semibold text-slate-900">Database Schema</h3>
+                <div class="os-icon-tile os-icon-tile-ink"><i class="fas fa-database text-sm"></i></div>
+                <h3 class="text-base font-semibold text-[var(--color-ink)]">Database schema</h3>
             </div>
-            <p class="text-sm text-slate-500 leading-relaxed mb-3">PostgreSQL multi-schema design with security isolation, access controls, and audit trails.</p>
-            <span class="text-sm font-medium text-emerald-600 group-hover:text-emerald-700 inline-flex items-center">
+            <p class="text-sm text-[var(--color-muted)] leading-relaxed mb-3">PostgreSQL design with security isolation, access controls, and audit trails.</p>
+            <span class="text-sm font-medium text-[var(--color-accent)] inline-flex items-center">
                 Read more <i class="fas fa-arrow-right ml-1.5 text-xs group-hover:translate-x-0.5 transition-transform"></i>
             </span>
         </a>
     </div>
 </section>
 
-{{-- Platform Guides —— the main grid --}}
+{{-- Platform guides —— the main grid --}}
 <section id="platforms" class="mb-16">
     <div class="flex items-end justify-between mb-6">
         <div>
-            <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1">Integration Guides</h2>
-            <p class="text-sm text-slate-500">Choose your stack and follow the step-by-step guide.</p>
+            <h2 class="os-eyebrow text-[var(--color-muted)] mb-1">Integration guides</h2>
+            <p class="text-sm text-[var(--color-muted)]">Choose your stack and follow the step-by-step guide.</p>
         </div>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {{-- Laravel --}}
-        <a href="{{ route('docs.laravel') }}" class="group flex items-center gap-4 p-4 rounded-xl border border-slate-200 hover:border-red-200 hover:bg-red-50/30 transition-all">
-            <div class="w-11 h-11 rounded-lg bg-red-100 flex items-center justify-center flex-shrink-0">
-                <i class="fab fa-laravel text-red-600 text-lg"></i>
-            </div>
+        <a href="{{ route('docs.laravel') }}" class="os-card os-card-hover group flex items-center gap-4 p-4">
+            <div class="os-icon-tile os-icon-tile-ink"><i class="fab fa-laravel text-lg"></i></div>
             <div class="min-w-0 flex-1">
                 <div class="flex items-center gap-2">
-                    <span class="text-sm font-semibold text-slate-900">Laravel</span>
-                    <span class="text-[10px] font-medium text-blue-700 bg-blue-100 px-1.5 py-0.5 rounded">Popular</span>
+                    <span class="text-sm font-semibold text-[var(--color-ink)]">Laravel</span>
+                    <span class="os-badge os-badge-accent">Popular</span>
                 </div>
-                <p class="text-xs text-slate-500 mt-0.5">Composer package &middot; 5 min</p>
+                <p class="text-xs text-[var(--color-muted)] mt-0.5">Composer package &middot; 5 min</p>
             </div>
-            <i class="fas fa-chevron-right text-slate-300 text-xs group-hover:text-slate-500 transition-colors"></i>
+            <i class="fas fa-chevron-right text-[var(--color-faint)] text-xs group-hover:text-[var(--color-muted)] transition-colors"></i>
         </a>
 
         {{-- .NET --}}
-        <a href="{{ route('docs.dotnet') }}" class="group flex items-center gap-4 p-4 rounded-xl border border-slate-200 hover:border-blue-200 hover:bg-blue-50/30 transition-all">
-            <div class="w-11 h-11 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
-                <i class="fab fa-microsoft text-blue-600 text-lg"></i>
-            </div>
+        <a href="{{ route('docs.dotnet') }}" class="os-card os-card-hover group flex items-center gap-4 p-4">
+            <div class="os-icon-tile os-icon-tile-ink"><i class="fab fa-microsoft text-lg"></i></div>
             <div class="min-w-0 flex-1">
-                <span class="text-sm font-semibold text-slate-900">.NET MVC</span>
-                <p class="text-xs text-slate-500 mt-0.5">C# &middot; NuGet &middot; 10 min</p>
+                <span class="text-sm font-semibold text-[var(--color-ink)]">.NET MVC</span>
+                <p class="text-xs text-[var(--color-muted)] mt-0.5">C# &middot; NuGet &middot; 10 min</p>
             </div>
-            <i class="fas fa-chevron-right text-slate-300 text-xs group-hover:text-slate-500 transition-colors"></i>
+            <i class="fas fa-chevron-right text-[var(--color-faint)] text-xs group-hover:text-[var(--color-muted)] transition-colors"></i>
         </a>
 
         {{-- Node.js --}}
-        <a href="{{ route('docs.nodejs') }}" class="group flex items-center gap-4 p-4 rounded-xl border border-slate-200 hover:border-green-200 hover:bg-green-50/30 transition-all">
-            <div class="w-11 h-11 rounded-lg bg-green-100 flex items-center justify-center flex-shrink-0">
-                <i class="fab fa-node-js text-green-600 text-lg"></i>
-            </div>
+        <a href="{{ route('docs.nodejs') }}" class="os-card os-card-hover group flex items-center gap-4 p-4">
+            <div class="os-icon-tile os-icon-tile-ink"><i class="fab fa-node-js text-lg"></i></div>
             <div class="min-w-0 flex-1">
                 <div class="flex items-center gap-2">
-                    <span class="text-sm font-semibold text-slate-900">Node.js</span>
-                    <span class="text-[10px] font-medium text-blue-700 bg-blue-100 px-1.5 py-0.5 rounded">Popular</span>
+                    <span class="text-sm font-semibold text-[var(--color-ink)]">Node.js</span>
+                    <span class="os-badge os-badge-accent">Popular</span>
                 </div>
-                <p class="text-xs text-slate-500 mt-0.5">Express middleware &middot; 3 min</p>
+                <p class="text-xs text-[var(--color-muted)] mt-0.5">Express middleware &middot; 3 min</p>
             </div>
-            <i class="fas fa-chevron-right text-slate-300 text-xs group-hover:text-slate-500 transition-colors"></i>
+            <i class="fas fa-chevron-right text-[var(--color-faint)] text-xs group-hover:text-[var(--color-muted)] transition-colors"></i>
         </a>
 
         {{-- Java --}}
-        <a href="{{ route('docs.java') }}" class="group flex items-center gap-4 p-4 rounded-xl border border-slate-200 hover:border-orange-200 hover:bg-orange-50/30 transition-all">
-            <div class="w-11 h-11 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">
-                <i class="fab fa-java text-orange-600 text-lg"></i>
-            </div>
+        <a href="{{ route('docs.java') }}" class="os-card os-card-hover group flex items-center gap-4 p-4">
+            <div class="os-icon-tile os-icon-tile-ink"><i class="fab fa-java text-lg"></i></div>
             <div class="min-w-0 flex-1">
-                <span class="text-sm font-semibold text-slate-900">Java Spring</span>
-                <p class="text-xs text-slate-500 mt-0.5">Spring Security &middot; 8 min</p>
+                <span class="text-sm font-semibold text-[var(--color-ink)]">Java Spring</span>
+                <p class="text-xs text-[var(--color-muted)] mt-0.5">Spring Security &middot; 8 min</p>
             </div>
-            <i class="fas fa-chevron-right text-slate-300 text-xs group-hover:text-slate-500 transition-colors"></i>
+            <i class="fas fa-chevron-right text-[var(--color-faint)] text-xs group-hover:text-[var(--color-muted)] transition-colors"></i>
         </a>
 
         {{-- Python --}}
-        <a href="{{ route('docs.python') }}" class="group flex items-center gap-4 p-4 rounded-xl border border-slate-200 hover:border-indigo-200 hover:bg-indigo-50/30 transition-all">
-            <div class="w-11 h-11 rounded-lg bg-indigo-100 flex items-center justify-center flex-shrink-0">
-                <i class="fab fa-python text-indigo-600 text-lg"></i>
-            </div>
+        <a href="{{ route('docs.python') }}" class="os-card os-card-hover group flex items-center gap-4 p-4">
+            <div class="os-icon-tile os-icon-tile-ink"><i class="fab fa-python text-lg"></i></div>
             <div class="min-w-0 flex-1">
-                <span class="text-sm font-semibold text-slate-900">Python Django</span>
-                <p class="text-xs text-slate-500 mt-0.5">Django middleware &middot; 7 min</p>
+                <span class="text-sm font-semibold text-[var(--color-ink)]">Python Django</span>
+                <p class="text-xs text-[var(--color-muted)] mt-0.5">Django middleware &middot; 7 min</p>
             </div>
-            <i class="fas fa-chevron-right text-slate-300 text-xs group-hover:text-slate-500 transition-colors"></i>
+            <i class="fas fa-chevron-right text-[var(--color-faint)] text-xs group-hover:text-[var(--color-muted)] transition-colors"></i>
         </a>
 
         {{-- JavaScript --}}
-        <a href="{{ route('docs.javascript') }}" class="group flex items-center gap-4 p-4 rounded-xl border border-slate-200 hover:border-yellow-200 hover:bg-yellow-50/30 transition-all">
-            <div class="w-11 h-11 rounded-lg bg-yellow-100 flex items-center justify-center flex-shrink-0">
-                <i class="fab fa-js text-yellow-600 text-lg"></i>
-            </div>
+        <a href="{{ route('docs.javascript') }}" class="os-card os-card-hover group flex items-center gap-4 p-4">
+            <div class="os-icon-tile os-icon-tile-ink"><i class="fab fa-js text-lg"></i></div>
             <div class="min-w-0 flex-1">
-                <span class="text-sm font-semibold text-slate-900">JavaScript</span>
-                <p class="text-xs text-slate-500 mt-0.5">Frontend / SPA &middot; 5 min</p>
+                <span class="text-sm font-semibold text-[var(--color-ink)]">JavaScript</span>
+                <p class="text-xs text-[var(--color-muted)] mt-0.5">Frontend / SPA &middot; 5 min</p>
             </div>
-            <i class="fas fa-chevron-right text-slate-300 text-xs group-hover:text-slate-500 transition-colors"></i>
+            <i class="fas fa-chevron-right text-[var(--color-faint)] text-xs group-hover:text-[var(--color-muted)] transition-colors"></i>
         </a>
     </div>
 </section>
 
-{{-- Quick Start —— three numbered steps, clean horizontal layout --}}
+{{-- Quick start —— three numbered steps, clean horizontal layout --}}
 <section class="mb-16">
-    <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-6">Quick Start</h2>
+    <h2 class="os-eyebrow text-[var(--color-muted)] mb-6">Quick start</h2>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="relative pl-10">
-            <span class="absolute left-0 top-0 w-7 h-7 rounded-full bg-slate-900 text-white text-xs font-bold flex items-center justify-center">1</span>
-            <h3 class="text-sm font-semibold text-slate-900 mb-1">Register Your App</h3>
-            <p class="text-sm text-slate-500 leading-relaxed">Register with the CAS admin panel to receive your client ID and secret.</p>
+            <span class="absolute left-0 top-0 w-7 h-7 rounded-full bg-[var(--color-ink)] text-white text-xs font-semibold flex items-center justify-center">1</span>
+            <h3 class="text-sm font-semibold text-[var(--color-ink)] mb-1">Register your app</h3>
+            <p class="text-sm text-[var(--color-muted)] leading-relaxed">Register in the One System admin panel to receive your client ID and client secret (the secret is shown once).</p>
         </div>
         <div class="relative pl-10">
-            <span class="absolute left-0 top-0 w-7 h-7 rounded-full bg-slate-900 text-white text-xs font-bold flex items-center justify-center">2</span>
-            <h3 class="text-sm font-semibold text-slate-900 mb-1">Install the Package</h3>
-            <p class="text-sm text-slate-500 leading-relaxed">Install the SDK for your platform via Composer, npm, pip, or NuGet.</p>
+            <span class="absolute left-0 top-0 w-7 h-7 rounded-full bg-[var(--color-ink)] text-white text-xs font-semibold flex items-center justify-center">2</span>
+            <h3 class="text-sm font-semibold text-[var(--color-ink)] mb-1">Install the package</h3>
+            <p class="text-sm text-[var(--color-muted)] leading-relaxed">Install the SDK for your platform via Composer, npm, pip, or NuGet.</p>
         </div>
         <div class="relative pl-10">
-            <span class="absolute left-0 top-0 w-7 h-7 rounded-full bg-slate-900 text-white text-xs font-bold flex items-center justify-center">3</span>
-            <h3 class="text-sm font-semibold text-slate-900 mb-1">Configure &amp; Test</h3>
-            <p class="text-sm text-slate-500 leading-relaxed">Set your environment variables, add the middleware, and verify the auth flow.</p>
+            <span class="absolute left-0 top-0 w-7 h-7 rounded-full bg-[var(--color-ink)] text-white text-xs font-semibold flex items-center justify-center">3</span>
+            <h3 class="text-sm font-semibold text-[var(--color-ink)] mb-1">Configure &amp; test</h3>
+            <p class="text-sm text-[var(--color-muted)] leading-relaxed">Set your environment variables, add the middleware, and verify the SSO flow.</p>
         </div>
     </div>
 </section>
 
-{{-- Code Example —— compact, well-formatted code block --}}
+{{-- Code example —— compact, well-formatted code block --}}
 <section class="mb-16">
-    <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-6">Example &mdash; Laravel</h2>
-    <div class="rounded-xl border border-slate-200 overflow-hidden">
-        <div class="flex items-center justify-between px-4 py-2.5 bg-slate-50 border-b border-slate-200">
-            <div class="flex items-center gap-2">
-                <i class="fab fa-laravel text-red-500 text-sm"></i>
-                <span class="text-xs font-medium text-slate-600">routes/web.php</span>
-            </div>
-            <button onclick="copyCode()" id="copy-btn" class="text-xs text-slate-400 hover:text-slate-600 transition-colors flex items-center gap-1">
+    <h2 class="os-eyebrow text-[var(--color-muted)] mb-6">Example &mdash; Laravel</h2>
+    <div class="os-codeblock">
+        <div class="os-codeblock-head">
+            <span class="flex items-center gap-2"><i class="fab fa-laravel"></i> routes/web.php</span>
+            <button onclick="copyCode()" id="copy-btn" class="hover:text-[var(--color-line-strong)] transition-colors flex items-center gap-1">
                 <i class="fas fa-copy"></i> Copy
             </button>
         </div>
-        <div class="bg-slate-900 p-5 overflow-x-auto">
-            <pre id="code-block" class="text-sm leading-relaxed font-mono"><code><span class="text-slate-500">// Install the package</span>
-<span class="text-blue-400">composer require</span> <span class="text-amber-300">insol-dev/central-authentication-server</span>
+        <pre id="code-block"><code><span class="text-[#94a3b8]">// Install the package</span>
+<span class="text-[#a5b4fc]">composer require</span> <span class="text-[#e2e8f0]">one-system/laravel-sso-client</span>
 
-<span class="text-slate-500">// Protect routes with CAS middleware</span>
-<span class="text-violet-400">Route</span>::<span class="text-green-400">middleware</span>([<span class="text-amber-300">'cas.auth'</span>])-><span class="text-green-400">group</span>(<span class="text-blue-400">function</span> () {
-    <span class="text-violet-400">Route</span>::<span class="text-green-400">get</span>(<span class="text-amber-300">'/dashboard'</span>, [<span class="text-orange-300">DashboardController</span>::<span class="text-blue-400">class</span>, <span class="text-amber-300">'index'</span>]);
-    <span class="text-violet-400">Route</span>::<span class="text-green-400">get</span>(<span class="text-amber-300">'/profile'</span>,   [<span class="text-orange-300">ProfileController</span>::<span class="text-blue-400">class</span>, <span class="text-amber-300">'show'</span>]);
+<span class="text-[#94a3b8]">// Protect routes with the SSO middleware</span>
+<span class="text-[#a5b4fc]">Route</span>::middleware([<span class="text-[#e2e8f0]">'sso.auth'</span>])->group(function () {
+    <span class="text-[#a5b4fc]">Route</span>::get(<span class="text-[#e2e8f0]">'/dashboard'</span>, [DashboardController::class, <span class="text-[#e2e8f0]">'index'</span>]);
+    <span class="text-[#a5b4fc]">Route</span>::get(<span class="text-[#e2e8f0]">'/profile'</span>,   [ProfileController::class, <span class="text-[#e2e8f0]">'show'</span>]);
 });
 
-<span class="text-slate-500">// Access the authenticated user</span>
-<span class="text-red-300">$user</span> = <span class="text-green-400">session</span>(<span class="text-amber-300">'cas_user'</span>);</code></pre>
-        </div>
+<span class="text-[#94a3b8]">// Access the authenticated user</span>
+$user = session(<span class="text-[#e2e8f0]">'sso_user'</span>);</code></pre>
     </div>
 </section>
 
-{{-- Complete Documentation Map —— links to all 11 sections --}}
-<section class="border-t border-slate-200 pt-10 mb-16">
-    <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-2">Complete Documentation</h2>
-    <p class="text-sm text-slate-500 mb-6">Navigate to any section of the CAS SSO documentation.</p>
+{{-- Complete documentation map —— links to all sections --}}
+<section class="border-t border-[var(--color-line)] pt-10 mb-16">
+    <h2 class="os-eyebrow text-[var(--color-muted)] mb-2">Complete documentation</h2>
+    <p class="text-sm text-[var(--color-muted)] mb-6">Navigate to any section of the One System SSO documentation.</p>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <a href="{{ route('docs') }}" class="group flex items-center gap-3 p-4 rounded-xl border border-blue-200 bg-blue-50/50 transition-all">
-            <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0"><span class="text-xs font-bold text-blue-700">1</span></div>
+        <a href="{{ route('docs') }}" class="os-card os-card-hover group flex items-center gap-3 p-4 border-[var(--color-accent-line)] bg-[var(--color-accent-soft)]">
+            <div class="os-icon-tile w-8 h-8 text-xs font-semibold">1</div>
             <div>
-                <span class="text-sm font-semibold text-slate-900">Overview</span>
-                <p class="text-xs text-slate-500">System concept & navigation</p>
+                <span class="text-sm font-semibold text-[var(--color-ink)]">Overview</span>
+                <p class="text-xs text-[var(--color-muted)]">System concept &amp; navigation</p>
             </div>
         </a>
-        <a href="{{ route('docs.architecture') }}" class="group flex items-center gap-3 p-4 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all">
-            <div class="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0"><span class="text-xs font-bold text-slate-600">2</span></div>
+        <a href="{{ route('docs.architecture') }}" class="os-card os-card-hover group flex items-center gap-3 p-4">
+            <div class="os-icon-tile os-icon-tile-ink w-8 h-8 text-xs font-semibold">2</div>
             <div>
-                <span class="text-sm font-semibold text-slate-900">Architecture</span>
-                <p class="text-xs text-slate-500">System design & code structure</p>
+                <span class="text-sm font-semibold text-[var(--color-ink)]">Architecture</span>
+                <p class="text-xs text-[var(--color-muted)]">System design &amp; code structure</p>
             </div>
         </a>
-        <a href="{{ route('docs.security') }}" class="group flex items-center gap-3 p-4 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all">
-            <div class="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0"><span class="text-xs font-bold text-slate-600">3</span></div>
+        <a href="{{ route('docs.security') }}" class="os-card os-card-hover group flex items-center gap-3 p-4">
+            <div class="os-icon-tile os-icon-tile-ink w-8 h-8 text-xs font-semibold">3</div>
             <div>
-                <span class="text-sm font-semibold text-slate-900">Security Features</span>
-                <p class="text-xs text-slate-500">Implemented security layers</p>
+                <span class="text-sm font-semibold text-[var(--color-ink)]">Security features</span>
+                <p class="text-xs text-[var(--color-muted)]">Implemented security layers</p>
             </div>
         </a>
-        <a href="{{ route('docs.quick-start') }}" class="group flex items-center gap-3 p-4 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all">
-            <div class="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0"><span class="text-xs font-bold text-slate-600">4</span></div>
+        <a href="{{ route('docs.quick-start') }}" class="os-card os-card-hover group flex items-center gap-3 p-4">
+            <div class="os-icon-tile os-icon-tile-ink w-8 h-8 text-xs font-semibold">4</div>
             <div>
-                <span class="text-sm font-semibold text-slate-900">Deploy Locally</span>
-                <p class="text-xs text-slate-500">Development environment setup</p>
+                <span class="text-sm font-semibold text-[var(--color-ink)]">Deploy locally</span>
+                <p class="text-xs text-[var(--color-muted)]">Development environment setup</p>
             </div>
         </a>
-        <a href="{{ route('docs.deployment') }}" class="group flex items-center gap-3 p-4 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all">
-            <div class="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0"><span class="text-xs font-bold text-slate-600">5</span></div>
+        <a href="{{ route('docs.deployment') }}" class="os-card os-card-hover group flex items-center gap-3 p-4">
+            <div class="os-icon-tile os-icon-tile-ink w-8 h-8 text-xs font-semibold">5</div>
             <div>
-                <span class="text-sm font-semibold text-slate-900">Deploy to Linux</span>
-                <p class="text-xs text-slate-500">Production deployment guide</p>
+                <span class="text-sm font-semibold text-[var(--color-ink)]">Deploy to Linux</span>
+                <p class="text-xs text-[var(--color-muted)]">Production deployment guide</p>
             </div>
         </a>
-        <a href="{{ route('docs.sdks') }}" class="group flex items-center gap-3 p-4 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all">
-            <div class="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0"><span class="text-xs font-bold text-slate-600">6</span></div>
+        <a href="{{ route('docs.sdks') }}" class="os-card os-card-hover group flex items-center gap-3 p-4">
+            <div class="os-icon-tile os-icon-tile-ink w-8 h-8 text-xs font-semibold">6</div>
             <div>
-                <span class="text-sm font-semibold text-slate-900">Integration Guides</span>
-                <p class="text-xs text-slate-500">SDK packages for all languages</p>
+                <span class="text-sm font-semibold text-[var(--color-ink)]">Integration guides</span>
+                <p class="text-xs text-[var(--color-muted)]">SDK packages for all languages</p>
             </div>
         </a>
-        <a href="{{ route('docs.admin-panel') }}" class="group flex items-center gap-3 p-4 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all">
-            <div class="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0"><span class="text-xs font-bold text-slate-600">7</span></div>
+        <a href="{{ route('docs.admin-panel') }}" class="os-card os-card-hover group flex items-center gap-3 p-4">
+            <div class="os-icon-tile os-icon-tile-ink w-8 h-8 text-xs font-semibold">7</div>
             <div>
-                <span class="text-sm font-semibold text-slate-900">Admin Guide</span>
-                <p class="text-xs text-slate-500">Setup, monitoring & management</p>
+                <span class="text-sm font-semibold text-[var(--color-ink)]">Admin guide</span>
+                <p class="text-xs text-[var(--color-muted)]">Setup, monitoring &amp; management</p>
             </div>
         </a>
-        <a href="{{ route('docs.user-guide') }}" class="group flex items-center gap-3 p-4 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all">
-            <div class="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0"><span class="text-xs font-bold text-slate-600">8</span></div>
+        <a href="{{ route('docs.user-guide') }}" class="os-card os-card-hover group flex items-center gap-3 p-4">
+            <div class="os-icon-tile os-icon-tile-ink w-8 h-8 text-xs font-semibold">8</div>
             <div>
-                <span class="text-sm font-semibold text-slate-900">User Guide</span>
-                <p class="text-xs text-slate-500">End-user login & dashboard</p>
+                <span class="text-sm font-semibold text-[var(--color-ink)]">User guide</span>
+                <p class="text-xs text-[var(--color-muted)]">End-user login &amp; dashboard</p>
             </div>
         </a>
-        <a href="{{ route('docs.security-guide') }}" class="group flex items-center gap-3 p-4 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all">
-            <div class="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0"><span class="text-xs font-bold text-slate-600">9</span></div>
+        <a href="{{ route('docs.security-guide') }}" class="os-card os-card-hover group flex items-center gap-3 p-4">
+            <div class="os-icon-tile os-icon-tile-ink w-8 h-8 text-xs font-semibold">9</div>
             <div>
-                <span class="text-sm font-semibold text-slate-900">Security Guide</span>
-                <p class="text-xs text-slate-500">App & server hardening</p>
+                <span class="text-sm font-semibold text-[var(--color-ink)]">Security guide</span>
+                <p class="text-xs text-[var(--color-muted)]">App &amp; server hardening</p>
             </div>
         </a>
-        <a href="{{ route('docs.troubleshooting') }}" class="group flex items-center gap-3 p-4 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all">
-            <div class="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0"><span class="text-xs font-bold text-slate-600">10</span></div>
+        <a href="{{ route('docs.troubleshooting') }}" class="os-card os-card-hover group flex items-center gap-3 p-4">
+            <div class="os-icon-tile os-icon-tile-ink w-8 h-8 text-xs font-semibold">10</div>
             <div>
-                <span class="text-sm font-semibold text-slate-900">Troubleshooting</span>
-                <p class="text-xs text-slate-500">Common issues & solutions</p>
+                <span class="text-sm font-semibold text-[var(--color-ink)]">Troubleshooting</span>
+                <p class="text-xs text-[var(--color-muted)]">Common issues &amp; solutions</p>
             </div>
         </a>
-        <a href="{{ route('docs.examples') }}" class="group flex items-center gap-3 p-4 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all">
-            <div class="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0"><span class="text-xs font-bold text-slate-600">11</span></div>
+        <a href="{{ route('docs.examples') }}" class="os-card os-card-hover group flex items-center gap-3 p-4">
+            <div class="os-icon-tile os-icon-tile-ink w-8 h-8 text-xs font-semibold">11</div>
             <div>
-                <span class="text-sm font-semibold text-slate-900">Code Examples</span>
-                <p class="text-xs text-slate-500">Copy-paste integration code</p>
+                <span class="text-sm font-semibold text-[var(--color-ink)]">Code examples</span>
+                <p class="text-xs text-[var(--color-muted)]">Copy-paste integration code</p>
             </div>
         </a>
-        <a href="{{ route('docs.api.overview') }}" class="group flex items-center gap-3 p-4 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all">
-            <div class="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0"><i class="fas fa-code text-slate-500 text-xs"></i></div>
+        <a href="{{ route('docs.api.overview') }}" class="os-card os-card-hover group flex items-center gap-3 p-4">
+            <div class="os-icon-tile os-icon-tile-ink w-8 h-8"><i class="fas fa-code text-xs"></i></div>
             <div>
-                <span class="text-sm font-semibold text-slate-900">API Reference</span>
-                <p class="text-xs text-slate-500">Endpoint documentation</p>
+                <span class="text-sm font-semibold text-[var(--color-ink)]">API reference</span>
+                <p class="text-xs text-[var(--color-muted)]">Endpoint documentation</p>
             </div>
         </a>
     </div>

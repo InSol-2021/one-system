@@ -7,6 +7,7 @@ public class CasConfig {
     private final String serverUrl;
     private final String clientId;
     private final String clientSecret;
+    private String publicUrl = "";
     private String callbackUrl = "";
     private String signatureSecret = "default-signature-secret";
     private boolean enableSignatureValidation = false;
@@ -31,6 +32,17 @@ public class CasConfig {
     }
 
     // Builder-style setters
+    /**
+     * Public, browser-facing CAS base URL used ONLY to build the browser login
+     * redirect ({@link CasClient#getLoginUrl}). In split-horizon deployments the
+     * browser must reach CAS at a different (public) host than the back-channel
+     * {@code serverUrl} used for server-to-server token validation. When unset
+     * (null/empty) the login URL falls back to {@code serverUrl}.
+     */
+    public CasConfig publicUrl(String url) {
+        this.publicUrl = (url == null) ? "" : url.replaceAll("/$", "");
+        return this;
+    }
     public CasConfig callbackUrl(String url) { this.callbackUrl = url; return this; }
     public CasConfig signatureSecret(String secret) { this.signatureSecret = secret; return this; }
     public CasConfig enableSignatureValidation(boolean enable) { this.enableSignatureValidation = enable; return this; }
@@ -39,6 +51,8 @@ public class CasConfig {
 
     // Getters
     public String getServerUrl() { return serverUrl; }
+    /** Public, browser-facing CAS base for the login redirect (empty if unset). */
+    public String getPublicUrl() { return publicUrl; }
     public String getClientId() { return clientId; }
     public String getClientSecret() { return clientSecret; }
     public String getCallbackUrl() { return callbackUrl; }

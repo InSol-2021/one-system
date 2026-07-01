@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <!-- Match the package's target framework (CasSystem.Client targets net8.0). -->
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>CasDemo</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+      Depend on the LOCAL package via a ProjectReference (no publishing / NuGet).
+      The relative path points at the package's .csproj inside the monorepo.
+    -->
+    <ProjectReference Include="../../packages/dotnet-cas-client/CasSystem.Client.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      Local username/password accounts are stored in a SQLite file. Microsoft.Data.Sqlite
+      is the idiomatic SQLite library for .NET. Pinned to the .NET 8 line.
+    -->
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.6" />
+  </ItemGroup>
+
+</Project>

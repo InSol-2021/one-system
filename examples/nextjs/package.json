@@ -1,0 +1,29 @@
+{
+  "name": "one-system-cas-nextjs-example",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Minimal Next.js (App Router) sample demonstrating @one-system/nextjs-cas-client end-to-end: SSO login, server-side callback token validation, authenticated user, and logout.",
+  "scripts": {
+    "dev": "next dev -p 9108",
+    "build": "next build",
+    "start": "next start -p 9108",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@one-system/nextjs-cas-client": "file:../../packages/nextjs-cas-client",
+    "better-sqlite3": "^11.8.1",
+    "next": "^14.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/node": "^22.0.0",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.5.3"
+  },
+  "engines": {
+    "node": ">=18.17.0"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [{ "name": "next" }],
+    "paths": {
+      "@/*": ["./src/*"],
+      "@one-system/nextjs-cas-client": [
+        "./node_modules/@one-system/nextjs-cas-client/src/index.ts"
+      ],
+      "@one-system/nextjs-cas-client/handlers": [
+        "./node_modules/@one-system/nextjs-cas-client/src/handlers/index.ts"
+      ],
+      "@one-system/nextjs-cas-client/middleware": [
+        "./node_modules/@one-system/nextjs-cas-client/src/middleware.ts"
+      ],
+      "@one-system/nextjs-cas-client/server": [
+        "./node_modules/@one-system/nextjs-cas-client/src/server/index.ts"
+      ]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}

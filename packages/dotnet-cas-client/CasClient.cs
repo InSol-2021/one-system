@@ -41,10 +41,20 @@ public class CasClient
     }
 
     /// <summary>Generate CAS SSO login URL.</summary>
+    /// <remarks>
+    /// The CAS server uses the client's registered callback_url; the browser is
+    /// 302-redirected there with the token appended as {callback_url}?token={JWT}.
+    /// The protocol login endpoint only requires client_id.
+    ///
+    /// This redirect is followed by the user's BROWSER, so it is built from the
+    /// public-facing <see cref="CasConfig.PublicUrl"/> when set (split-horizon
+    /// deployments), falling back to the internal <see cref="CasConfig.ServerUrl"/>.
+    /// Server-to-server validation continues to use <see cref="CasConfig.ServerUrl"/>.
+    /// </remarks>
     public string GetLoginUrl(string? returnUrl = null)
     {
-        var redirectUri = !string.IsNullOrEmpty(returnUrl) ? returnUrl : _config.CallbackUrl;
-        return $"{_config.ServerUrl.TrimEnd('/')}/sso/login?client_id={HttpUtility.UrlEncode(_config.ClientId)}&response_type=token&redirect_uri={HttpUtility.UrlEncode(redirectUri)}";
+        var loginBase = string.IsNullOrEmpty(_config.PublicUrl) ? _config.ServerUrl : _config.PublicUrl;
+        return $"{loginBase.TrimEnd('/')}/sso/login?client_id={HttpUtility.UrlEncode(_config.ClientId)}";
     }
 
     /// <summary>Generate SSO token for a user via client credentials.</summary>
@@ -90,14 +100,16 @@ public class CasClient
                 ["client_secret"] = _config.ClientSecret
             };
 
-            var request = CreateRequest(HttpMethod.Post, "/api/sso/validate", requestData, timestamp);
+            var request = CreateRequest(HttpMethod.Post, "/api/validate-token", requestData, timestamp);
             var response = await _http.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
                 using var doc = JsonDocument.Parse(json);
-                if (doc.RootElement.TryGetProperty("user", out var userElem))
+                var isValid = !doc.RootElement.TryGetProperty("valid", out var validElem)
+                              || validElem.ValueKind != JsonValueKind.False;
+                if (isValid && doc.RootElement.TryGetProperty("user", out var userElem))
                 {
                     var user = JsonSerializer.Deserialize<Dictionary<string, object>>(userElem.GetRawText());
                     if (user != null)

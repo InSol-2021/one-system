@@ -1,6 +1,8 @@
 # Python CAS Client
 
-A Python package for seamless integration with CAS (Central Authentication Service) SSO servers. Works with Django, Flask, FastAPI, and any Python framework.
+A Python package for seamless integration with **One System** CAS (Central Authentication Service) SSO servers. Works with Django, Flask, FastAPI, and any Python framework.
+
+**Requirements:** Python 3.9+ and `requests >= 2.32`. The optional `[django]` extra requires Django 4.2+, and the `[flask]` extra requires Flask 3.0+.
 
 ## Features
 
@@ -14,13 +16,13 @@ A Python package for seamless integration with CAS (Central Authentication Servi
 ## Installation
 
 ```bash
-pip install cas-client
+pip install cas-system-client
 
 # With Django support
-pip install cas-client[django]
+pip install cas-system-client[django]
 
 # With Flask support
-pip install cas-client[flask]
+pip install cas-system-client[flask]
 ```
 
 ## Quick Start
@@ -38,16 +40,29 @@ cas = CasClient(
 )
 ```
 
+### How the One System SSO flow works
+
+1. Send the browser to `cas.get_login_url()` — this redirects to
+   `GET {server_url}/sso/login?client_id=...`.
+2. One System authenticates the user and redirects back to your registered
+   `callback_url` with a single-use JWT appended as `?token=<JWT>`.
+3. In your callback, call `cas.validate_token(token)`. The client validates the
+   token **server-to-server** (sending `client_id` + `client_secret`) and returns
+   the user dict `{id, username, email, ...}` on success, or `None`. Tokens are
+   single-use — validate once, then rely on your framework session.
+
 ### 2. Django Integration
 
 ```python
 # settings.py
+import os
 from cas_client import CasClient
 
 CAS_CLIENT = CasClient(
     server_url=os.environ['CAS_SERVER_URL'],
     client_id=os.environ['CAS_CLIENT_ID'],
     client_secret=os.environ['CAS_CLIENT_SECRET'],
+    callback_url=os.environ['CAS_CALLBACK_URL'],
 )
 CAS_PROTECTED_PATHS = ['/dashboard', '/admin']
 CAS_LOGIN_URL = '/auth/login'

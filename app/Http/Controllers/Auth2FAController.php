@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\UserSecurity;
 use App\Models\AuditLog;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use PragmaRX\Google2FA\Google2FA;
 
@@ -61,10 +62,22 @@ class Auth2FAController extends Controller
         if ($valid) {
             $user->update(['last_login' => now()]);
 
+            // Preserve the temp identity values across the session rotation,
+            // then prevent session fixation by regenerating the session id and
+            // CSRF token before establishing the authenticated identity.
+            $tempUserId = session('temp_user_id');
+            $tempUsername = session('temp_username');
+            $tempRole = session('temp_role');
+
+            $request->session()->regenerate();
+            $request->session()->regenerateToken();
+
+            Auth::login($user);
+
             session([
-                'user_id' => session('temp_user_id'),
-                'username' => session('temp_username'),
-                'role' => session('temp_role')
+                'user_id' => $tempUserId,
+                'username' => $tempUsername,
+                'role' => $tempRole
             ]);
 
             session()->forget(['temp_user_id', 'temp_username', 'temp_role', '2fa_required']);
@@ -84,7 +97,7 @@ class Auth2FAController extends Controller
             ]);
 
             if ($user->isAdmin()) {
-                return redirect()->intended('/admin/client-systems');
+                return redirect()->intended('/admin/dashboard');
             } else {
                 return redirect()->intended('/user/dashboard');
             }

@@ -1,0 +1,22 @@
+# Flask web framework for the sample app.
+# Pinned to >=3.0 to match the cas-client package's `flask` extra floor
+# (Flask 2.x is end-of-life; 3.x is the current supported series and pulls in
+# Werkzeug>=3.0 transitively). No app code changes are required for this bump:
+# the Flask symbols used here (Flask, redirect, request, session, url_for, g)
+# are unchanged across the 2.x -> 3.x major.
+Flask>=3.0
+
+# Loads CAS_* config from a local .env file (optional but convenient).
+python-dotenv>=1.0
+
+# The One System CAS client SDK, installed from the LOCAL package source
+# (no publishing). The relative path points at packages/python-cas-client,
+# which contains setup.py for the `cas-client` distribution.
+#
+# This path is relative to THIS requirements.txt file when installed with:
+#   pip install -r requirements.txt
+#
+# If your pip/working directory makes the relative path awkward, install the
+# package explicitly first (see README), e.g.:
+#   pip install -e ../../packages/python-cas-client
+../../packages/python-cas-client

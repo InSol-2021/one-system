@@ -23,6 +23,7 @@ class SsoToken extends Model
         'expires_at',
         'is_active',
         'is_used',
+        'used_at',
         'last_used_at',
         'user_agent',
         'ip_address',
@@ -39,6 +40,7 @@ class SsoToken extends Model
         'is_active' => 'boolean',
         'is_used' => 'boolean',
         'expires_at' => 'datetime',
+        'used_at' => 'datetime',
         'last_used_at' => 'datetime',
         'user_data' => 'array',
         'payload' => 'array',
@@ -66,6 +68,7 @@ class SsoToken extends Model
     public function scopeActive($query)
     {
         return $query->where('is_active', true)
+                    ->where('is_used', false)
                     ->where('expires_at', '>', now());
     }
 
@@ -83,7 +86,8 @@ class SsoToken extends Model
     public function markAsUsed()
     {
         $this->update([
-            'last_used_at' => now(),
+            'is_used' => true,
+            'used_at' => now(),
         ]);
     }
 

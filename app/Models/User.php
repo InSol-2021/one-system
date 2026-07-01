@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Casts\EncryptedArrayFallback;
+use App\Casts\EncryptedFallback;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -66,7 +68,8 @@ class User extends Authenticatable
             'password_changed_at' => 'datetime',
             'preferences' => 'array',
             'two_factor_enabled' => 'boolean',
-            'two_factor_backup_codes' => 'array',
+            'two_factor_secret' => EncryptedFallback::class,
+            'two_factor_backup_codes' => EncryptedArrayFallback::class,
             'password' => 'hashed',
         ];
     }
@@ -77,14 +80,6 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
-    }
-
-    /**
-     * Check if user is client admin
-     */
-    public function isClientAdmin(): bool
-    {
-        return $this->role === 'client_admin';
     }
 
     /**

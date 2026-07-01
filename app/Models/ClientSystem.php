@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Hash;
 
 class ClientSystem extends Model
 {
@@ -90,5 +91,80 @@ class ClientSystem extends Model
     public function isActive()
     {
         return $this->is_active === true;
+    }
+
+    /**
+     * Determine whether the given value already looks like a bcrypt hash.
+     */
+    protected function looksHashed($value): bool
+    {
+        return is_string($value)
+            && (str_starts_with($value, '$2y$') || str_starts_with($value, '$2a$'));
+    }
+
+    /**
+     * Hash the client secret on assignment unless it already looks hashed
+     * (prevents double-hashing of already-stored values).
+     */
+    public function setClientSecretAttribute($value): void
+    {
+        if ($value === null || $value === '' || $this->looksHashed($value)) {
+            $this->attributes['client_secret'] = $value;
+
+            return;
+        }
+
+        $this->attributes['client_secret'] = Hash::make($value);
+    }
+
+    /**
+     * Hash the webhook secret on assignment unless it already looks hashed
+     * (prevents double-hashing of already-stored values).
+     */
+    public function setWebhookSecretAttribute($value): void
+    {
+        if ($value === null || $value === '' || $this->looksHashed($value)) {
+            $this->attributes['webhook_secret'] = $value;
+
+            return;
+        }
+
+        $this->attributes['webhook_secret'] = Hash::make($value);
+    }
+
+    /**
+     * Verify a plaintext client secret against the stored value.
+     *
+     * Works before and after the hashing migration: if the stored value is a
+     * bcrypt hash, use Hash::check; otherwise fall back to a constant-time
+     * comparison against the legacy plaintext value.
+     */
+    public function verifyClientSecret(?string $plain): bool
+    {
+        return $this->verifySecret($this->attributes['client_secret'] ?? null, $plain);
+    }
+
+    /**
+     * Verify a plaintext webhook secret against the stored value.
+     */
+    public function verifyWebhookSecret(?string $plain): bool
+    {
+        return $this->verifySecret($this->attributes['webhook_secret'] ?? null, $plain);
+    }
+
+    /**
+     * Shared verification helper for hashed-or-legacy-plaintext secrets.
+     */
+    protected function verifySecret(?string $stored, ?string $plain): bool
+    {
+        if ($stored === null || $stored === '' || $plain === null || $plain === '') {
+            return false;
+        }
+
+        if ($this->looksHashed($stored)) {
+            return Hash::check($plain, $stored);
+        }
+
+        return hash_equals($stored, $plain);
     }
 }

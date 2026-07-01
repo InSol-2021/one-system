@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Casts\EncryptedArrayFallback;
+use App\Casts\EncryptedFallback;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -34,7 +36,8 @@ class UserSecurity extends Model
      */
     protected $casts = [
         'two_factor_enabled' => 'boolean',
-        'two_factor_backup_codes' => 'array',
+        'two_factor_secret' => EncryptedFallback::class,
+        'two_factor_backup_codes' => EncryptedArrayFallback::class,
         'two_factor_setup_at' => 'datetime',
         'password_reset_required' => 'boolean',
         'locked_until' => 'datetime',
@@ -109,9 +112,16 @@ class UserSecurity extends Model
      */
     public function generateBackupCodes(): array
     {
+        $alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $max = strlen($alphabet) - 1;
+
         $backupCodes = [];
         for ($i = 0; $i < 8; $i++) {
-            $backupCodes[] = substr(str_shuffle('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 8);
+            $code = '';
+            for ($j = 0; $j < 8; $j++) {
+                $code .= $alphabet[random_int(0, $max)];
+            }
+            $backupCodes[] = $code;
         }
 
         $this->update(['two_factor_backup_codes' => $backupCodes]);

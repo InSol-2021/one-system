@@ -4,7 +4,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.cassystem</groupId>
+    <!-- Maven Central groupId: io.github.<account> namespaces are verified purely via
+         GitHub ownership (no domain purchase needed), unlike com.cassystem which would
+         require proving ownership of cassystem.com. The Java package name (com.cassystem.client)
+         is unchanged — Maven does not require the groupId to match the code's package name. -->
+    <groupId>io.github.insol-2021</groupId>
     <artifactId>cas-client</artifactId>
     <version>2.0.0</version>
     <packaging>jar</packaging>
@@ -21,8 +25,8 @@
     </licenses>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -40,7 +44,24 @@
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
-            <version>0.12.3</version>
+            <version>0.12.6</version>
+        </dependency>
+        <!--
+          jjwt 0.12.x splits the API from its runtime implementation. jjwt-impl
+          and a serializer (jjwt-jackson) must be on the RUNTIME classpath for
+          token parsing/signing to work; they are not needed at compile time.
+        -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>0.12.6</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>0.12.6</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>

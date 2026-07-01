@@ -1,0 +1,24 @@
+[package]
+name = "rust-cas-client"
+version = "1.0.0"
+edition = "2021"
+description = "One System CAS SSO client for Rust — build the login URL and validate single-use tokens server-to-server."
+license = "MIT"
+repository = "https://github.com/one-system/one-system"
+keywords = ["cas", "sso", "authentication", "jwt"]
+categories = ["authentication", "web-programming"]
+
+[lib]
+name = "rust_cas_client"
+path = "src/lib.rs"
+
+[dependencies]
+# Async HTTP client for the server-to-server token validation call.
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+# (De)serialize the validate-token request/response bodies.
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+# URL-encode the login redirect query string.
+url = "2"
+# Surface a typed error to callers.
+thiserror = "1"

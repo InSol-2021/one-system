@@ -1,0 +1,8 @@
+{
+  "// purpose": "During `ng serve` (dev mode on :4200) forward backend API calls to the Express server on APP_PORT (9110), so the front-end can reach /api/auth/validate and /api/config without CORS. Local-auth POST /login is handled by proxy.conf.cjs (it needs a bypass function so GET /login still renders the SPA route).",
+  "/api": {
+    "target": "http://localhost:9110",
+    "secure": false,
+    "changeOrigin": true
+  }
+}

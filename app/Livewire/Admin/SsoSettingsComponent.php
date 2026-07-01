@@ -6,9 +6,12 @@ use Livewire\Component;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use App\Models\SsoSetting;
+use App\Livewire\Concerns\AuthorizesAdmin;
 
 class SsoSettingsComponent extends Component
 {
+    use AuthorizesAdmin;
+
     public $processing = false;
     public $token_expiry_minutes = 60;
     public $token_issuer = 'Innovative-Solution';
@@ -35,6 +38,7 @@ class SsoSettingsComponent extends Component
 
     public function mount()
     {
+        $this->authorizeAdmin();
         $this->loadSettings();
     }
 
@@ -76,6 +80,8 @@ class SsoSettingsComponent extends Component
 
     public function saveSettings()
     {
+        $this->authorizeAdmin();
+
         if ($this->processing) {
             return;
         }

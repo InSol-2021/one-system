@@ -5,7 +5,7 @@
  * IMPORTANT: Token validation should always be done on your backend server.
  * This SDK handles login redirects, token extraction from URLs, and role checking.
  *
- * @version 2.0.0
+ * @version 1.0.0
  */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
@@ -40,25 +40,42 @@
 
   /**
    * Generate CAS SSO login URL and redirect the browser.
-   * @param {string} [returnUrl] - URL to redirect after login
+   * @param {string} [returnUrl] - App URL to return to after a successful callback
    */
   CasClient.prototype.login = function (returnUrl) {
-    var url = this.getLoginUrl(returnUrl);
+    if (returnUrl) {
+      try { sessionStorage.setItem('cas_return_url', returnUrl); } catch (e) {}
+    }
+    var url = this.getLoginUrl();
     window.location.href = url;
   };
 
   /**
    * Generate CAS SSO login URL without redirecting.
-   * @param {string} [returnUrl]
+   * The CAS server redirects to the client's registered callback_url with the
+   * token appended, so the login request only needs the client_id.
    * @returns {string}
    */
-  CasClient.prototype.getLoginUrl = function (returnUrl) {
+  CasClient.prototype.getLoginUrl = function () {
     var params = new URLSearchParams({
       client_id: this.config.clientId,
-      response_type: 'token',
-      redirect_uri: returnUrl || this.config.callbackUrl,
     });
     return this.config.serverUrl + '/sso/login?' + params.toString();
+  };
+
+  /**
+   * Read (and clear) the return URL stashed by login(), if any.
+   * @returns {string|null}
+   */
+  CasClient.prototype.consumeReturnUrl = function () {
+    try {
+      var url = sessionStorage.getItem('cas_return_url');
+      if (url) {
+        sessionStorage.removeItem('cas_return_url');
+        return url;
+      }
+    } catch (e) {}
+    return null;
   };
 
   /**
@@ -149,7 +166,16 @@
     this._user = null;
     try { sessionStorage.removeItem('cas_user'); } catch (e) {}
     var returnUrl = redirectUrl || window.location.origin;
-    window.location.href = this.config.serverUrl + '/auth/logout?redirect=' + encodeURIComponent(returnUrl);
+    var self = this;
+    fetch(this.config.serverUrl + '/api/logout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+    })
+      .catch(function () {})
+      .finally(function () {
+        window.location.href = returnUrl;
+      });
   };
 
   /**

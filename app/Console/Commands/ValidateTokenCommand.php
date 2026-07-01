@@ -16,8 +16,12 @@ class ValidateTokenCommand extends Command
         $token = $this->argument('token');
         
         try {
-            $jwtSecret = env('JWT_SECRET', 'your-secret-key');
-            
+            $jwtSecret = config('jwt.secret');
+
+            if (empty($jwtSecret)) {
+                throw new \RuntimeException('JWT secret not configured');
+            }
+
             $this->info("Validating JWT Token...");
             $this->info("=" . str_repeat("=", 50));
             

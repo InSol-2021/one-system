@@ -1,6 +1,6 @@
 # .NET CAS Client
 
-A .NET library for seamless integration with CAS (Central Authentication Service) SSO servers. Works with ASP.NET Core 6+.
+A .NET library for seamless integration with One System CAS (Central Authentication Service) SSO servers. Targets .NET 8 and works with ASP.NET Core 8.
 
 ## Features
 
@@ -10,6 +10,12 @@ A .NET library for seamless integration with CAS (Central Authentication Service
 - ⚡ **Async/Await** — Fully asynchronous API
 - 💉 **Dependency Injection** — Built-in service registration extensions
 - 🔄 **Thread-Safe Caching** — ConcurrentDictionary token cache
+
+## Requirements
+
+- .NET 8 SDK (the package targets `net8.0`).
+- An ASP.NET Core (web) host — the package references the `Microsoft.AspNetCore.App`
+  shared framework for `HttpContext`, `IServiceCollection`, and the middleware.
 
 ## Installation
 
@@ -24,6 +30,21 @@ dotnet add package CasSystem.Client
 ```powershell
 Install-Package CasSystem.Client
 ```
+
+## How it works
+
+1. **Browser SSO** — send the user to `GetLoginUrl()`, which builds
+   `GET {ServerUrl}/sso/login?client_id={ClientId}`. The One System CAS server
+   authenticates the user and 302-redirects the browser back to the registered
+   `callback_url` with `?token={JWT}` appended.
+2. **Server-to-server validation** — call `ValidateTokenAsync(token)`, which POSTs
+   to `{ServerUrl}/api/validate-token` with `{ token, client_id, client_secret }`.
+   On success the server returns `200 { valid: true, user: { id, username, email },
+   expires_at }`. The token is **single-use** — validate it exactly once, then
+   create your own session.
+3. **Service-to-service issuance** — `GenerateSSOTokenAsync(username)` POSTs to
+   `{ServerUrl}/api/sso/token` with `{ client_id, client_secret, username }` to mint
+   a token for a user (the caller must be IP-whitelisted on the CAS server).
 
 ## Quick Start
 

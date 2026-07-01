@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\AuditLog;
+use App\Http\Requests\RegisterRequest;
 use App\Services\AuthService;
 use App\Services\SsoService;
 
@@ -133,23 +134,29 @@ class AuthController extends Controller
         return back()->withErrors(['error' => 'Invalid username or password'])->withInput();
     }
 
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
-        $request->validate([
-            'username' => 'required|string|unique:users',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|string|min:6',
-        ]);
+        // RegisterRequest enforces the strong password, username regex,
+        // uniqueness, and reCAPTCHA rules. Use validated() data only.
+        $validated = $request->validated();
 
-        $existingUser = User::where('username', $request->username)
-            ->orWhere('email', $request->email)
+        $existingUser = User::where('username', $validated['username'])
+            ->orWhere('email', $validated['email'])
             ->first();
 
         if ($existingUser) {
             return response()->json(['error' => 'User already exists'], 400);
         }
 
-        $user = $this->authService->register($request->all(), $request);
+        // Pass an explicit whitelist of fields, never $request->all(), to avoid
+        // mass-assignment of role/is_active/2FA fields.
+        $user = $this->authService->register([
+            'username' => $validated['username'],
+            'email' => $validated['email'],
+            'password' => $validated['password'],
+            'first_name' => $request->input('first_name', ''),
+            'last_name' => $request->input('last_name', ''),
+        ], $request);
 
         return response()->json([
             'success' => true,
@@ -257,7 +264,14 @@ class AuthController extends Controller
         $user = $result['user'];
         $ssoToken = $result['ssoToken'];
 
-        session(['user_id' => $user->id, 'username' => $user->username]);
+        // Prevent session fixation: rotate the session id before establishing
+        // the authenticated identity from a successful SSO callback.
+        $request->session()->regenerate();
+        $request->session()->regenerateToken();
+
+        Auth::login($user);
+
+        session(['user_id' => $user->id, 'username' => $user->username, 'role' => $user->role]);
 
         AuditLog::create([
             'user_id' => $user->id,
@@ -271,10 +285,16 @@ class AuthController extends Controller
             'success' => true
         ]);
 
+        // Determine redirect URL based on user role
+        $redirectUrl = match ($user->role ?? 'user') {
+            'admin' => '/admin/dashboard',
+            default => '/user/dashboard',
+        };
+
         return response()->json([
             'success' => true,
             'message' => 'Authentication successful',
-            'redirect_url' => '/dashboard',
+            'redirect_url' => $redirectUrl,
             'user' => [
                 'id' => $user->id,
                 'username' => $user->username,

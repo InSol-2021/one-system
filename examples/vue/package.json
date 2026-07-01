@@ -1,0 +1,31 @@
+{
+  "name": "vue-cas-client-example",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Minimal Vite + Vue 3 sample demonstrating @one-system/vue-cas-client end-to-end (login, callback validation, authenticated user, logout) with a tiny Express backend for the server-to-server token validation.",
+  "scripts": {
+    "dev": "node server/index.js",
+    "dev:front": "vite",
+    "build": "vite build",
+    "start": "node server/index.js",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@one-system/vue-cas-client": "file:../../packages/vue-cas-client",
+    "better-sqlite3": "^11.8.1",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-session": "^1.18.1",
+    "pinia": "^3.0.1",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "concurrently": "^8.2.2",
+    "http-proxy-middleware": "^3.0.0",
+    "typescript": "^5.6.3",
+    "vite": "^6.0.7"
+  }
+}

@@ -16,17 +16,20 @@ class SsoService
 
     public function __construct()
     {
-        $this->jwtSecret = env('JWT_SECRET', 'cas-secret-key-change-in-production');
+        $this->jwtSecret = config('jwt.secret');
+
+        if (empty($this->jwtSecret)) {
+            throw new \RuntimeException('JWT secret not configured');
+        }
     }
 
     public function generateToken($clientId, $clientSecret, $username, $request)
     {
         $clientSystem = ClientSystem::where('client_id', $clientId)
-            ->where('client_secret', $clientSecret)
             ->active()
             ->first();
 
-        if (!$clientSystem) {
+        if (!$clientSystem || !$clientSystem->verifyClientSecret($clientSecret)) {
             $this->logFailure(null, null, 'sso_generation_failed', 'invalid_client_credentials', 'Invalid client credentials', [
                 'reason' => 'Invalid client credentials',
                 'client_id' => $clientId,
@@ -57,7 +60,7 @@ class SsoService
             'clientSystemId' => $clientSystem->id,
             'clientId' => $clientSystem->client_id,
             'iat' => time(),
-            'exp' => time() + (8 * 60 * 60), // 8 hours
+            'exp' => time() + config('jwt.ttl'),
             'jti' => bin2hex(random_bytes(16)), // Unique token ID
         ];
 
@@ -135,7 +138,7 @@ class SsoService
             'clientSystemId' => $clientSystem->id,
             'clientId' => $clientSystem->client_id,
             'iat' => time(),
-            'exp' => time() + (8 * 60 * 60), // 8 hours
+            'exp' => time() + config('jwt.ttl'),
             'jti' => bin2hex(random_bytes(16)), // Unique token ID
             'is_linked_account' => (bool) $linkedUser,
             'original_user_id' => $user->id
@@ -188,11 +191,10 @@ class SsoService
         $clientIp = $this->getClientIp($request);
 
         $clientSystem = ClientSystem::where('client_id', $clientId)
-            ->where('client_secret', $clientSecret)
             ->active()
             ->first();
 
-        if (!$clientSystem) {
+        if (!$clientSystem || !$clientSystem->verifyClientSecret($clientSecret)) {
             throw new \Exception('Invalid client credentials', 401);
         }
 
@@ -257,7 +259,7 @@ class SsoService
         }
 
 
-        $ssoToken->update(['is_used' => true]);
+        $ssoToken->update(['is_used' => true, 'used_at' => now()]);
 
         return [
             'valid' => true,
@@ -271,13 +273,38 @@ class SsoService
         try {
             $decoded = JWT::decode($token, new Key($this->jwtSecret, 'HS256'));
 
-            $ssoToken = SsoToken::where('token_hash', hash('sha256', $token))
-                ->active()
-                ->with('user')
-                ->first();
+            $tokenHash = hash('sha256', $token);
 
-            if (!$ssoToken) {
-                 return ['status' => 'error', 'message' => 'Invalid or expired token'];
+            // Atomically locate, single-use check, and consume the token to
+            // prevent replay. The conditional update only succeeds for an
+            // active, unused, unexpired token; a second concurrent/replayed
+            // request affects zero rows.
+            $ssoToken = DB::transaction(function () use ($tokenHash) {
+                $candidate = SsoToken::where('token_hash', $tokenHash)
+                    ->active()
+                    ->lockForUpdate()
+                    ->with('user')
+                    ->first();
+
+                if (!$candidate) {
+                    return null;
+                }
+
+                if ($candidate->is_used) {
+                    return false;
+                }
+
+                $candidate->update(['is_used' => true, 'used_at' => now()]);
+
+                return $candidate;
+            });
+
+            if ($ssoToken === null) {
+                return ['status' => 'error', 'message' => 'Invalid or expired token'];
+            }
+
+            if ($ssoToken === false) {
+                return ['status' => 'error', 'message' => 'Token has already been used'];
             }
 
             $user = $ssoToken->user;

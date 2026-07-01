@@ -1,6 +1,6 @@
 # JavaScript CAS Client (Browser)
 
-A lightweight JavaScript SDK for browser-based CAS SSO integration. No build tools required — works with a simple `<script>` tag or ES modules.
+A lightweight JavaScript SDK for browser-based CAS SSO integration. No build tools required — works with a simple `<script>` tag (UMD: exposes a global `CasClient`, and is `require()`-able via CommonJS).
 
 ## Features
 
@@ -24,7 +24,7 @@ A lightweight JavaScript SDK for browser-based CAS SSO integration. No build too
 ### npm
 
 ```bash
-npm install @insol-dev/js-cas-client
+npm install @one-system/js-cas-client
 ```
 
 ## Quick Start
@@ -60,7 +60,7 @@ npm install @insol-dev/js-cas-client
   cas.handleCallback().then(function(user) {
     if (user) {
       console.log('Welcome,', user.username);
-      window.location.href = '/dashboard';
+      window.location.href = cas.consumeReturnUrl() || '/dashboard';
     } else {
       alert('Login failed');
       window.location.href = '/login';
@@ -97,8 +97,9 @@ npm install @insol-dev/js-cas-client
 
 | Method | Description |
 |--------|-------------|
-| `login(returnUrl?)` | Redirect to CAS login |
-| `getLoginUrl(returnUrl?)` | Get login URL without redirect |
+| `login(returnUrl?)` | Redirect to CAS login (stashes `returnUrl` for after the callback) |
+| `getLoginUrl()` | Get login URL without redirect |
+| `consumeReturnUrl()` | Read + clear the `returnUrl` stashed by `login()` |
 | `handleCallback()` | Extract + validate token on callback page |
 | `extractTokenFromUrl()` | Extract token from URL query string |
 | `validateTokenViaBackend(token)` | Send token to backend for validation |
@@ -108,6 +109,23 @@ npm install @insol-dev/js-cas-client
 | `userHasRole(role)` | Check single role |
 | `userHasAnyRole(roles)` | Check any of roles |
 | `userHasAllRoles(roles)` | Check all roles |
+
+## Backend Validation Contract
+
+This browser SDK never holds your `client_secret` and never validates tokens itself.
+`validateTokenViaBackend(token)` POSTs `{ "token": "<jwt>" }` to your `backendValidateUrl`.
+Your backend must then validate the token **server-to-server** against the CAS server:
+
+```
+POST {CAS_BASE}/api/validate-token        Content-Type: application/json
+{ "token": "<jwt>", "client_id": "...", "client_secret": "..." }
+
+200 → { "valid": true, "user": { "id", "username", "email" }, "expires_at": "..." }
+401 → { "error": "<message>" }
+```
+
+The token is **single-use** — validate it once, then establish your own app session. Your
+backend endpoint should return a JSON body containing a `user` object back to the browser.
 
 ## License
 

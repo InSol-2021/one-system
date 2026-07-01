@@ -1,139 +1,351 @@
 @extends('public.documentation.layout')
 
-@section('title', 'Java Spring Boot Integration — CAS SSO')
-@section('description', 'Complete guide for integrating Java Spring Boot applications with CAS Single Sign-On authentication.')
+@section('title', 'Java integration — One System CAS SSO')
+@section('description', 'Integrate Java and Spring Boot applications with One System CAS single sign-on using the cas-client library.')
 
 @section('content')
-<section class="border-b border-slate-200 pb-10 mb-12">
-    <div class="max-w-3xl">
+<section class="border-b border-[var(--color-line)] pb-10 mb-12">
+    <div class="">
         <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                <i class="fab fa-java text-orange-600 text-lg"></i>
-            </div>
+            <span class="os-icon-tile os-icon-tile-ink">
+                <i class="fab fa-java"></i>
+            </span>
             <div>
-                <p class="text-sm font-medium text-blue-600 tracking-wide uppercase">Integration Guide</p>
-                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">Java Spring Boot</h1>
+                <p class="os-eyebrow">Integration guide</p>
+                <h1 class="text-3xl font-semibold text-[var(--color-ink)] tracking-tight leading-tight">{{ $javaGuide['title'] }}</h1>
             </div>
         </div>
-        <p class="text-lg text-slate-500 leading-relaxed mb-4">{{ $javaGuide['description'] }}</p>
-        <div class="flex flex-wrap gap-4 text-xs text-slate-500">
-            <span><i class="fas fa-clock mr-1"></i>8 min setup</span>
-            <span><i class="fas fa-signal mr-1"></i>Intermediate</span>
-            <span><i class="fas fa-tag mr-1"></i>Java 17+ / Spring 3</span>
+        <p class="text-lg text-[var(--color-muted)] leading-relaxed mb-5">{{ $javaGuide['description'] }}</p>
+        <div class="flex flex-wrap gap-2">
+            <span class="os-badge"><i class="fas fa-clock"></i> 8 min setup</span>
+            <span class="os-badge"><i class="fas fa-signal"></i> Intermediate</span>
+            <span class="os-badge">Java 17+</span>
+            <span class="os-badge">cas-client 2.0.0</span>
         </div>
     </div>
 </section>
 
-<nav class="mb-12 p-5 rounded-xl border border-slate-200 bg-slate-50/50">
-    <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">On This Page</h2>
-    <ol class="space-y-1.5 text-sm">
-        <li><a href="#dependency" class="text-blue-600 hover:text-blue-800">1. Maven Dependency</a></li>
-        <li><a href="#configuration" class="text-blue-600 hover:text-blue-800">2. Configuration</a></li>
-        <li><a href="#service" class="text-blue-600 hover:text-blue-800">3. Auth Service</a></li>
-        <li><a href="#security" class="text-blue-600 hover:text-blue-800">4. Security Config</a></li>
+<nav class="mb-12 os-card os-card-pad">
+    <h2 class="text-xs font-semibold text-[var(--color-faint)] uppercase tracking-widest mb-3">On this page</h2>
+    <ol class="space-y-1.5 text-sm text-[var(--color-accent)]">
+        <li><a href="#dependency" class="hover:text-[var(--color-accent-strong)]">1. Add the dependency</a></li>
+        <li><a href="#client" class="hover:text-[var(--color-accent-strong)]">2. Configure the client</a></li>
+        <li><a href="#filter" class="hover:text-[var(--color-accent-strong)]">3. Register the auth filter</a></li>
+        <li><a href="#callback" class="hover:text-[var(--color-accent-strong)]">4. Handle the SSO callback</a></li>
+        <li><a href="#manual" class="hover:text-[var(--color-accent-strong)]">5. Manual auth &amp; roles</a></li>
+        <li><a href="#reference" class="hover:text-[var(--color-accent-strong)]">6. API reference</a></li>
     </ol>
 </nav>
 
+<section class="mb-12">
+    <p class="text-[var(--color-ink-2)] leading-relaxed">
+        The <code class="os-code-inline">cas-client</code> library wraps the One System CAS SSO protocol for any Java
+        framework. It ships a programmatic <code class="os-code-inline">CasClient</code>, a configuration builder
+        (<code class="os-code-inline">CasConfig</code>), and a drop-in servlet filter
+        (<code class="os-code-inline">CasAuthFilter</code>) for protecting routes. It depends on OkHttp, Gson,
+        JJWT, and SLF4J, targets Java 17, and is built against the
+        <code class="os-code-inline">javax.servlet</code> API (servlet-api 4.0.1) — so it works with Spring Boot 2.7.x,
+        Jakarta EE 8 / Java EE servlet containers, and plain Java.
+    </p>
+</section>
+
 <section id="dependency" class="mb-12">
-    <h2 class="text-xl font-bold text-slate-900 mb-4">1. Maven Dependency</h2>
-    <div class="rounded-xl border border-slate-200 overflow-hidden">
-        <div class="flex items-center px-4 py-2.5 bg-slate-50 border-b border-slate-200"><span class="text-xs font-medium text-slate-600">pom.xml</span></div>
-        <div class="bg-slate-900 p-5 overflow-x-auto">
-            <pre class="text-sm leading-relaxed font-mono text-slate-300"><code>&lt;<span class="text-red-300">dependency</span>&gt;
-    &lt;<span class="text-amber-300">groupId</span>&gt;np.com.innovativesolution&lt;/<span class="text-amber-300">groupId</span>&gt;
-    &lt;<span class="text-amber-300">artifactId</span>&gt;java-client&lt;/<span class="text-amber-300">artifactId</span>&gt;
-    &lt;<span class="text-amber-300">version</span>&gt;2.0.0&lt;/<span class="text-amber-300">version</span>&gt;
-&lt;/<span class="text-red-300">dependency</span>&gt;</code></pre>
+    <h2 class="text-xl font-semibold text-[var(--color-ink)] mb-2">1. Add the dependency</h2>
+    <p class="text-[var(--color-muted)] mb-4">Add <code class="os-code-inline">io.github.insol-2021:cas-client</code> to your build.</p>
+
+    <div class="os-codeblock mb-4">
+        <div class="os-codeblock-head"><span>pom.xml</span><span>Maven</span></div>
+        <pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;io.github.insol-2021&lt;/groupId&gt;
+    &lt;artifactId&gt;cas-client&lt;/artifactId&gt;
+    &lt;version&gt;2.0.0&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+    </div>
+
+    <div class="os-codeblock">
+        <div class="os-codeblock-head"><span>build.gradle</span><span>Gradle</span></div>
+        <pre><code>implementation 'io.github.insol-2021:cas-client:2.0.0'</code></pre>
+    </div>
+
+    <div class="os-alert mt-4">
+        <i class="fas fa-info-circle mt-0.5 text-[var(--color-accent)]"></i>
+        <div>
+            Requires <strong>Java 17+</strong>. The package targets the
+            <code class="os-code-inline">javax.servlet</code> API (servlet-api 4.0.1), so use
+            <strong>Spring Boot 2.7.x</strong> — Spring Boot 3 moved to
+            <code class="os-code-inline">jakarta.servlet</code> and is not binary-compatible with
+            <code class="os-code-inline">CasAuthFilter</code>. Transitive dependencies are OkHttp 4.12, Gson 2.10,
+            JJWT 0.12, and SLF4J 2.0.
         </div>
     </div>
 </section>
 
-<section id="configuration" class="mb-12">
-    <h2 class="text-xl font-bold text-slate-900 mb-4">2. Configuration</h2>
-    <div class="rounded-xl border border-slate-200 overflow-hidden">
-        <div class="flex items-center px-4 py-2.5 bg-slate-50 border-b border-slate-200"><span class="text-xs font-medium text-slate-600">application.yml</span></div>
-        <div class="bg-slate-900 p-5 overflow-x-auto">
-            <pre class="text-sm leading-relaxed font-mono text-slate-300"><code><span class="text-amber-300">cas</span>:
-  <span class="text-amber-300">server-url</span>: <span class="text-green-400">https://your-cas-server.com</span>
-  <span class="text-amber-300">client-id</span>: <span class="text-green-400">your_client_id</span>
-  <span class="text-amber-300">client-secret</span>: <span class="text-green-400">your_client_secret</span>
-  <span class="text-amber-300">callback-url</span>: <span class="text-green-400">https://your-app.com/cas/callback</span></code></pre>
-        </div>
-    </div>
-</section>
+<section id="client" class="mb-12">
+    <h2 class="text-xl font-semibold text-[var(--color-ink)] mb-2">2. Configure the client</h2>
+    <p class="text-[var(--color-muted)] mb-4">
+        Build a <code class="os-code-inline">CasConfig</code> with your CAS server URL, client ID, and client
+        secret, then expose a singleton <code class="os-code-inline">CasClient</code>. Keep the client secret in
+        the environment — it is only ever used server to server.
+    </p>
 
-<section id="service" class="mb-12">
-    <h2 class="text-xl font-bold text-slate-900 mb-4">3. Auth Service</h2>
-    <div class="rounded-xl border border-slate-200 overflow-hidden">
-        <div class="flex items-center px-4 py-2.5 bg-slate-50 border-b border-slate-200"><span class="text-xs font-medium text-slate-600">CasAuthService.java</span></div>
-        <div class="bg-slate-900 p-5 overflow-x-auto">
-            <pre class="text-sm leading-relaxed font-mono text-slate-300"><code><span class="text-violet-400">@Service</span>
-<span class="text-violet-400">public class</span> <span class="text-orange-300">CasAuthService</span> {
+    <div class="os-codeblock mb-4">
+        <div class="os-codeblock-head"><span>CasConfiguration.java</span><span>Spring Boot</span></div>
+        <pre><code>import com.cassystem.client.CasClient;
+import com.cassystem.client.CasConfig;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-    <span class="text-violet-400">private final</span> <span class="text-orange-300">RestTemplate</span> restTemplate;
-    <span class="text-violet-400">private final</span> <span class="text-orange-300">CasProperties</span> props;
+@Configuration
+public class CasConfiguration {
 
-    <span class="text-violet-400">public</span> <span class="text-orange-300">CasUser</span> <span class="text-green-400">validateToken</span>(<span class="text-orange-300">String</span> token) {
-        <span class="text-orange-300">Map</span>&lt;String, Object&gt; body = Map.of(
-            <span class="text-amber-300">"token"</span>,         token,
-            <span class="text-amber-300">"client_id"</span>,     props.getClientId(),
-            <span class="text-amber-300">"client_secret"</span>, props.getClientSecret()
-        );
+    @Bean
+    public CasClient casClient() {
+        CasConfig config = new CasConfig(
+            System.getenv("CAS_SERVER_URL"),     // e.g. https://your-cas-server.com
+            System.getenv("CAS_CLIENT_ID"),
+            System.getenv("CAS_CLIENT_SECRET")
+        ).callbackUrl("https://your-app.com/cas/callback");
 
-        <span class="text-orange-300">ResponseEntity</span>&lt;<span class="text-orange-300">CasResponse</span>&gt; response = restTemplate
-            .<span class="text-green-400">postForEntity</span>(
-                props.getServerUrl() + <span class="text-amber-300">"/api/sso/validate"</span>,
-                body,
-                <span class="text-orange-300">CasResponse</span>.<span class="text-blue-400">class</span>
-            );
-
-        <span class="text-violet-400">return</span> response.getBody().getUser();
+        return new CasClient(config);
     }
 }</code></pre>
+    </div>
+
+    <div class="os-alert mb-2">
+        <i class="fas fa-info-circle mt-0.5 text-[var(--color-accent)]"></i>
+        <div>
+            <code class="os-code-inline">CasConfig</code> is a fluent builder. Optional setters include
+            <code class="os-code-inline">timeoutSeconds(int)</code>, <code class="os-code-inline">verifySsl(boolean)</code>,
+            <code class="os-code-inline">enableSignatureValidation(boolean)</code>, and
+            <code class="os-code-inline">signatureSecret(String)</code> for HMAC-SHA256 request signing.
         </div>
     </div>
 </section>
 
-<section id="security" class="mb-12">
-    <h2 class="text-xl font-bold text-slate-900 mb-4">4. Security Config</h2>
-    <div class="rounded-xl border border-slate-200 overflow-hidden mb-6">
-        <div class="flex items-center px-4 py-2.5 bg-slate-50 border-b border-slate-200"><span class="text-xs font-medium text-slate-600">SecurityConfig.java</span></div>
-        <div class="bg-slate-900 p-5 overflow-x-auto">
-            <pre class="text-sm leading-relaxed font-mono text-slate-300"><code><span class="text-violet-400">@Configuration</span>
-<span class="text-violet-400">@EnableWebSecurity</span>
-<span class="text-violet-400">public class</span> <span class="text-orange-300">SecurityConfig</span> {
+<section id="filter" class="mb-12">
+    <h2 class="text-xl font-semibold text-[var(--color-ink)] mb-2">3. Register the auth filter</h2>
+    <p class="text-[var(--color-muted)] mb-4">
+        <code class="os-code-inline">CasAuthFilter</code> is a standard servlet filter. Register it with a
+        <code class="os-code-inline">FilterRegistrationBean</code> and map the URL patterns you want to protect.
+        It looks for an authenticated user in the session or a <code class="os-code-inline">Bearer</code> token in the
+        <code class="os-code-inline">Authorization</code> header, and otherwise redirects to your login URL (or returns
+        <code class="os-code-inline">401</code> for JSON requests). Pass required roles to gate by role.
+    </p>
 
-    <span class="text-violet-400">@Bean</span>
-    <span class="text-violet-400">public</span> <span class="text-orange-300">SecurityFilterChain</span> <span class="text-green-400">filterChain</span>(<span class="text-orange-300">HttpSecurity</span> http) {
-        http
-            .<span class="text-green-400">authorizeHttpRequests</span>(auth -> auth
-                .requestMatchers(<span class="text-amber-300">"/cas/**"</span>).permitAll()
-                .anyRequest().authenticated()
-            )
-            .<span class="text-green-400">addFilterBefore</span>(
-                casTokenFilter(),
-                <span class="text-orange-300">UsernamePasswordAuthFilter</span>.<span class="text-blue-400">class</span>
-            );
-        <span class="text-violet-400">return</span> http.build();
+    <div class="os-codeblock">
+        <div class="os-codeblock-head"><span>CasConfiguration.java</span><span>Filter registration</span></div>
+        <pre><code>import com.cassystem.client.CasAuthFilter;
+import com.cassystem.client.CasClient;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
+
+@Bean
+public FilterRegistrationBean&lt;CasAuthFilter&gt; casAuthFilter(CasClient casClient) {
+    FilterRegistrationBean&lt;CasAuthFilter&gt; reg = new FilterRegistrationBean&lt;&gt;();
+    reg.setFilter(new CasAuthFilter(casClient));
+    reg.addUrlPatterns("/dashboard/*", "/profile/*");
+    reg.setOrder(1);
+    return reg;
+}
+
+@Bean
+public FilterRegistrationBean&lt;CasAuthFilter&gt; casAdminFilter(CasClient casClient) {
+    FilterRegistrationBean&lt;CasAuthFilter&gt; reg = new FilterRegistrationBean&lt;&gt;();
+    // (casClient, loginUrl, requiredRoles...)
+    reg.setFilter(new CasAuthFilter(casClient, "/auth/login", "admin"));
+    reg.addUrlPatterns("/admin/*");
+    reg.setOrder(2);
+    return reg;
+}</code></pre>
+    </div>
+
+    <div class="os-alert mt-4">
+        <i class="fas fa-info-circle mt-0.5 text-[var(--color-accent)]"></i>
+        <div>
+            The filter stores the validated user under the <code class="os-code-inline">cas_user</code> session
+            attribute and also exposes it as a request attribute, so downstream controllers can read it with
+            <code class="os-code-inline">request.getAttribute("cas_user")</code>.
+        </div>
+    </div>
+</section>
+
+<section id="callback" class="mb-12">
+    <h2 class="text-xl font-semibold text-[var(--color-ink)] mb-2">4. Handle the SSO callback</h2>
+    <p class="text-[var(--color-muted)] mb-4">
+        Redirect unauthenticated users to <code class="os-code-inline">casClient.getLoginUrl()</code>. The CAS server
+        authenticates them and redirects back to your registered <code class="os-code-inline">callbackUrl</code> with a
+        single-use <code class="os-code-inline">token</code> query parameter. Validate it server to server, then store the
+        user in the session to create your app's own session.
+    </p>
+
+    <div class="os-codeblock">
+        <div class="os-codeblock-head"><span>CasController.java</span><span>Spring MVC</span></div>
+        <pre><code>import com.cassystem.client.CasClient;
+import javax.servlet.http.HttpSession;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+
+@Controller
+public class CasController {
+
+    private final CasClient casClient;
+
+    public CasController(CasClient casClient) {
+        this.casClient = casClient;
+    }
+
+    // Kick off SSO: send the browser to the CAS server
+    @GetMapping("/auth/login")
+    public String login() {
+        return "redirect:" + casClient.getLoginUrl();
+    }
+
+    // Registered callback_url — token arrives as a query param
+    @GetMapping("/cas/callback")
+    public String callback(@RequestParam("token") String token, HttpSession session) {
+        // Server-to-server validation (single use)
+        Map&lt;String, Object&gt; user = casClient.validateToken(token);
+
+        if (user == null) {
+            return "redirect:/auth/login?error=invalid_token";
+        }
+
+        // Create the app's own session
+        session.setAttribute("cas_user", user);
+        return "redirect:/dashboard";
+    }
+
+    @PostMapping("/auth/logout")
+    public String logout(@RequestParam(value = "token", required = false) String token,
+                         HttpSession session) {
+        casClient.logout(token);
+        session.invalidate();
+        return "redirect:/";
     }
 }</code></pre>
-        </div>
     </div>
 
-    <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
-        <div class="flex items-start gap-2">
-            <i class="fas fa-check-circle text-emerald-500 mt-0.5"></i>
-            <div class="text-sm text-emerald-800"><strong>Done!</strong> Spring Security will intercept requests and validate CAS tokens via the custom filter.</div>
+    <div class="os-alert mt-4">
+        <i class="fas fa-shield-halved mt-0.5 text-[var(--color-accent)]"></i>
+        <div>
+            <code class="os-code-inline">validateToken</code> POSTs <code class="os-code-inline">{ token, client_id, client_secret }</code>
+            to <code class="os-code-inline">/api/validate-token</code>. On success the server returns
+            <code class="os-code-inline">{ valid: true, user: {...}, expires_at }</code> and the library hands you the
+            <code class="os-code-inline">user</code> map. Tokens are single-use — validate once, then rely on your session.
         </div>
     </div>
 </section>
 
-<section class="border-t border-slate-200 pt-10">
-    <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-4">Next Steps</h2>
+<section id="manual" class="mb-12">
+    <h2 class="text-xl font-semibold text-[var(--color-ink)] mb-2">5. Manual auth &amp; roles</h2>
+    <p class="text-[var(--color-muted)] mb-4">
+        Beyond the filter, <code class="os-code-inline">CasClient</code> exposes helpers for token validation,
+        service-to-service token issuance, and role checks. The user map contains
+        <code class="os-code-inline">id</code>, <code class="os-code-inline">username</code>,
+        <code class="os-code-inline">email</code>, and a <code class="os-code-inline">roles</code> list.
+    </p>
+
+    <div class="os-codeblock">
+        <div class="os-codeblock-head"><span>Usage.java</span><span>CasClient API</span></div>
+        <pre><code>// Build the CAS login URL (server resolves the registered callback)
+String loginUrl = casClient.getLoginUrl();
+
+// Validate a single-use token -> user map, or null
+Map&lt;String, Object&gt; user = casClient.validateToken(token);
+if (user != null) {
+    String username = (String) user.get("username");
+    String email    = (String) user.get("email");
+}
+
+// Read a previously validated user from the in-memory cache
+Map&lt;String, Object&gt; cached = casClient.getUserFromToken(token);
+
+// Service-to-service token issuance (IP-whitelisted, uses client credentials)
+Map&lt;String, Object&gt; tokenData = casClient.generateSSOToken("john_doe");
+// -> { redirect_url, token }
+
+// Role checks
+boolean isAdmin   = casClient.userHasRole(user, "admin");
+boolean isStaff   = casClient.userHasAnyRole(user, "admin", "manager");
+boolean isTrusted = casClient.userHasAllRoles(user, "user", "verified");
+
+// Logout (clears the cache entry and notifies the CAS server)
+casClient.logout(token);</code></pre>
+    </div>
+</section>
+
+<section id="reference" class="mb-12">
+    <h2 class="text-xl font-semibold text-[var(--color-ink)] mb-4">6. API reference</h2>
+
+    <div class="os-card overflow-hidden">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="border-b border-[var(--color-line)] bg-[var(--color-surface-2)] text-left">
+                    <th class="px-4 py-2.5 font-semibold text-[var(--color-ink-2)]">Method</th>
+                    <th class="px-4 py-2.5 font-semibold text-[var(--color-ink-2)]">Description</th>
+                </tr>
+            </thead>
+            <tbody class="text-[var(--color-ink-2)]">
+                <tr class="border-b border-[var(--color-line)]">
+                    <td class="px-4 py-2.5"><code class="os-code-inline">getLoginUrl([returnUrl])</code></td>
+                    <td class="px-4 py-2.5 text-[var(--color-muted)]">Build the CAS SSO login URL for the configured client.</td>
+                </tr>
+                <tr class="border-b border-[var(--color-line)]">
+                    <td class="px-4 py-2.5"><code class="os-code-inline">validateToken(token)</code></td>
+                    <td class="px-4 py-2.5 text-[var(--color-muted)]">Validate a token server to server; returns the user map or <code class="os-code-inline">null</code>.</td>
+                </tr>
+                <tr class="border-b border-[var(--color-line)]">
+                    <td class="px-4 py-2.5"><code class="os-code-inline">getUserFromToken(token)</code></td>
+                    <td class="px-4 py-2.5 text-[var(--color-muted)]">Return the cached user for a token, if still valid.</td>
+                </tr>
+                <tr class="border-b border-[var(--color-line)]">
+                    <td class="px-4 py-2.5"><code class="os-code-inline">generateSSOToken(username)</code></td>
+                    <td class="px-4 py-2.5 text-[var(--color-muted)]">Issue an SSO token for a user via client credentials (IP-whitelisted).</td>
+                </tr>
+                <tr class="border-b border-[var(--color-line)]">
+                    <td class="px-4 py-2.5"><code class="os-code-inline">logout(token)</code></td>
+                    <td class="px-4 py-2.5 text-[var(--color-muted)]">Invalidate the cached token and notify the CAS server.</td>
+                </tr>
+                <tr class="border-b border-[var(--color-line)]">
+                    <td class="px-4 py-2.5"><code class="os-code-inline">userHasRole(user, role)</code></td>
+                    <td class="px-4 py-2.5 text-[var(--color-muted)]">Check a single role.</td>
+                </tr>
+                <tr class="border-b border-[var(--color-line)]">
+                    <td class="px-4 py-2.5"><code class="os-code-inline">userHasAnyRole(user, roles...)</code></td>
+                    <td class="px-4 py-2.5 text-[var(--color-muted)]">Check whether the user has any of the roles.</td>
+                </tr>
+                <tr>
+                    <td class="px-4 py-2.5"><code class="os-code-inline">userHasAllRoles(user, roles...)</code></td>
+                    <td class="px-4 py-2.5 text-[var(--color-muted)]">Check whether the user has all of the roles.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="os-alert os-alert-success mt-6">
+        <i class="fas fa-check-circle mt-0.5"></i>
+        <div><strong>Done.</strong> The filter intercepts protected routes, validates CAS tokens, and populates the
+            <code class="os-code-inline">cas_user</code> attribute for your controllers.</div>
+    </div>
+</section>
+
+<section class="border-t border-[var(--color-line)] pt-10">
+    <h2 class="text-xs font-semibold text-[var(--color-faint)] uppercase tracking-widest mb-4">Next steps</h2>
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <a href="{{ route('docs.api.overview') }}" class="group flex items-center gap-3 p-4 rounded-lg border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all"><i class="fas fa-code text-slate-400 text-sm"></i><span class="text-sm font-medium text-slate-700 group-hover:text-slate-900">API Reference</span></a>
-        <a href="{{ route('docs.security') }}" class="group flex items-center gap-3 p-4 rounded-lg border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all"><i class="fas fa-shield-alt text-slate-400 text-sm"></i><span class="text-sm font-medium text-slate-700 group-hover:text-slate-900">Security Guide</span></a>
-        <a href="{{ route('docs.deployment') }}" class="group flex items-center gap-3 p-4 rounded-lg border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all"><i class="fas fa-server text-slate-400 text-sm"></i><span class="text-sm font-medium text-slate-700 group-hover:text-slate-900">Deployment</span></a>
+        <a href="{{ route('docs.api.overview') }}" class="os-card os-card-hover flex items-center gap-3 p-4">
+            <i class="fas fa-code text-[var(--color-muted)]"></i>
+            <span class="text-sm font-medium text-[var(--color-ink-2)]">API reference</span>
+        </a>
+        <a href="{{ route('docs.security') }}" class="os-card os-card-hover flex items-center gap-3 p-4">
+            <i class="fas fa-shield-halved text-[var(--color-muted)]"></i>
+            <span class="text-sm font-medium text-[var(--color-ink-2)]">Security guide</span>
+        </a>
+        <a href="{{ route('docs.deployment') }}" class="os-card os-card-hover flex items-center gap-3 p-4">
+            <i class="fas fa-server text-[var(--color-muted)]"></i>
+            <span class="text-sm font-medium text-[var(--color-ink-2)]">Deployment</span>
+        </a>
     </div>
 </section>
 @endsection

@@ -116,7 +116,7 @@ class ClientCredentialValidator
      */
     private function validateCredentialsAgainstClientSystem($username, $password, $clientSystem)
     {
-        $baseUrl = $this->extractBaseUrl($clientSystem->callback_url);
+        $baseUrl = $this->resolveValidationBaseUrl($clientSystem);
 
         $loginResult = $this->tryLoginEndpoint($baseUrl, $username, $password, $clientSystem);
         if ($loginResult['success']) {
@@ -144,8 +144,9 @@ class ClientCredentialValidator
      */
     private function tryLoginEndpoint($baseUrl, $username, $password, $clientSystem)
     {
+        $path = $this->resolveLoginPath($clientSystem);
         try {
-            $response = Http::timeout(10)->post("{$baseUrl}/login", [
+            $response = Http::timeout(10)->post("{$baseUrl}{$path}", [
                 'username' => $username,
                 'password' => $password,
                 'client_validation' => true
@@ -230,6 +231,39 @@ class ClientCredentialValidator
         $parts = parse_url($callbackUrl);
         return $parts['scheme'] . '://' . $parts['host'] .
                (isset($parts['port']) ? ':' . $parts['port'] : '');
+    }
+
+    /**
+     * Where to reach the client system for credential validation. Prefers an
+     * explicit server_config.validation_url (e.g. an internal docker address that
+     * is reachable from this server when the public callback host is not), and
+     * falls back to the callback URL's host.
+     */
+    private function resolveValidationBaseUrl($clientSystem): string
+    {
+        $cfg = $clientSystem->server_config ?? null;
+        if (is_string($cfg)) {
+            $cfg = json_decode($cfg, true) ?: [];
+        }
+        if (is_array($cfg) && !empty($cfg['validation_url'])) {
+            return rtrim($cfg['validation_url'], '/');
+        }
+        return $this->extractBaseUrl($clientSystem->callback_url);
+    }
+
+    /**
+     * Path on the client system that handles credential validation (the login
+     * endpoint that honours {username,password,client_validation:true}). Defaults
+     * to /login; some apps (e.g. Next.js) expose it elsewhere (/api/login).
+     */
+    private function resolveLoginPath($clientSystem): string
+    {
+        $cfg = $clientSystem->server_config ?? null;
+        if (is_string($cfg)) {
+            $cfg = json_decode($cfg, true) ?: [];
+        }
+        $path = is_array($cfg) && !empty($cfg['login_path']) ? $cfg['login_path'] : '/login';
+        return '/' . ltrim($path, '/');
     }
 
     /**

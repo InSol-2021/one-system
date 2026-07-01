@@ -21,10 +21,17 @@ class CasClient:
     CAS SSO Client for Python applications.
 
     Args:
-        server_url: CAS server URL (e.g., https://your-cas-server.com)
+        server_url: CAS server URL (e.g., https://your-cas-server.com). Used as
+            the internal/back-channel base for server-to-server calls
+            (token validation, logout, token generation).
         client_id: Registered client ID
         client_secret: Registered client secret
         callback_url: OAuth callback URL
+        public_url: Public, browser-facing CAS base URL used ONLY when building
+            the browser login redirect (``get_login_url``). In split-horizon
+            deployments the browser must reach CAS at a public host while the
+            server reaches it at a different internal host. Optional; when empty
+            the login URL falls back to ``server_url`` (single-url dev).
         signature_secret: HMAC signature secret (optional)
         enable_signature_validation: Enable HMAC request signing (default: False)
         timeout: Request timeout in seconds (default: 30)
@@ -37,6 +44,7 @@ class CasClient:
         client_id: str,
         client_secret: str,
         callback_url: str = '',
+        public_url: str = '',
         signature_secret: str = '',
         enable_signature_validation: bool = False,
         timeout: int = 30,
@@ -51,6 +59,9 @@ class CasClient:
 
         self.config = {
             'server_url': server_url.rstrip('/'),
+            # Public/browser-facing base for the login redirect only. Falls back
+            # to server_url when not provided so single-url setups are unchanged.
+            'public_url': (public_url or '').rstrip('/'),
             'client_id': client_id,
             'client_secret': client_secret,
             'callback_url': callback_url,
@@ -71,18 +82,27 @@ class CasClient:
     def get_login_url(self, return_url: Optional[str] = None) -> str:
         """Generate CAS SSO login URL.
 
+        The CAS server expects only ``client_id`` on the login redirect; it
+        looks up the client's registered callback URL server-side and appends
+        the token to it (``{callback_url}?token={JWT}``).
+
+        This is the URL the user's BROWSER is redirected to, so it is built from
+        ``public_url`` when configured (the public, browser-facing CAS host),
+        falling back to ``server_url`` otherwise. Server-to-server calls still
+        use ``server_url`` (the internal back-channel host).
+
         Args:
-            return_url: URL to redirect after successful login
+            return_url: Unused by the CAS server (the registered callback URL
+                is always used). Accepted for backwards compatibility.
 
         Returns:
             Full CAS login URL string
         """
         params = {
             'client_id': self.config['client_id'],
-            'response_type': 'token',
-            'redirect_uri': return_url or self.config['callback_url'],
         }
-        return f"{self.config['server_url']}/sso/login?{urlencode(params)}"
+        base = self.config['public_url'] or self.config['server_url']
+        return f"{base}/sso/login?{urlencode(params)}"
 
     def generate_sso_token(self, username: str) -> Optional[Dict[str, Any]]:
         """Generate SSO token for a user via client credentials.
@@ -164,7 +184,9 @@ class CasClient:
 
             if response.status_code == 200:
                 data = response.json()
-                if 'user' in data:
+                # CAS server signals success with {"valid": true, "user": {...},
+                # "expires_at": "<datetime>"}. Honor the explicit "valid" flag.
+                if data.get('valid') and 'user' in data:
                     cache_key = hashlib.md5(token.encode()).hexdigest()
                     self._cache[cache_key] = {
                         'data': data['user'],
@@ -235,7 +257,7 @@ class CasClient:
 
     def _generate_signature(self, method: str, uri: str, data: dict, timestamp: int) -> str:
         """Generate HMAC SHA-256 signature for request."""
-        body = json.dumps(data, separators=(',', ':'))
+        body = json.dumps(data)
         payload = '|'.join([method, uri, body, str(timestamp), self.config['client_id']])
         secret = self.config['signature_secret']
         signature = hmac.new(secret.encode(), payload.encode(), hashlib.sha256).hexdigest()

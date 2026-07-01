@@ -1,153 +1,160 @@
 @extends('public.documentation.layout')
 
-@section('title', 'User Guide — CAS SSO')
-@section('description', 'Learn how to use the CAS Single Sign-On system as an end user — login, profile, connected apps, and security settings.')
+@section('title', 'User guide — One System')
+@section('description', 'Learn how to use One System single sign-on as an end user — sign in, profile, connected apps, and security settings.')
 
 @section('content')
-<div class="max-w-4xl">
-    <!-- Page Header -->
-    <div class="mb-8">
-        <div class="flex items-center space-x-2 text-sm text-gray-500 mb-4">
-            <a href="{{ route('docs') }}" class="hover:text-blue-600">Docs</a>
-            <i class="fas fa-chevron-right text-xs"></i>
-            <span>User Guide</span>
+<div class="">
+    {{-- Page header --}}
+    <section class="border-b border-[var(--color-line)] pb-10 mb-12">
+        <div class="flex items-center gap-2 text-sm text-[var(--color-muted)] mb-4">
+            <a href="{{ route('docs') }}" class="hover:text-[var(--color-accent)]">Docs</a>
+            <i class="fas fa-chevron-right text-[0.65rem] text-[var(--color-faint)]"></i>
+            <span>User guide</span>
         </div>
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">User Guide</h1>
-        <p class="text-lg text-gray-600">A comprehensive guide for end users of the CAS Single Sign-On system.</p>
-    </div>
+        <p class="os-eyebrow mb-3">For end users</p>
+        <h1 class="text-4xl font-semibold text-[var(--color-ink)] tracking-tight leading-tight mb-4">User guide</h1>
+        <p class="text-lg text-[var(--color-muted)] leading-relaxed">A complete guide for end users of One System single sign-on.</p>
+    </section>
 
-    <!-- Getting Started -->
-    <div class="bg-white border border-gray-200 rounded-lg p-6 mb-8">
-        <h2 class="text-xl font-semibold text-gray-900 mb-4">
-            <i class="fas fa-play-circle text-blue-600 mr-2"></i>Getting Started
+    {{-- Getting Started --}}
+    <section class="mb-12">
+        <h2 class="text-xl font-semibold text-[var(--color-ink)] mb-4 flex items-center gap-2">
+            <span class="os-icon-tile os-icon-tile-ink" style="width:2.25rem;height:2.25rem;font-size:0.95rem;"><i class="fas fa-circle-play"></i></span>
+            Getting started
         </h2>
-        <p class="text-gray-700 mb-4">
-            The CAS (Central Authentication Service) provides a single set of credentials to access all connected applications. Once your account is created by an administrator, you can log in and manage your profile.
+        <p class="text-sm text-[var(--color-ink-2)] mb-4">
+            One System gives you a single set of credentials to access every connected application. Once an administrator creates your account, you can sign in and manage your profile.
         </p>
 
-        <h3 class="text-lg font-medium text-gray-900 mb-3">Logging In</h3>
-        <ol class="list-decimal list-inside space-y-2 text-gray-700 mb-4">
-            <li>Navigate to the CAS login page at <code class="bg-gray-100 px-2 py-1 rounded text-sm">/auth/login</code></li>
-            <li>Enter your <strong>email address</strong> and <strong>password</strong></li>
-            <li>If Two-Factor Authentication (2FA) is enabled, enter the OTP code from your authenticator app</li>
-            <li>You will be redirected to your <strong>User Dashboard</strong></li>
+        <h3 class="text-sm font-semibold text-[var(--color-ink)] mt-6 mb-3">Signing in</h3>
+        <ol class="space-y-2 text-sm text-[var(--color-ink-2)] mb-4">
+            <li class="flex items-start gap-2"><span class="font-semibold text-[var(--color-ink)]">1.</span> Open the One System sign-in page at <code class="os-code-inline">/auth/login</code></li>
+            <li class="flex items-start gap-2"><span class="font-semibold text-[var(--color-ink)]">2.</span> Enter your <strong>email address</strong> and <strong>password</strong></li>
+            <li class="flex items-start gap-2"><span class="font-semibold text-[var(--color-ink)]">3.</span> If two-factor authentication (2FA) is enabled, enter the code from your authenticator app</li>
+            <li class="flex items-start gap-2"><span class="font-semibold text-[var(--color-ink)]">4.</span> You are redirected to your <strong>user dashboard</strong></li>
         </ol>
 
-        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <p class="text-blue-800 text-sm"><i class="fas fa-info-circle mr-1"></i> <strong>Tip:</strong> If you forget your password, contact your system administrator to have it reset.</p>
+        <div class="os-alert">
+            <i class="fas fa-circle-info mt-0.5 text-[var(--color-accent)]"></i>
+            <span><strong>Tip:</strong> If you forget your password, use the "Forgot password" link on the sign-in page, or contact your system administrator to have it reset.</span>
         </div>
-    </div>
+    </section>
 
-    <!-- User Dashboard -->
-    <div class="bg-white border border-gray-200 rounded-lg p-6 mb-8">
-        <h2 class="text-xl font-semibold text-gray-900 mb-4">
-            <i class="fas fa-tachometer-alt text-green-600 mr-2"></i>User Dashboard
+    {{-- User Dashboard --}}
+    <section class="mb-12">
+        <h2 class="text-xl font-semibold text-[var(--color-ink)] mb-4 flex items-center gap-2">
+            <span class="os-icon-tile os-icon-tile-ink" style="width:2.25rem;height:2.25rem;font-size:0.95rem;"><i class="fas fa-gauge-high"></i></span>
+            User dashboard
         </h2>
-        <p class="text-gray-700 mb-4">
-            After logging in, the User Dashboard provides an overview of your connected applications and account status.
+        <p class="text-sm text-[var(--color-ink-2)] mb-4">
+            After signing in, the dashboard gives you an overview of your connected applications and account status.
         </p>
 
-        <h3 class="text-lg font-medium text-gray-900 mb-3">Dashboard Features</h3>
-        <ul class="space-y-3 text-gray-700">
-            <li class="flex items-start">
-                <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                <div>
-                    <strong>Connected Applications</strong> — View all client systems you have access to, along with their SSO status.
-                </div>
+        <h3 class="text-sm font-semibold text-[var(--color-ink)] mt-6 mb-3">Dashboard features</h3>
+        <ul class="space-y-3 text-sm text-[var(--color-ink-2)]">
+            <li class="flex items-start gap-3">
+                <i class="fas fa-circle-check text-[var(--color-accent)] mt-1"></i>
+                <div><strong>Connected applications</strong> — view every client system you have access to, with its SSO status.</div>
             </li>
-            <li class="flex items-start">
-                <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                <div>
-                    <strong>Launch Applications</strong> — Click "Launch Application" on any connected system to SSO directly into it without re-entering credentials.
-                </div>
+            <li class="flex items-start gap-3">
+                <i class="fas fa-circle-check text-[var(--color-accent)] mt-1"></i>
+                <div><strong>Launch applications</strong> — click "Launch application" on any connected system to sign in to it without re-entering credentials.</div>
             </li>
-            <li class="flex items-start">
-                <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                <div>
-                    <strong>Quick Actions</strong> — Access profile settings and refresh your dashboard data.
-                </div>
+            <li class="flex items-start gap-3">
+                <i class="fas fa-circle-check text-[var(--color-accent)] mt-1"></i>
+                <div><strong>Quick actions</strong> — reach profile settings and refresh your dashboard data.</div>
             </li>
         </ul>
-    </div>
+    </section>
 
-    <!-- Profile & Security -->
-    <div class="bg-white border border-gray-200 rounded-lg p-6 mb-8">
-        <h2 class="text-xl font-semibold text-gray-900 mb-4">
-            <i class="fas fa-user-cog text-purple-600 mr-2"></i>Profile & Security
+    {{-- Profile & Security --}}
+    <section class="mb-12">
+        <h2 class="text-xl font-semibold text-[var(--color-ink)] mb-4 flex items-center gap-2">
+            <span class="os-icon-tile os-icon-tile-ink" style="width:2.25rem;height:2.25rem;font-size:0.95rem;"><i class="fas fa-user-gear"></i></span>
+            Profile &amp; security
         </h2>
-        <p class="text-gray-700 mb-4">
-            Manage your personal information and security settings from the Profile page.
+        <p class="text-sm text-[var(--color-ink-2)] mb-4">
+            Manage your personal information and security settings from the profile page.
         </p>
 
-        <h3 class="text-lg font-medium text-gray-900 mb-3">Personal Information</h3>
-        <p class="text-gray-700 mb-4">Update your name, contact details, and other account information. Changes are saved immediately and reflected across all connected applications.</p>
+        <h3 class="text-sm font-semibold text-[var(--color-ink)] mt-6 mb-3">Personal information</h3>
+        <p class="text-sm text-[var(--color-ink-2)] mb-4">Update your name, contact details, and other account information. Changes are saved immediately and reflected across all connected applications.</p>
 
-        <h3 class="text-lg font-medium text-gray-900 mb-3">Changing Your Password</h3>
-        <ol class="list-decimal list-inside space-y-2 text-gray-700 mb-4">
-            <li>Go to <strong>Profile & Security</strong> from the navigation bar</li>
-            <li>Click the <strong>Security</strong> tab</li>
-            <li>Enter your <strong>current password</strong></li>
-            <li>Enter and confirm your <strong>new password</strong></li>
-            <li>Click <strong>Update Password</strong></li>
+        <h3 class="text-sm font-semibold text-[var(--color-ink)] mt-6 mb-3">Changing your password</h3>
+        <ol class="space-y-2 text-sm text-[var(--color-ink-2)] mb-4">
+            <li class="flex items-start gap-2"><span class="font-semibold text-[var(--color-ink)]">1.</span> Open <strong>Profile &amp; security</strong> from the navigation bar</li>
+            <li class="flex items-start gap-2"><span class="font-semibold text-[var(--color-ink)]">2.</span> Click the <strong>Security</strong> tab</li>
+            <li class="flex items-start gap-2"><span class="font-semibold text-[var(--color-ink)]">3.</span> Enter your <strong>current password</strong></li>
+            <li class="flex items-start gap-2"><span class="font-semibold text-[var(--color-ink)]">4.</span> Enter and confirm your <strong>new password</strong></li>
+            <li class="flex items-start gap-2"><span class="font-semibold text-[var(--color-ink)]">5.</span> Click <strong>Update password</strong></li>
         </ol>
 
-        <h3 class="text-lg font-medium text-gray-900 mb-3">Two-Factor Authentication (2FA)</h3>
-        <p class="text-gray-700 mb-4">If 2FA is enabled by your administrator, you will need an authenticator app (Google Authenticator, Authy, etc.) to generate time-based one-time passwords (TOTP) during login.</p>
+        <h3 class="text-sm font-semibold text-[var(--color-ink)] mt-6 mb-3">Two-factor authentication (2FA)</h3>
+        <p class="text-sm text-[var(--color-ink-2)] mb-4">When 2FA is enabled, you need an authenticator app (Google Authenticator, Authy, and similar) to generate time-based one-time passwords (TOTP) during sign-in.</p>
 
-        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            <p class="text-yellow-800 text-sm"><i class="fas fa-exclamation-triangle mr-1"></i> <strong>Important:</strong> Keep your 2FA recovery codes in a secure location. If you lose access to your authenticator app, you will need to contact your administrator.</p>
+        <div class="os-alert os-alert-warning">
+            <i class="fas fa-triangle-exclamation mt-0.5"></i>
+            <span><strong>Important:</strong> Keep your 2FA recovery codes somewhere safe. If you lose access to your authenticator app, you will need to contact your administrator.</span>
         </div>
-    </div>
+    </section>
 
-    <!-- SSO Login Flow -->
-    <div class="bg-white border border-gray-200 rounded-lg p-6 mb-8">
-        <h2 class="text-xl font-semibold text-gray-900 mb-4">
-            <i class="fas fa-exchange-alt text-indigo-600 mr-2"></i>How SSO Login Works
+    {{-- SSO Login Flow --}}
+    <section class="mb-12">
+        <h2 class="text-xl font-semibold text-[var(--color-ink)] mb-4 flex items-center gap-2">
+            <span class="os-icon-tile os-icon-tile-ink" style="width:2.25rem;height:2.25rem;font-size:0.95rem;"><i class="fas fa-right-left"></i></span>
+            How SSO sign-in works
         </h2>
-        <p class="text-gray-700 mb-4">
-            Single Sign-On allows you to access multiple applications with one login:
+        <p class="text-sm text-[var(--color-ink-2)] mb-4">
+            Single sign-on lets you reach many applications after one sign-in. Behind the scenes:
         </p>
-        <ol class="list-decimal list-inside space-y-3 text-gray-700">
-            <li><strong>Login once</strong> — Sign in to CAS with your credentials</li>
-            <li><strong>Click "Launch Application"</strong> — From your dashboard, select the app you want to use</li>
-            <li><strong>Automatic authentication</strong> — CAS sends a secure token to the target application, and you are logged in automatically</li>
-            <li><strong>Seamless access</strong> — No need to enter credentials again for any connected app during your session</li>
+        <ol class="space-y-3 text-sm text-[var(--color-ink-2)] mb-6">
+            <li class="flex items-start gap-2"><span class="font-semibold text-[var(--color-ink)]">1.</span> <strong>Sign in once</strong> — authenticate with One System using your credentials.</li>
+            <li class="flex items-start gap-2"><span class="font-semibold text-[var(--color-ink)]">2.</span> <strong>Click "Launch application"</strong> — your browser is sent to <code class="os-code-inline">/sso/login?client_id=&hellip;</code> for the app you chose.</li>
+            <li class="flex items-start gap-2"><span class="font-semibold text-[var(--color-ink)]">3.</span> <strong>Token hand-off</strong> — One System redirects your browser to the app's registered callback URL with a single-use token appended (<code class="os-code-inline">?token=&hellip;</code>).</li>
+            <li class="flex items-start gap-2"><span class="font-semibold text-[var(--color-ink)]">4.</span> <strong>Server-side validation</strong> — the app validates that token with One System server-to-server, then creates its own session and logs you in.</li>
+            <li class="flex items-start gap-2"><span class="font-semibold text-[var(--color-ink)]">5.</span> <strong>Seamless access</strong> — for the rest of your session you can launch other connected apps without re-entering credentials.</li>
         </ol>
-    </div>
+        <div class="os-alert">
+            <i class="fas fa-circle-info mt-0.5 text-[var(--color-accent)]"></i>
+            <span>The hand-off token is single-use and short-lived. The application validates it once, then relies on its own session — so the token never needs to be reused or stored.</span>
+        </div>
+    </section>
 
-    <!-- Troubleshooting for Users -->
-    <div class="bg-white border border-gray-200 rounded-lg p-6 mb-8">
-        <h2 class="text-xl font-semibold text-gray-900 mb-4">
-            <i class="fas fa-question-circle text-orange-600 mr-2"></i>Common Issues
+    {{-- Troubleshooting --}}
+    <section class="mb-12">
+        <h2 class="text-xl font-semibold text-[var(--color-ink)] mb-4 flex items-center gap-2">
+            <span class="os-icon-tile os-icon-tile-ink" style="width:2.25rem;height:2.25rem;font-size:0.95rem;"><i class="fas fa-circle-question"></i></span>
+            Common issues
         </h2>
 
         <div class="space-y-4">
-            <div class="border-l-4 border-blue-400 pl-4">
-                <h4 class="font-medium text-gray-900">Can't log in?</h4>
-                <p class="text-gray-600 text-sm">Check your email and password. If you've forgotten your password, contact your system administrator to reset it.</p>
+            <div class="border-l-2 border-[var(--color-accent)] pl-4">
+                <h4 class="text-sm font-semibold text-[var(--color-ink)]">Can't sign in?</h4>
+                <p class="text-sm text-[var(--color-muted)]">Double-check your email and password. If you've forgotten your password, use the "Forgot password" link or contact your administrator to reset it.</p>
             </div>
-            <div class="border-l-4 border-blue-400 pl-4">
-                <h4 class="font-medium text-gray-900">2FA code not working?</h4>
-                <p class="text-gray-600 text-sm">Make sure the time on your phone is synced correctly. TOTP codes are time-sensitive and expire every 30 seconds.</p>
+            <div class="border-l-2 border-[var(--color-accent)] pl-4">
+                <h4 class="text-sm font-semibold text-[var(--color-ink)]">2FA code not working?</h4>
+                <p class="text-sm text-[var(--color-muted)]">Make sure the time on your phone is synced correctly. TOTP codes are time-sensitive and expire every 30 seconds.</p>
             </div>
-            <div class="border-l-4 border-blue-400 pl-4">
-                <h4 class="font-medium text-gray-900">Application not launching?</h4>
-                <p class="text-gray-600 text-sm">The client system may be offline or your access may not be configured. Contact your administrator.</p>
+            <div class="border-l-2 border-[var(--color-accent)] pl-4">
+                <h4 class="text-sm font-semibold text-[var(--color-ink)]">Application not launching?</h4>
+                <p class="text-sm text-[var(--color-muted)]">The client system may be offline, or your access may not be configured. Contact your administrator.</p>
             </div>
-            <div class="border-l-4 border-blue-400 pl-4">
-                <h4 class="font-medium text-gray-900">Need help?</h4>
-                <p class="text-gray-600 text-sm">Reach out to your system administrator or contact the CAS development team at <a href="https://innovativesolution.com.np/" target="_blank" class="font-semibold text-blue-600 hover:text-blue-800">innovativesolution.com.np</a>.</p>
+            <div class="border-l-2 border-[var(--color-accent)] pl-4">
+                <h4 class="text-sm font-semibold text-[var(--color-ink)]">Need help?</h4>
+                <p class="text-sm text-[var(--color-muted)]">Reach out to your system administrator or contact the One System development team at <a href="https://innovativesolution.com.np/" target="_blank" rel="noopener" class="font-semibold text-[var(--color-accent)] hover:text-[var(--color-accent-strong)]">innovativesolution.com.np</a>.</p>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Navigation -->
-    <div class="flex justify-between items-center border-t border-gray-200 pt-6">
-        <a href="{{ route('docs.admin-panel') }}" class="flex items-center text-blue-600 hover:text-blue-800">
-            <i class="fas fa-arrow-left mr-2"></i>Admin Guide
+    {{-- Navigation --}}
+    <div class="flex justify-between items-center border-t border-[var(--color-line)] pt-6">
+        <a href="{{ route('docs.admin-panel') }}" class="os-btn os-btn-ghost">
+            <i class="fas fa-arrow-left"></i>Admin guide
         </a>
-        <a href="{{ route('docs.security-guide') }}" class="flex items-center text-blue-600 hover:text-blue-800">
-            Security Guide<i class="fas fa-arrow-right ml-2"></i>
+        <a href="{{ route('docs.security-guide') }}" class="os-btn os-btn-secondary">
+            Security guide<i class="fas fa-arrow-right"></i>
         </a>
     </div>
 </div>

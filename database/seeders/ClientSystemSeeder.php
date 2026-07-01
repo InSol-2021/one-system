@@ -18,19 +18,22 @@ class ClientSystemSeeder extends Seeder
                 'description' => 'Laravel-based customer portal with e-commerce features',
                 'callback_url' => 'http://127.0.0.1:9001/cas/callback',
                 'client_id' => 'laravel_customer_portal_id',
-                'client_secret' => 'laravel_portal_secret',
-                'allowed_scopes' => json_encode(['read', 'write', 'orders']),
+                // Generated per seed run and stored hashed by the model mutator.
+                'client_secret' => bin2hex(random_bytes(32)),
+                'webhook_secret' => bin2hex(random_bytes(32)),
+                'allowed_scopes' => ['read', 'write', 'orders'],
                 'is_active' => true,
                 'credentials_viewed' => true,
-                'server_config' => json_encode([
+                'server_config' => [
                     'domain' => 'http://127.0.0.1:9001',
-                    'webhook_secret' => 'laravel_portal_webhook_secret',
-                    'signature_validation_enabled' => true
-                ]),
+                    'signature_validation_enabled' => true,
+                ],
             ]
         ];
 
         foreach ($clientSystems as $systemData) {
+            // Persist via the model so the client_secret/webhook_secret mutators
+            // hash the values at rest. Plaintext is never stored.
             ClientSystem::updateOrCreate(
                 ['name' => $systemData['name']],
                 $systemData

@@ -1,0 +1,88 @@
+:root {
+  color-scheme: light dark;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  min-height: 100vh;
+  align-items: flex-start;
+  justify-content: center;
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+.card {
+  max-width: 560px;
+  width: 100%;
+  margin: 3rem 1rem;
+  padding: 2rem;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 12px;
+}
+
+h1 {
+  margin: 0 0 0.25rem;
+  font-size: 1.4rem;
+}
+
+.subtitle {
+  margin: 0 0 1.5rem;
+  color: #94a3b8;
+}
+
+code {
+  background: #0f172a;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+
+.btn {
+  display: inline-block;
+  margin: 0.4rem 0.4rem 0 0;
+  padding: 0.55rem 1.1rem;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  line-height: 1.2;
+}
+
+.btn-primary { background: #6366f1; color: white; }
+.btn-secondary { background: #334155; color: #e2e8f0; }
+.btn-link { background: none; color: #818cf8; text-decoration: underline; padding-left: 0; }
+
+.auth-options { display: flex; flex-wrap: wrap; align-items: center; }
+
+.or {
+  margin: 1.25rem 0 0.75rem;
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+.hint { margin-top: 0.5rem; font-size: 0.8rem; color: #64748b; }
+
+.ok { color: #4ade80; font-weight: 600; }
+.error { color: #f87171; }
+
+.user {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.25rem 1rem;
+  margin: 1rem 0;
+  padding: 1rem;
+  background: #0f172a;
+  border-radius: 8px;
+}
+.user dt { color: #94a3b8; }
+.user dd { margin: 0; word-break: break-all; }
+
+.protected {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #334155;
+}

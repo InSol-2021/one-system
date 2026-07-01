@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackageId>CasSystem.Client</PackageId>
@@ -12,6 +12,10 @@
     <PackageTags>cas;sso;authentication;jwt;single-sign-on</PackageTags>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="System.Text.Json" Version="7.0.3" />
+    <!-- ASP.NET Core types used by the middleware/client (IServiceCollection,
+         HttpContext, RequestDelegate, ILogger, Microsoft.Extensions.*). A library
+         that consumes these needs the shared framework reference. -->
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,201 @@
+# =============================================================================
+# One System CAS — sample applications (ports 9101-9111)
+#
+# Brings up all eleven example apps alongside a running CAS server. Each image is
+# built with the repo ROOT as the build context (context: ..) because every
+# sample links its SDK from the sibling packages/ directory.
+#
+# Usage (single server):
+#   1. Start the CAS server stack first (it creates the shared docker network):
+#        docker compose -f docker-compose.yml up -d        # or docker-production.yml
+#   2. Run migrations + seed the demo client registrations:
+#        docker compose -f docker-compose.yml exec php php artisan migrate --force
+#        docker compose -f docker-compose.yml exec php php artisan db:seed --class="Database\\Seeders\\SampleClientsSeeder" --force
+#   3. Start the samples:
+#        cd examples && docker compose up -d --build
+#   4. Open http://localhost:9101 ... http://localhost:9111
+#
+# CAS URL (split horizon): set CAS_PUBLIC_URL to an address reachable by BOTH the
+# browser AND the sample containers — on a real server that is the server's domain
+# or LAN IP (e.g. http://203.0.113.10:8000). On Docker Desktop for pure localhost,
+# the containers can reach the host via host.docker.internal (extra_hosts below).
+#
+# Secrets are DEMO placeholders that must match SampleClientsSeeder. Override the
+# *_CAS_SECRET vars (here and in the seeder env) for any real use. See ../DEPLOYMENT.md.
+# =============================================================================
+
+x-sample-common: &sample-common
+  restart: unless-stopped
+  networks: [one-system-network]
+  # Split-horizon: containers validate tokens server-to-server against
+  # CAS_INTERNAL_URL (the CAS service's docker name on one-system-network), while
+  # the browser is redirected to CAS_PUBLIC_URL for /sso/login. host.docker.internal
+  # is kept for Docker Desktop single-URL local dev (where one URL reaches both).
+  extra_hosts:
+    - "host.docker.internal:host-gateway"
+
+services:
+  sample-laravel:
+    <<: *sample-common
+    build: { context: .., dockerfile: examples/laravel/Dockerfile }
+    image: one-system-sample-laravel
+    container_name: os-sample-laravel
+    ports: ["9101:9101"]
+    environment:
+      APP_PORT: 9101
+      # Public origin the browser is sent back to (drives route('callback') ->
+      # redirect_uri, which must match the seeded callback_url).
+      APP_URL: ${SAMPLE_BASE_HOST:-http://localhost}:9101
+      CAS_BASE_URL: ${CAS_INTERNAL_URL:-http://host.docker.internal:8000}
+      CAS_PUBLIC_URL: ${CAS_PUBLIC_URL:-http://host.docker.internal:8000}
+      CAS_SERVER_URL: ${CAS_INTERNAL_URL:-http://host.docker.internal:8000}
+      CAS_CLIENT_ID: laravel-sample
+      CAS_CLIENT_SECRET: ${LARAVEL_CAS_SECRET:-demo-secret-laravel}
+      CAS_CALLBACK_URL: ${SAMPLE_BASE_HOST:-http://localhost}:9101/callback
+
+  sample-nodejs:
+    <<: *sample-common
+    build: { context: .., dockerfile: examples/nodejs/Dockerfile }
+    image: one-system-sample-nodejs
+    container_name: os-sample-nodejs
+    ports: ["9102:9102"]
+    environment:
+      PORT: 9102
+      CAS_BASE_URL: ${CAS_INTERNAL_URL:-http://host.docker.internal:8000}
+      CAS_PUBLIC_URL: ${CAS_PUBLIC_URL:-http://host.docker.internal:8000}
+      CAS_CLIENT_ID: nodejs-sample
+      CAS_CLIENT_SECRET: ${NODEJS_CAS_SECRET:-demo-secret-nodejs}
+      CAS_CALLBACK_URL: ${SAMPLE_BASE_HOST:-http://localhost}:9102/callback
+
+  sample-javascript:
+    <<: *sample-common
+    build: { context: .., dockerfile: examples/javascript/Dockerfile }
+    image: one-system-sample-javascript
+    container_name: os-sample-javascript
+    ports: ["9103:9103"]
+    environment:
+      PORT: 9103
+      CAS_BASE_URL: ${CAS_INTERNAL_URL:-http://host.docker.internal:8000}
+      CAS_PUBLIC_URL: ${CAS_PUBLIC_URL:-http://host.docker.internal:8000}
+      CAS_CLIENT_ID: javascript-sample
+      CAS_CLIENT_SECRET: ${JAVASCRIPT_CAS_SECRET:-demo-secret-javascript}
+      CAS_CALLBACK_URL: ${SAMPLE_BASE_HOST:-http://localhost}:9103/cas/callback
+
+  sample-python:
+    <<: *sample-common
+    build: { context: .., dockerfile: examples/python/Dockerfile }
+    image: one-system-sample-python
+    container_name: os-sample-python
+    ports: ["9104:9104"]
+    environment:
+      PORT: 9104
+      CAS_BASE_URL: ${CAS_INTERNAL_URL:-http://host.docker.internal:8000}
+      CAS_PUBLIC_URL: ${CAS_PUBLIC_URL:-http://host.docker.internal:8000}
+      CAS_CLIENT_ID: python-sample
+      CAS_CLIENT_SECRET: ${PYTHON_CAS_SECRET:-demo-secret-python}
+      CAS_CALLBACK_URL: ${SAMPLE_BASE_HOST:-http://localhost}:9104/callback
+
+  sample-java:
+    <<: *sample-common
+    build: { context: .., dockerfile: examples/java/Dockerfile }
+    image: one-system-sample-java
+    container_name: os-sample-java
+    ports: ["9105:9105"]
+    environment:
+      SERVER_PORT: 9105
+      CAS_BASE_URL: ${CAS_INTERNAL_URL:-http://host.docker.internal:8000}
+      CAS_PUBLIC_URL: ${CAS_PUBLIC_URL:-http://host.docker.internal:8000}
+      CAS_CLIENT_ID: java-sample
+      CAS_CLIENT_SECRET: ${JAVA_CAS_SECRET:-demo-secret-java}
+      CAS_CALLBACK_URL: ${SAMPLE_BASE_HOST:-http://localhost}:9105/callback
+
+  sample-dotnet:
+    <<: *sample-common
+    build: { context: .., dockerfile: examples/dotnet/Dockerfile }
+    image: one-system-sample-dotnet
+    container_name: os-sample-dotnet
+    ports: ["9106:9106"]
+    environment:
+      ASPNETCORE_URLS: http://+:9106
+      CAS_BASE_URL: ${CAS_INTERNAL_URL:-http://host.docker.internal:8000}
+      CAS_PUBLIC_URL: ${CAS_PUBLIC_URL:-http://host.docker.internal:8000}
+      CAS_CLIENT_ID: dotnet-sample
+      CAS_CLIENT_SECRET: ${DOTNET_CAS_SECRET:-demo-secret-dotnet}
+      CAS_CALLBACK_URL: ${SAMPLE_BASE_HOST:-http://localhost}:9106/cas/callback
+
+  sample-react:
+    <<: *sample-common
+    build: { context: .., dockerfile: examples/react/Dockerfile }
+    image: one-system-sample-react
+    container_name: os-sample-react
+    ports: ["9107:9107"]
+    environment:
+      PORT: 9107
+      CAS_BASE_URL: ${CAS_INTERNAL_URL:-http://host.docker.internal:8000}
+      CAS_PUBLIC_URL: ${CAS_PUBLIC_URL:-http://host.docker.internal:8000}
+      CAS_CLIENT_ID: react-sample
+      CAS_CLIENT_SECRET: ${REACT_CAS_SECRET:-demo-secret-react}
+      CAS_CALLBACK_URL: ${SAMPLE_BASE_HOST:-http://localhost}:9107/
+
+  sample-nextjs:
+    <<: *sample-common
+    build: { context: .., dockerfile: examples/nextjs/Dockerfile }
+    image: one-system-sample-nextjs
+    container_name: os-sample-nextjs
+    ports: ["9108:9108"]
+    environment:
+      PORT: 9108
+      CAS_BASE_URL: ${CAS_INTERNAL_URL:-http://host.docker.internal:8000}
+      CAS_PUBLIC_URL: ${CAS_PUBLIC_URL:-http://host.docker.internal:8000}
+      CAS_SERVER_URL: ${CAS_INTERNAL_URL:-http://host.docker.internal:8000}
+      CAS_CLIENT_ID: nextjs-sample
+      CAS_CLIENT_SECRET: ${NEXTJS_CAS_SECRET:-demo-secret-nextjs}
+      CAS_CALLBACK_URL: ${SAMPLE_BASE_HOST:-http://localhost}:9108/api/cas/callback
+
+  sample-vue:
+    <<: *sample-common
+    build: { context: .., dockerfile: examples/vue/Dockerfile }
+    image: one-system-sample-vue
+    container_name: os-sample-vue
+    ports: ["9109:9109"]
+    environment:
+      PORT: 9109
+      CAS_BASE_URL: ${CAS_INTERNAL_URL:-http://host.docker.internal:8000}
+      CAS_PUBLIC_URL: ${CAS_PUBLIC_URL:-http://host.docker.internal:8000}
+      CAS_CLIENT_ID: vue-sample
+      CAS_CLIENT_SECRET: ${VUE_CAS_SECRET:-demo-secret-vue}
+      CAS_CALLBACK_URL: ${SAMPLE_BASE_HOST:-http://localhost}:9109/auth/callback
+
+  sample-angular:
+    <<: *sample-common
+    build: { context: .., dockerfile: examples/angular/Dockerfile }
+    image: one-system-sample-angular
+    container_name: os-sample-angular
+    ports: ["9110:9110"]
+    environment:
+      PORT: 9110
+      CAS_BASE_URL: ${CAS_INTERNAL_URL:-http://host.docker.internal:8000}
+      CAS_PUBLIC_URL: ${CAS_PUBLIC_URL:-http://host.docker.internal:8000}
+      CAS_CLIENT_ID: angular-sample
+      CAS_CLIENT_SECRET: ${ANGULAR_CAS_SECRET:-demo-secret-angular}
+      CAS_CALLBACK_URL: ${SAMPLE_BASE_HOST:-http://localhost}:9110/cas/callback
+
+  sample-rust:
+    <<: *sample-common
+    build: { context: .., dockerfile: examples/rust/Dockerfile }
+    image: one-system-sample-rust
+    container_name: os-sample-rust
+    ports: ["9111:9111"]
+    environment:
+      PORT: 9111
+      CAS_BASE_URL: ${CAS_INTERNAL_URL:-http://host.docker.internal:8000}
+      CAS_PUBLIC_URL: ${CAS_PUBLIC_URL:-http://host.docker.internal:8000}
+      CAS_SERVER_URL: ${CAS_INTERNAL_URL:-http://host.docker.internal:8000}
+      CAS_CLIENT_ID: rust-sample
+      CAS_CLIENT_SECRET: ${RUST_CAS_SECRET:-demo-secret-rust}
+      CAS_CALLBACK_URL: ${SAMPLE_BASE_HOST:-http://localhost}:9111/cas/callback
+
+networks:
+  # Created by the CAS server's own docker-compose.yml. Bring the CAS stack up first.
+  one-system-network:
+    external: true

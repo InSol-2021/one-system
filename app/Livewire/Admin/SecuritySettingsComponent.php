@@ -9,10 +9,13 @@ use Illuminate\Support\Facades\Hash;
 use PragmaRX\Google2FA\Google2FA;
 use App\Models\SecuritySetting;
 use App\Models\UserSecurity;
+use App\Livewire\Concerns\AuthorizesAdmin;
 use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport;
 
 class SecuritySettingsComponent extends Component
 {
+    use AuthorizesAdmin;
+
     public $processing = false;
     public $enable_2fa = false;
     public $enable_forgot_password = true;
@@ -44,7 +47,9 @@ class SecuritySettingsComponent extends Component
         'smtp_host' => 'required_if:enable_forgot_password,true|nullable|string',
         'smtp_port' => 'required_if:enable_forgot_password,true|nullable|integer|min:1|max:65535',
         'smtp_username' => 'required_if:enable_forgot_password,true|nullable|string',
-        'smtp_password' => 'required_if:enable_forgot_password,true|nullable|string',
+        // SMTP password is write-only and may be left blank to keep the existing
+        // stored value, so it is not required even when forgot-password is enabled.
+        'smtp_password' => 'nullable|string',
         'from_email' => 'required_if:enable_forgot_password,true|nullable|email',
         'from_name' => 'required_if:enable_forgot_password,true|nullable|string|max:255',
         'verification_code' => 'required_with:google2fa_secret|digits:6'
@@ -52,6 +57,7 @@ class SecuritySettingsComponent extends Component
 
     public function mount()
     {
+        $this->authorizeAdmin();
         $this->loadSettings();
         $this->loadUserSecurity();
     }
@@ -71,7 +77,11 @@ class SecuritySettingsComponent extends Component
         $this->smtp_host = $settings->smtp_host ?? '';
         $this->smtp_port = $settings->smtp_port ?? 587;
         $this->smtp_username = $settings->smtp_username ?? '';
-        $this->smtp_password = $settings->smtp_password ?? '';
+        // SMTP password is write-only: never hydrate the stored secret into the
+        // public property (it would be serialized into the Livewire snapshot and
+        // shipped to the browser). Leave blank; only overwrite the stored value
+        // when a new non-empty value is submitted in saveSettings().
+        $this->smtp_password = '';
         $this->smtp_encryption = $settings->smtp_encryption ?? 'tls';
         $this->from_email = $settings->from_email ?? '';
         $this->from_name = $settings->from_name ?? 'CAS System';
@@ -92,6 +102,8 @@ class SecuritySettingsComponent extends Component
 
     public function saveSettings()
     {
+        $this->authorizeAdmin();
+
         if ($this->processing) {
             return;
         }
@@ -110,11 +122,17 @@ class SecuritySettingsComponent extends Component
                 'smtp_host' => $this->smtp_host,
                 'smtp_port' => $this->smtp_port,
                 'smtp_username' => $this->smtp_username,
-                'smtp_password' => $this->smtp_password,
                 'smtp_encryption' => $this->smtp_encryption,
                 'from_email' => $this->from_email,
                 'from_name' => $this->from_name,
             ];
+
+            // SMTP password is write-only: only overwrite the stored value when a
+            // new non-empty value was submitted; leaving it blank keeps the
+            // existing stored password untouched.
+            if (!empty($this->smtp_password)) {
+                $updateData['smtp_password'] = $this->smtp_password;
+            }
 
             $result = SecuritySetting::updateSettings($updateData);
 
@@ -136,6 +154,8 @@ class SecuritySettingsComponent extends Component
 
     public function generate2FA()
     {
+        $this->authorizeAdmin();
+
         $userId = auth()->id() ?? session('user_id');
         if (!$userId) {
             session()->flash('error', 'You must be logged in to generate 2FA codes.');
@@ -158,6 +178,8 @@ class SecuritySettingsComponent extends Component
 
     public function enable2FA()
     {
+        $this->authorizeAdmin();
+
         $userId = auth()->id() ?? session('user_id');
         if (!$userId) {
             session()->flash('error', 'You must be logged in to enable 2FA.');
@@ -204,6 +226,8 @@ class SecuritySettingsComponent extends Component
 
     public function disable2FA()
     {
+        $this->authorizeAdmin();
+
         $userId = auth()->id() ?? session('user_id');
         if (!$userId) {
             session()->flash('error', 'You must be logged in to disable 2FA.');
@@ -236,6 +260,8 @@ class SecuritySettingsComponent extends Component
 
     public function regenerateBackupCodes()
     {
+        $this->authorizeAdmin();
+
         $userId = session('user_id');
         if (!$userId) {
             session()->flash('error', 'You must be logged in to regenerate backup codes.');
@@ -257,8 +283,17 @@ class SecuritySettingsComponent extends Component
 
     public function testEmailConfiguration()
     {
+        $this->authorizeAdmin();
+
         try {
-            if (empty($this->smtp_host) || empty($this->smtp_username) || empty($this->smtp_password) || empty($this->from_email)) {
+            // SMTP password is write-only: fall back to the stored value when the
+            // field is left blank so the test can run against the saved password.
+            $smtpPassword = $this->smtp_password;
+            if (empty($smtpPassword)) {
+                $smtpPassword = SecuritySetting::current()->smtp_password ?? '';
+            }
+
+            if (empty($this->smtp_host) || empty($this->smtp_username) || empty($smtpPassword) || empty($this->from_email)) {
                 session()->flash('error', 'Please fill in all required email configuration fields.');
                 return;
             }
@@ -269,7 +304,7 @@ class SecuritySettingsComponent extends Component
                 'port' => $this->smtp_port,
                 'encryption' => $this->smtp_encryption,
                 'username' => $this->smtp_username,
-                'password' => $this->smtp_password,
+                'password' => $smtpPassword,
                 'timeout' => 10,
             ];
 
@@ -280,7 +315,7 @@ class SecuritySettingsComponent extends Component
             );
 
             $transport->setUsername($this->smtp_username);
-            $transport->setPassword($this->smtp_password);
+            $transport->setPassword($smtpPassword);
 
             $transport->start();
             $transport->stop();

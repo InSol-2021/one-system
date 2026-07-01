@@ -18,15 +18,21 @@ class AccountLockoutMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $email = $request->input('email');
+        // Key on the actual login identifier the user submitted (the web flow
+        // posts `login`); fall back to email/username so every auth entry
+        // point is covered.
+        $identifier = $request->input('login')
+            ?? $request->input('email')
+            ?? $request->input('username');
         $ip = $request->ip();
 
-        if (!$email) {
+        if (!$identifier) {
             return $next($request);
         }
 
-        $lockoutKey = 'account-lockout:' . $email;
-        $attemptsKey = 'failed-attempts:' . $email;
+        $identifierKey = mb_strtolower(trim((string) $identifier));
+        $lockoutKey = 'account-lockout:' . $identifierKey;
+        $attemptsKey = 'failed-attempts:' . $identifierKey;
 
         if (Cache::has($lockoutKey)) {
             $lockoutUntil = Cache::get($lockoutKey);
@@ -36,7 +42,7 @@ class AccountLockoutMiddleware
                 'user_id' => null,
                 'action' => 'login_attempt_while_locked',
                 'details' => json_encode([
-                    'email' => $email,
+                    'login' => $identifierKey,
                     'ip_address' => $ip,
                     'lockout_until' => $lockoutUntil,
                     'remaining_minutes' => $remainingMinutes
@@ -54,12 +60,8 @@ class AccountLockoutMiddleware
 
         $response = $next($request);
 
-        if ($response->getStatusCode() === 401 ||
-            (method_exists($response, 'getData') &&
-             isset($response->getData()->error) &&
-             strpos($response->getData()->error, 'Invalid credentials') !== false)) {
-
-            $this->handleFailedAttempt($email, $ip);
+        if ($this->isFailedLogin($response)) {
+            $this->handleFailedAttempt($identifierKey, $ip);
         } else {
             Cache::forget($attemptsKey);
         }
@@ -68,12 +70,41 @@ class AccountLockoutMiddleware
     }
 
     /**
-     * Handle a failed login attempt
+     * Detect a failed login from the actual auth outcome rather than relying
+     * solely on a 401 status or a specific JSON error string.
+     *
+     * - API/JSON flow: failure returns HTTP 401.
+     * - Web flow: failure is a 3xx redirect carrying an `error` validation bag
+     *   (success redirects to a dashboard with no error bag).
      */
-    private function handleFailedAttempt(string $email, string $ip): void
+    private function isFailedLogin(Response $response): bool
     {
-        $attemptsKey = 'failed-attempts:' . $email;
-        $lockoutKey = 'account-lockout:' . $email;
+        $status = $response->getStatusCode();
+
+        if ($status === 401) {
+            return true;
+        }
+
+        if ($status >= 200 && $status < 300) {
+            return false;
+        }
+
+        if ($status >= 300 && $status < 400) {
+            $errors = session()->get('errors');
+
+            return $errors !== null && $errors->getBag('default')->has('error');
+        }
+
+        return false;
+    }
+
+    /**
+     * Handle a failed login attempt, keyed on the login identifier.
+     */
+    private function handleFailedAttempt(string $identifier, string $ip): void
+    {
+        $attemptsKey = 'failed-attempts:' . $identifier;
+        $lockoutKey = 'account-lockout:' . $identifier;
 
         $attempts = Cache::get($attemptsKey, 0) + 1;
         Cache::put($attemptsKey, $attempts, 900);
@@ -87,7 +118,7 @@ class AccountLockoutMiddleware
                 'user_id' => null,
                 'action' => 'account_locked_failed_attempts',
                 'details' => json_encode([
-                    'email' => $email,
+                    'login' => $identifier,
                     'ip_address' => $ip,
                     'failed_attempts' => $attempts,
                     'lockout_until' => $lockoutUntil,
@@ -98,7 +129,7 @@ class AccountLockoutMiddleware
             ]);
 
             Log::warning("Account locked for excessive failed login attempts", [
-                'email' => $email,
+                'login' => $identifier,
                 'ip_address' => $ip,
                 'attempts' => $attempts,
                 'lockout_until' => $lockoutUntil
@@ -108,7 +139,7 @@ class AccountLockoutMiddleware
                 'user_id' => null,
                 'action' => 'login_failed_attempt',
                 'details' => json_encode([
-                    'email' => $email,
+                    'login' => $identifier,
                     'ip_address' => $ip,
                     'attempt_number' => $attempts,
                     'remaining_attempts' => 5 - $attempts

@@ -1,141 +1,213 @@
 @extends('public.documentation.layout')
 
-@section('title', 'Node.js Integration — CAS SSO')
-@section('description', 'Complete guide for integrating Node.js/Express applications with CAS Single Sign-On authentication.')
+@section('title', 'Node.js integration — CAS SSO')
+@section('description', 'Integrate Node.js and Express applications with CAS Single Sign-On using the official @one-system/node-cas-client package.')
 
 @section('content')
-<section class="border-b border-slate-200 pb-10 mb-12">
-    <div class="max-w-3xl">
+@php
+    // Highlight palette tuned to the ONE codeblock surface (dark ink background).
+    $kw  = 'color:#c7d2fe';        // keywords / accent-tinted
+    $str = 'color:#a5b4fc';        // strings
+    $fn  = 'color:#e2e8f0';        // functions / identifiers
+    $var = 'color:#cbd5e1';        // variables
+    $com = 'color:#64748b';        // comments
+    $num = 'color:#93c5fd';        // numbers / literals
+@endphp
+<section class="border-b border-[var(--color-line)] pb-10 mb-12">
+    <div class="">
         <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                <i class="fab fa-node-js text-green-600 text-lg"></i>
-            </div>
+            <span class="os-icon-tile os-icon-tile-ink">
+                <i class="fab fa-node-js"></i>
+            </span>
             <div>
-                <p class="text-sm font-medium text-blue-600 tracking-wide uppercase">Integration Guide</p>
-                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">Node.js / Express</h1>
+                <p class="os-eyebrow">Integration guide</p>
+                <h1 class="text-3xl font-bold text-[var(--color-ink)] tracking-tight leading-tight">Node.js / Express</h1>
             </div>
         </div>
-        <p class="text-lg text-slate-500 leading-relaxed mb-4">{{ $nodejsGuide['description'] }}</p>
-        <div class="flex flex-wrap gap-4 text-xs text-slate-500">
-            <span><i class="fas fa-clock mr-1"></i>3 min setup</span>
-            <span><i class="fas fa-signal mr-1"></i>Easy</span>
-            <span><i class="fas fa-tag mr-1"></i>Node 18+</span>
+        <p class="text-lg text-[var(--color-muted)] leading-relaxed mb-5">{{ $nodejsGuide['description'] }}</p>
+        <div class="flex flex-wrap gap-2">
+            <span class="os-badge"><i class="fas fa-clock"></i>3 min setup</span>
+            <span class="os-badge"><i class="fas fa-signal"></i>Beginner</span>
+            <span class="os-badge"><i class="fas fa-tag"></i>Node 18+</span>
+            <span class="os-badge os-badge-accent"><i class="fab fa-npm"></i>v1.0.0</span>
         </div>
     </div>
 </section>
 
-<nav class="mb-12 p-5 rounded-xl border border-slate-200 bg-slate-50/50">
-    <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">On This Page</h2>
+<nav class="mb-12 os-card os-card-pad">
+    <h2 class="text-xs font-semibold text-[var(--color-faint)] uppercase tracking-widest mb-3">On this page</h2>
     <ol class="space-y-1.5 text-sm">
-        <li><a href="#installation" class="text-blue-600 hover:text-blue-800">1. Installation</a></li>
-        <li><a href="#configuration" class="text-blue-600 hover:text-blue-800">2. Configuration</a></li>
-        <li><a href="#middleware" class="text-blue-600 hover:text-blue-800">3. Express Middleware</a></li>
-        <li><a href="#routes" class="text-blue-600 hover:text-blue-800">4. Route Protection</a></li>
+        <li><a href="#installation" class="text-[var(--color-accent)] hover:text-[var(--color-accent-strong)]">1. Installation</a></li>
+        <li><a href="#configuration" class="text-[var(--color-accent)] hover:text-[var(--color-accent-strong)]">2. Configuration</a></li>
+        <li><a href="#client" class="text-[var(--color-accent)] hover:text-[var(--color-accent-strong)]">3. Initialize the client</a></li>
+        <li><a href="#login" class="text-[var(--color-accent)] hover:text-[var(--color-accent-strong)]">4. Login &amp; callback</a></li>
+        <li><a href="#middleware" class="text-[var(--color-accent)] hover:text-[var(--color-accent-strong)]">5. Protect routes</a></li>
+        <li><a href="#server-to-server" class="text-[var(--color-accent)] hover:text-[var(--color-accent-strong)]">6. Server-to-server tokens</a></li>
+        <li><a href="#api" class="text-[var(--color-accent)] hover:text-[var(--color-accent-strong)]">7. API reference</a></li>
     </ol>
 </nav>
 
 <section id="installation" class="mb-12">
-    <h2 class="text-xl font-bold text-slate-900 mb-4">1. Installation</h2>
-    <div class="rounded-xl border border-slate-200 overflow-hidden">
-        <div class="flex items-center px-4 py-2.5 bg-slate-50 border-b border-slate-200"><span class="text-xs font-medium text-slate-600">Terminal</span></div>
-        <div class="bg-slate-900 p-5 overflow-x-auto">
-            <pre class="text-sm leading-relaxed font-mono text-slate-300"><code>npm install @insol-dev/node-cas-client jsonwebtoken axios</code></pre>
-        </div>
+    <h2 class="text-xl font-bold text-[var(--color-ink)] mb-2">1. Installation</h2>
+    <p class="text-[var(--color-muted)] mb-4">Install the official client from npm. The package ships <code class="os-code-inline">axios</code> as its only dependency, so there is nothing else to add.</p>
+    <div class="os-codeblock">
+        <div class="os-codeblock-head"><span>Terminal</span></div>
+        <pre><code>npm install @one-system/node-cas-client</code></pre>
     </div>
 </section>
 
 <section id="configuration" class="mb-12">
-    <h2 class="text-xl font-bold text-slate-900 mb-4">2. Configuration</h2>
-    <div class="rounded-xl border border-slate-200 overflow-hidden mb-6">
-        <div class="flex items-center px-4 py-2.5 bg-slate-50 border-b border-slate-200"><span class="text-xs font-medium text-slate-600">.env</span></div>
-        <div class="bg-slate-900 p-5 overflow-x-auto">
-            <pre class="text-sm leading-relaxed font-mono text-slate-300"><code><span class="text-amber-300">CAS_SERVER_URL</span>=<span class="text-green-400">https://your-cas-server.com</span>
-<span class="text-amber-300">CAS_CLIENT_ID</span>=<span class="text-green-400">your_client_id</span>
-<span class="text-amber-300">CAS_CLIENT_SECRET</span>=<span class="text-green-400">your_client_secret</span>
-<span class="text-amber-300">CAS_CALLBACK_URL</span>=<span class="text-green-400">https://your-app.com/cas/callback</span></code></pre>
-        </div>
+    <h2 class="text-xl font-bold text-[var(--color-ink)] mb-2">2. Configuration</h2>
+    <p class="text-[var(--color-muted)] mb-4">Store your CAS credentials in environment variables. <code class="os-code-inline">CAS_SERVER_URL</code> is the CAS server origin and <code class="os-code-inline">CAS_CALLBACK_URL</code> must match the callback registered for your client.</p>
+    <div class="os-codeblock">
+        <div class="os-codeblock-head"><span>.env</span></div>
+        <pre><code><span style="{{ $var }}">CAS_SERVER_URL</span>=<span style="{{ $str }}">https://your-cas-server.com</span>
+<span style="{{ $var }}">CAS_CLIENT_ID</span>=<span style="{{ $str }}">your_client_id</span>
+<span style="{{ $var }}">CAS_CLIENT_SECRET</span>=<span style="{{ $str }}">your_client_secret</span>
+<span style="{{ $var }}">CAS_CALLBACK_URL</span>=<span style="{{ $str }}">https://your-app.com/cas/callback</span></code></pre>
     </div>
-    <div class="rounded-xl border border-slate-200 overflow-hidden">
-        <div class="flex items-center px-4 py-2.5 bg-slate-50 border-b border-slate-200"><span class="text-xs font-medium text-slate-600">config/cas.js</span></div>
-        <div class="bg-slate-900 p-5 overflow-x-auto">
-            <pre class="text-sm leading-relaxed font-mono text-slate-300"><code><span class="text-violet-400">module.exports</span> = {
-  serverUrl:    process.env.<span class="text-amber-300">CAS_SERVER_URL</span>,
-  clientId:     process.env.<span class="text-amber-300">CAS_CLIENT_ID</span>,
-  clientSecret: process.env.<span class="text-amber-300">CAS_CLIENT_SECRET</span>,
-  callbackUrl:  process.env.<span class="text-amber-300">CAS_CALLBACK_URL</span>,
-};</code></pre>
-        </div>
+    <div class="os-alert mt-4">
+        <i class="fas fa-shield-halved mt-0.5 text-[var(--color-muted)]"></i>
+        <div>The client secret is used only for server-to-server calls and must never reach the browser. Serve your app over HTTPS in production.</div>
+    </div>
+</section>
+
+<section id="client" class="mb-12">
+    <h2 class="text-xl font-bold text-[var(--color-ink)] mb-2">3. Initialize the client</h2>
+    <p class="text-[var(--color-muted)] mb-4">The package exports a single <code class="os-code-inline">CasClient</code> class. Create one instance and reuse it across your app.</p>
+    <div class="os-codeblock">
+        <div class="os-codeblock-head"><span>cas.js</span></div>
+        <pre><code><span style="{{ $kw }}">const</span> CasClient = <span style="{{ $fn }}">require</span>(<span style="{{ $str }}">'@one-system/node-cas-client'</span>);
+
+<span style="{{ $kw }}">const</span> cas = <span style="{{ $kw }}">new</span> <span style="{{ $fn }}">CasClient</span>({
+  serverUrl:    process.env.<span style="{{ $var }}">CAS_SERVER_URL</span>,
+  clientId:     process.env.<span style="{{ $var }}">CAS_CLIENT_ID</span>,
+  clientSecret: process.env.<span style="{{ $var }}">CAS_CLIENT_SECRET</span>,
+  callbackUrl:  process.env.<span style="{{ $var }}">CAS_CALLBACK_URL</span>,
+  <span style="{{ $com }}">// Optional</span>
+  timeout:      <span style="{{ $num }}">30000</span>,
+  verifySsl:    <span style="{{ $num }}">true</span>,
+});
+
+<span style="{{ $kw }}">module.exports</span> = cas;</code></pre>
+    </div>
+</section>
+
+<section id="login" class="mb-12">
+    <h2 class="text-xl font-bold text-[var(--color-ink)] mb-2">4. Login &amp; callback</h2>
+    <p class="text-[var(--color-muted)] mb-4">Redirect the browser to the CAS login URL. The CAS server authenticates the user and redirects back to your registered callback with a single-use <code class="os-code-inline">token</code> query parameter. Validate it server-to-server, then create your own session.</p>
+    <div class="os-codeblock">
+        <div class="os-codeblock-head"><span>routes/auth.js</span></div>
+        <pre><code><span style="{{ $kw }}">const</span> express = <span style="{{ $fn }}">require</span>(<span style="{{ $str }}">'express'</span>);
+<span style="{{ $kw }}">const</span> cas     = <span style="{{ $fn }}">require</span>(<span style="{{ $str }}">'../cas'</span>);
+<span style="{{ $kw }}">const</span> router  = express.<span style="{{ $fn }}">Router</span>();
+
+<span style="{{ $com }}">// 1. Send the user to CAS to sign in</span>
+router.<span style="{{ $fn }}">get</span>(<span style="{{ $str }}">'/auth/login'</span>, (req, res) =&gt; {
+  res.<span style="{{ $fn }}">redirect</span>(cas.<span style="{{ $fn }}">getLoginUrl</span>());
+});
+
+<span style="{{ $com }}">// 2. CAS redirects back here with ?token=&lt;JWT&gt;</span>
+router.<span style="{{ $fn }}">get</span>(<span style="{{ $str }}">'/cas/callback'</span>, <span style="{{ $kw }}">async</span> (req, res) =&gt; {
+  <span style="{{ $kw }}">const</span> { token } = req.query;
+  <span style="{{ $kw }}">const</span> user = <span style="{{ $kw }}">await</span> cas.<span style="{{ $fn }}">validateToken</span>(token);
+
+  <span style="{{ $kw }}">if</span> (user) {
+    req.session.cas_user  = user;   <span style="{{ $com }}">// { id, username, email, roles }</span>
+    req.session.cas_token = token;
+    <span style="{{ $kw }}">return</span> res.<span style="{{ $fn }}">redirect</span>(<span style="{{ $str }}">'/dashboard'</span>);
+  }
+  res.<span style="{{ $fn }}">redirect</span>(<span style="{{ $str }}">'/auth/login?error=authentication_failed'</span>);
+});
+
+<span style="{{ $com }}">// 3. Logout invalidates the CAS session and clears the local one</span>
+router.<span style="{{ $fn }}">post</span>(<span style="{{ $str }}">'/logout'</span>, <span style="{{ $kw }}">async</span> (req, res) =&gt; {
+  <span style="{{ $kw }}">await</span> cas.<span style="{{ $fn }}">logout</span>(req.session.cas_token);
+  req.session.<span style="{{ $fn }}">destroy</span>(() =&gt; res.<span style="{{ $fn }}">redirect</span>(<span style="{{ $str }}">'/'</span>));
+});
+
+<span style="{{ $kw }}">module.exports</span> = router;</code></pre>
+    </div>
+    <div class="os-alert mt-4">
+        <i class="fas fa-circle-info mt-0.5 text-[var(--color-muted)]"></i>
+        <div>The token is single-use. <code class="os-code-inline">validateToken()</code> posts to <code class="os-code-inline">/api/validate-token</code> with your client credentials and returns the user object on success, or <code class="os-code-inline">null</code> on failure.</div>
     </div>
 </section>
 
 <section id="middleware" class="mb-12">
-    <h2 class="text-xl font-bold text-slate-900 mb-4">3. Express Middleware</h2>
-    <div class="rounded-xl border border-slate-200 overflow-hidden">
-        <div class="flex items-center px-4 py-2.5 bg-slate-50 border-b border-slate-200"><span class="text-xs font-medium text-slate-600">middleware/cas-auth.js</span></div>
-        <div class="bg-slate-900 p-5 overflow-x-auto">
-            <pre class="text-sm leading-relaxed font-mono text-slate-300"><code><span class="text-violet-400">const</span> axios = <span class="text-green-400">require</span>(<span class="text-amber-300">'axios'</span>);
-<span class="text-violet-400">const</span> config = <span class="text-green-400">require</span>(<span class="text-amber-300">'../config/cas'</span>);
+    <h2 class="text-xl font-bold text-[var(--color-ink)] mb-2">5. Protect routes</h2>
+    <p class="text-[var(--color-muted)] mb-4">The package ships drop-in Express middleware. <code class="os-code-inline">casAuth(cas)</code> requires an authenticated session (or a <code class="os-code-inline">Bearer</code> token) and attaches the user to <code class="os-code-inline">req.casUser</code>. <code class="os-code-inline">casRole(cas, ...roles)</code> enforces role-based access.</p>
+    <div class="os-codeblock">
+        <div class="os-codeblock-head"><span>routes/app.js</span></div>
+        <pre><code><span style="{{ $kw }}">const</span> express = <span style="{{ $fn }}">require</span>(<span style="{{ $str }}">'express'</span>);
+<span style="{{ $kw }}">const</span> cas     = <span style="{{ $fn }}">require</span>(<span style="{{ $str }}">'../cas'</span>);
+<span style="{{ $kw }}">const</span> { casAuth, casRole } = <span style="{{ $fn }}">require</span>(<span style="{{ $str }}">'@one-system/node-cas-client/src/middleware'</span>);
+<span style="{{ $kw }}">const</span> router  = express.<span style="{{ $fn }}">Router</span>();
 
-<span class="text-violet-400">async function</span> <span class="text-green-400">casAuth</span>(req, res, next) {
-  <span class="text-violet-400">const</span> token = req.headers.authorization?.split(<span class="text-amber-300">' '</span>)[<span class="text-blue-400">1</span>];
+<span style="{{ $com }}">// Any signed-in user</span>
+router.<span style="{{ $fn }}">get</span>(<span style="{{ $str }}">'/dashboard'</span>, <span style="{{ $fn }}">casAuth</span>(cas), (req, res) =&gt; {
+  res.<span style="{{ $fn }}">json</span>({ message: <span style="{{ $str }}">'Welcome'</span>, user: req.casUser });
+});
 
-  <span class="text-violet-400">if</span> (!token) {
-    <span class="text-violet-400">return</span> res.status(<span class="text-blue-400">401</span>).json({ error: <span class="text-amber-300">'Token required'</span> });
-  }
+<span style="{{ $com }}">// Requires the "admin" role</span>
+router.<span style="{{ $fn }}">get</span>(<span style="{{ $str }}">'/admin'</span>, <span style="{{ $fn }}">casAuth</span>(cas), <span style="{{ $fn }}">casRole</span>(cas, <span style="{{ $str }}">'admin'</span>), (req, res) =&gt; {
+  res.<span style="{{ $fn }}">json</span>({ message: <span style="{{ $str }}">'Admin area'</span>, user: req.casUser });
+});
 
-  <span class="text-violet-400">try</span> {
-    <span class="text-violet-400">const</span> { data } = <span class="text-violet-400">await</span> axios.<span class="text-green-400">post</span>(
-      <span class="text-amber-300">`${config.serverUrl}/api/sso/validate`</span>,
-      { token, client_id: config.clientId, client_secret: config.clientSecret }
-    );
-
-    req.user = data.user;
-    <span class="text-green-400">next</span>();
-  } <span class="text-violet-400">catch</span> (err) {
-    res.status(<span class="text-blue-400">401</span>).json({ error: <span class="text-amber-300">'Invalid token'</span> });
-  }
-}
-
-<span class="text-violet-400">module.exports</span> = casAuth;</code></pre>
-        </div>
+<span style="{{ $kw }}">module.exports</span> = router;</code></pre>
+    </div>
+    <div class="os-alert os-alert-success mt-4">
+        <i class="fas fa-circle-check mt-0.5"></i>
+        <div><strong>Done.</strong> Add <code class="os-code-inline">casAuth(cas)</code> to any route that requires SSO, and chain <code class="os-code-inline">casRole(cas, 'admin')</code> when a role is required. The middleware uses the in-memory token cache, so repeat requests skip a round trip to the CAS server.</div>
     </div>
 </section>
 
-<section id="routes" class="mb-12">
-    <h2 class="text-xl font-bold text-slate-900 mb-4">4. Route Protection</h2>
-    <div class="rounded-xl border border-slate-200 overflow-hidden mb-6">
-        <div class="flex items-center px-4 py-2.5 bg-slate-50 border-b border-slate-200"><span class="text-xs font-medium text-slate-600">routes/api.js</span></div>
-        <div class="bg-slate-900 p-5 overflow-x-auto">
-            <pre class="text-sm leading-relaxed font-mono text-slate-300"><code><span class="text-violet-400">const</span> express  = <span class="text-green-400">require</span>(<span class="text-amber-300">'express'</span>);
-<span class="text-violet-400">const</span> casAuth  = <span class="text-green-400">require</span>(<span class="text-amber-300">'../middleware/cas-auth'</span>);
-<span class="text-violet-400">const</span> router   = express.<span class="text-green-400">Router</span>();
+<section id="server-to-server" class="mb-12">
+    <h2 class="text-xl font-bold text-[var(--color-ink)] mb-2">6. Server-to-server tokens</h2>
+    <p class="text-[var(--color-muted)] mb-4">From an IP-whitelisted backend you can issue a token for a known user with <code class="os-code-inline">generateSSOToken(username)</code>. It returns the <code class="os-code-inline">token</code> and a ready-to-use <code class="os-code-inline">redirect_url</code>, or <code class="os-code-inline">null</code> on failure.</p>
+    <div class="os-codeblock">
+        <div class="os-codeblock-head"><span>provision.js</span></div>
+        <pre><code><span style="{{ $kw }}">const</span> result = <span style="{{ $kw }}">await</span> cas.<span style="{{ $fn }}">generateSSOToken</span>(<span style="{{ $str }}">'john_doe'</span>);
 
-router.<span class="text-green-400">get</span>(<span class="text-amber-300">'/dashboard'</span>, casAuth, (req, res) => {
-  res.json({ message: <span class="text-amber-300">'Welcome'</span>, user: req.user });
-});
-
-router.<span class="text-green-400">get</span>(<span class="text-amber-300">'/profile'</span>, casAuth, (req, res) => {
-  res.json(req.user);
-});
-
-<span class="text-violet-400">module.exports</span> = router;</code></pre>
-        </div>
-    </div>
-
-    <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
-        <div class="flex items-start gap-2">
-            <i class="fas fa-check-circle text-emerald-500 mt-0.5"></i>
-            <div class="text-sm text-emerald-800"><strong>Done!</strong> Add <code class="text-xs bg-emerald-100 px-1 py-0.5 rounded font-mono">casAuth</code> middleware to any route that requires SSO authentication.</div>
-        </div>
+<span style="{{ $kw }}">if</span> (result) {
+  console.<span style="{{ $fn }}">log</span>(result.token);         <span style="{{ $com }}">// signed JWT</span>
+  console.<span style="{{ $fn }}">log</span>(result.redirect_url);  <span style="{{ $com }}">// callback URL with the token attached</span>
+}</code></pre>
     </div>
 </section>
 
-<section class="border-t border-slate-200 pt-10">
-    <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-4">Next Steps</h2>
+<section id="api" class="mb-12">
+    <h2 class="text-xl font-bold text-[var(--color-ink)] mb-2">7. API reference</h2>
+    <p class="text-[var(--color-muted)] mb-4">Methods on the <code class="os-code-inline">CasClient</code> instance.</p>
+    <div class="os-card overflow-hidden">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="border-b border-[var(--color-line)] bg-[var(--color-surface-2)] text-left">
+                    <th class="px-4 py-2.5 font-semibold text-[var(--color-ink-2)]">Method</th>
+                    <th class="px-4 py-2.5 font-semibold text-[var(--color-ink-2)]">Description</th>
+                </tr>
+            </thead>
+            <tbody class="text-[var(--color-muted)]">
+                <tr class="border-b border-[var(--color-line)]"><td class="px-4 py-2.5"><code class="os-code-inline">getLoginUrl()</code></td><td class="px-4 py-2.5">Build the CAS SSO login URL to redirect the browser to.</td></tr>
+                <tr class="border-b border-[var(--color-line)]"><td class="px-4 py-2.5"><code class="os-code-inline">validateToken(token)</code></td><td class="px-4 py-2.5">Validate a callback token server-to-server. Resolves to the user object or <code class="os-code-inline">null</code>.</td></tr>
+                <tr class="border-b border-[var(--color-line)]"><td class="px-4 py-2.5"><code class="os-code-inline">getUserFromToken(token)</code></td><td class="px-4 py-2.5">Return cached user data for a previously validated token.</td></tr>
+                <tr class="border-b border-[var(--color-line)]"><td class="px-4 py-2.5"><code class="os-code-inline">generateSSOToken(username)</code></td><td class="px-4 py-2.5">Issue a token for a user via client credentials (server-to-server).</td></tr>
+                <tr class="border-b border-[var(--color-line)]"><td class="px-4 py-2.5"><code class="os-code-inline">logout(token?)</code></td><td class="px-4 py-2.5">Log out from the CAS server and drop the cached token.</td></tr>
+                <tr class="border-b border-[var(--color-line)]"><td class="px-4 py-2.5"><code class="os-code-inline">userHasRole(user, role)</code></td><td class="px-4 py-2.5">Check whether the user has a single role.</td></tr>
+                <tr class="border-b border-[var(--color-line)]"><td class="px-4 py-2.5"><code class="os-code-inline">userHasAnyRole(user, roles)</code></td><td class="px-4 py-2.5">Check whether the user has any of the given roles.</td></tr>
+                <tr><td class="px-4 py-2.5"><code class="os-code-inline">userHasAllRoles(user, roles)</code></td><td class="px-4 py-2.5">Check whether the user has all of the given roles.</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <p class="text-sm text-[var(--color-muted)] mt-4">The validation endpoint <code class="os-code-inline">POST /api/validate-token</code> responds with <code class="os-code-inline">{ valid: true, user: { id, username, email }, expires_at }</code> on success, or <code class="os-code-inline">401 { error }</code> on failure.</p>
+</section>
+
+<section class="border-t border-[var(--color-line)] pt-10">
+    <h2 class="text-xs font-semibold text-[var(--color-faint)] uppercase tracking-widest mb-4">Next steps</h2>
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <a href="{{ route('docs.api.overview') }}" class="group flex items-center gap-3 p-4 rounded-lg border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all"><i class="fas fa-code text-slate-400 text-sm"></i><span class="text-sm font-medium text-slate-700 group-hover:text-slate-900">API Reference</span></a>
-        <a href="{{ route('docs.security') }}" class="group flex items-center gap-3 p-4 rounded-lg border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all"><i class="fas fa-shield-alt text-slate-400 text-sm"></i><span class="text-sm font-medium text-slate-700 group-hover:text-slate-900">Security Guide</span></a>
-        <a href="{{ route('docs.webhooks') }}" class="group flex items-center gap-3 p-4 rounded-lg border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all"><i class="fas fa-bolt text-slate-400 text-sm"></i><span class="text-sm font-medium text-slate-700 group-hover:text-slate-900">Webhooks</span></a>
+        <a href="{{ route('docs.api.overview') }}" class="os-card os-card-hover flex items-center gap-3 p-4"><i class="fas fa-code text-[var(--color-muted)] text-sm"></i><span class="text-sm font-medium text-[var(--color-ink-2)]">API reference</span></a>
+        <a href="{{ route('docs.security') }}" class="os-card os-card-hover flex items-center gap-3 p-4"><i class="fas fa-shield-halved text-[var(--color-muted)] text-sm"></i><span class="text-sm font-medium text-[var(--color-ink-2)]">Security guide</span></a>
+        <a href="{{ route('docs.webhooks') }}" class="os-card os-card-hover flex items-center gap-3 p-4"><i class="fas fa-bolt text-[var(--color-muted)] text-sm"></i><span class="text-sm font-medium text-[var(--color-ink-2)]">Webhooks</span></a>
     </div>
 </section>
 @endsection

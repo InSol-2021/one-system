@@ -1,0 +1,12 @@
+# Keep the image small and avoid leaking local secrets/venvs into the build.
+.venv/
+venv/
+__pycache__/
+*.pyc
+.env
+*.egg-info/
+.git/
+
+# Local SQLite user store -- created/seeded at runtime, never baked into the image.
+data/
+*.db

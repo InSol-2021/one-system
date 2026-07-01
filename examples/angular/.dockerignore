@@ -1,0 +1,11 @@
+node_modules
+dist
+.angular
+.env
+npm-debug.log
+
+# Local SQLite user store (created at runtime, never copied into the image)
+data
+*.db
+*.db-shm
+*.db-wal

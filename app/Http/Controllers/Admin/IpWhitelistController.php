@@ -5,16 +5,51 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Models\AuditLog;
 use App\Models\IpWhitelist;
+use App\Models\User;
+use Symfony\Component\HttpFoundation\Response;
 
 class IpWhitelistController extends Controller
 {
+    /**
+     * Defense-in-depth admin gate. Routes are gated by middleware, but each
+     * public action re-verifies that the acting session user is an active admin.
+     * Returns null when authorized, or a JSON error response when not.
+     */
+    private function ensureAdmin(): ?Response
+    {
+        $userId = session('user_id');
+
+        if (!$userId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthenticated',
+            ], 401);
+        }
+
+        $user = User::find($userId);
+
+        if (!$user || $user->role !== 'admin') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Forbidden',
+            ], 403);
+        }
+
+        return null;
+    }
+
     /**
      * Get all IP whitelist entries
      */
     public function list()
     {
+        if ($denied = $this->ensureAdmin()) {
+            return $denied;
+        }
+
         try {
             $entries = IpWhitelist::with('addedBy:id,username')
                 ->orderBy('created_at', 'desc')
@@ -25,11 +60,22 @@ class IpWhitelistController extends Controller
                 'ip_whitelist' => $entries
             ]);
         } catch (\Exception $e) {
+            Log::error('Failed to fetch IP whitelist', ['exception' => $e]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to fetch IP whitelist: ' . $e->getMessage()
+                'message' => 'Failed to fetch IP whitelist'
             ], 500);
         }
+    }
+
+    /**
+     * Alias for list(). Kept so the GET listing route resolves whether it is
+     * bound to index() (legacy binding) or list() (after the route fix).
+     */
+    public function index()
+    {
+        return $this->list();
     }
 
     /**
@@ -37,6 +83,10 @@ class IpWhitelistController extends Controller
      */
     public function store(Request $request)
     {
+        if ($denied = $this->ensureAdmin()) {
+            return $denied;
+        }
+
         $request->validate([
             'ip_address' => 'required|ip',
             'subnet_mask' => 'nullable|integer|min:1|max:32',
@@ -75,9 +125,11 @@ class IpWhitelistController extends Controller
             ], 201);
 
         } catch (\Exception $e) {
+            Log::error('Failed to add IP to whitelist', ['exception' => $e]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to add IP to whitelist: ' . $e->getMessage()
+                'message' => 'Failed to add IP to whitelist'
             ], 500);
         }
     }
@@ -87,6 +139,10 @@ class IpWhitelistController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if ($denied = $this->ensureAdmin()) {
+            return $denied;
+        }
+
         $request->validate([
             'ip_address' => 'sometimes|ip',
             'subnet_mask' => 'nullable|integer|min:1|max:32',
@@ -130,9 +186,11 @@ class IpWhitelistController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            Log::error('Failed to update IP whitelist entry', ['exception' => $e]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update IP whitelist entry: ' . $e->getMessage()
+                'message' => 'Failed to update IP whitelist entry'
             ], 500);
         }
     }
@@ -142,6 +200,10 @@ class IpWhitelistController extends Controller
      */
     public function destroy($id)
     {
+        if ($denied = $this->ensureAdmin()) {
+            return $denied;
+        }
+
         try {
             $entry = IpWhitelist::query()->find($id);
 
@@ -179,9 +241,11 @@ class IpWhitelistController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            Log::error('Failed to delete IP whitelist entry', ['exception' => $e]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to delete IP whitelist entry: ' . $e->getMessage()
+                'message' => 'Failed to delete IP whitelist entry'
             ], 500);
         }
     }
@@ -191,6 +255,10 @@ class IpWhitelistController extends Controller
      */
     public function addCurrentIp(Request $request)
     {
+        if ($denied = $this->ensureAdmin()) {
+            return $denied;
+        }
+
         $request->validate([
             'description' => 'nullable|string|max:255',
         ]);
@@ -215,7 +283,7 @@ class IpWhitelistController extends Controller
                 'subnet_mask' => 'full',
                 'description' => $request->description ?: "Auto-added current IP: {$currentIp}",
                 'is_active' => true,
-                'created_by' => session('user_id') ?: 1, // Default to admin user if no session
+                'created_by' => session('user_id'),
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
@@ -245,9 +313,11 @@ class IpWhitelistController extends Controller
             ], 201);
 
         } catch (\Exception $e) {
+            Log::error('Failed to add current IP to whitelist', ['exception' => $e]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to add current IP to whitelist: ' . $e->getMessage()
+                'message' => 'Failed to add current IP to whitelist'
             ], 500);
         }
     }
@@ -257,6 +327,10 @@ class IpWhitelistController extends Controller
      */
     public function testAccess(Request $request)
     {
+        if ($denied = $this->ensureAdmin()) {
+            return $denied;
+        }
+
         $request->validate([
             'test_ip' => 'required|ip',
         ]);
@@ -293,9 +367,11 @@ class IpWhitelistController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            Log::error('Failed to test IP access', ['exception' => $e]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to test IP access: ' . $e->getMessage()
+                'message' => 'Failed to test IP access'
             ], 500);
         }
     }
@@ -340,6 +416,10 @@ class IpWhitelistController extends Controller
      */
     public function stats()
     {
+        if ($denied = $this->ensureAdmin()) {
+            return $denied;
+        }
+
         try {
             $stats = [
                 'total_entries' => IpWhitelist::query()->count(),
@@ -356,9 +436,11 @@ class IpWhitelistController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            Log::error('Failed to get IP whitelist stats', ['exception' => $e]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to get IP whitelist stats: ' . $e->getMessage()
+                'message' => 'Failed to get IP whitelist stats'
             ], 500);
         }
     }

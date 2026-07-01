@@ -7,9 +7,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use App\Models\User;
+use App\Livewire\Concerns\AuthorizesAdmin;
 
 class ProfileComponent extends Component
 {
+    use AuthorizesAdmin;
+
     public $username;
     public $email;
     public $first_name;
@@ -40,6 +43,30 @@ class ProfileComponent extends Component
 
     public function mount()
     {
+        $this->authorizeAdmin();
+
+        $user = $this->resolveUser();
+
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
+        $this->username = $user->username ?? '';
+        $this->email = $user->email ?? '';
+        $this->first_name = $user->first_name ?? '';
+        $this->last_name = $user->last_name ?? '';
+        $this->two_factor_enabled = (bool) $user->two_factor_enabled;
+        $this->two_factor_secret = $user->two_factor_secret;
+        $this->backup_codes = $user->two_factor_backup_codes ?? [];
+    }
+
+    /**
+     * Resolve the currently authenticated user strictly from the auth guard or
+     * the session user_id. Never falls back to the first admin user and never
+     * writes an admin identity into the session.
+     */
+    private function resolveUser(): ?User
+    {
         $user = auth()->user();
         $userId = auth()->id() ?? session('user_id');
 
@@ -47,37 +74,18 @@ class ProfileComponent extends Component
             $user = User::find($userId);
         }
 
-        if (!$user) {
-            $adminUser = User::where('role', 'admin')->first();
-            if ($adminUser) {
-                $user = $adminUser;
-                session(['user_id' => $user->id, 'username' => $user->username, 'role' => $user->role]);
-            }
-        }
-
-        if ($user) {
-            $this->username = $user->username ?? '';
-            $this->email = $user->email ?? '';
-            $this->first_name = $user->first_name ?? '';
-            $this->last_name = $user->last_name ?? '';
-            $this->two_factor_enabled = (bool) $user->two_factor_enabled;
-            $this->two_factor_secret = $user->two_factor_secret;
-            $this->backup_codes = $user->two_factor_backup_codes ?? [];
-        } else {
-            return redirect()->route('login');
-        }
+        return $user;
     }
 
     public function updateProfile()
     {
-        $userId = auth()->id() ?? session('user_id');
+        $this->authorizeAdmin();
 
-        if (!$userId) {
-            $adminUser = User::where('role', 'admin')->first();
-            if ($adminUser) {
-                $userId = $adminUser->id;
-            }
+        $user = $this->resolveUser();
+        if (!$user) {
+            return redirect()->route('login');
         }
+        $userId = $user->id;
 
         $this->validate([
             'username' => 'required|string|max:255',
@@ -120,16 +128,16 @@ class ProfileComponent extends Component
 
     public function changePassword()
     {
+        $this->authorizeAdmin();
+
         $this->validate([
             'current_password' => 'required',
             'new_password' => ['required', 'confirmed', Password::min(8)->letters()->mixedCase()->numbers()->symbols()],
         ]);
 
-        $user = auth()->user();
-        $userId = auth()->id() ?? session('user_id');
-
-        if (!$user && $userId) {
-            $user = User::find($userId);
+        $user = $this->resolveUser();
+        if (!$user) {
+            return redirect()->route('login');
         }
 
         if (!Hash::check($this->current_password, $user->password)) {
@@ -173,19 +181,11 @@ class ProfileComponent extends Component
 
     public function enable2FA()
     {
-        $user = auth()->user();
-        $userId = auth()->id() ?? session('user_id');
+        $this->authorizeAdmin();
 
-        if (!$user && $userId) {
-            $user = User::find($userId);
-        }
-
+        $user = $this->resolveUser();
         if (!$user) {
-            $adminUser = User::where('role', 'admin')->first();
-            if ($adminUser) {
-                $user = $adminUser;
-                $userId = $user->id;
-            }
+            return redirect()->route('login');
         }
 
         try {
@@ -230,19 +230,11 @@ class ProfileComponent extends Component
 
     public function disable2FA()
     {
-        $user = auth()->user();
-        $userId = auth()->id() ?? session('user_id');
+        $this->authorizeAdmin();
 
-        if (!$user && $userId) {
-            $user = User::find($userId);
-        }
-
+        $user = $this->resolveUser();
         if (!$user) {
-            $adminUser = User::where('role', 'admin')->first();
-            if ($adminUser) {
-                $user = $adminUser;
-                $userId = $user->id;
-            }
+            return redirect()->route('login');
         }
 
         try {
@@ -282,19 +274,11 @@ class ProfileComponent extends Component
 
     public function regenerateBackupCodes()
     {
-        $user = auth()->user();
-        $userId = auth()->id() ?? session('user_id');
+        $this->authorizeAdmin();
 
-        if (!$user && $userId) {
-            $user = User::find($userId);
-        }
-
+        $user = $this->resolveUser();
         if (!$user) {
-            $adminUser = User::where('role', 'admin')->first();
-            if ($adminUser) {
-                $user = $adminUser;
-                $userId = $user->id;
-            }
+            return redirect()->route('login');
         }
 
         try {

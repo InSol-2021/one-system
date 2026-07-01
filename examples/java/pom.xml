@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+      Spring Boot 2.7.x is used ON PURPOSE.
+
+      The java-cas-client package (CasAuthFilter / CasClient / CasConfig) is built
+      against javax.servlet (javax.servlet-api 4.0.1). Spring Boot 3.x switched to
+      jakarta.servlet, which would NOT be binary-compatible with the package's
+      CasAuthFilter. Spring Boot 2.7.x still uses javax.servlet, so the package's
+      filter drops straight in.
+    -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.7.18</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>com.onesystem.examples</groupId>
+    <artifactId>cas-java-sample</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+    <name>One System CAS - Java (Spring Boot) sample</name>
+    <description>Minimal Spring Boot app demonstrating the One System java-cas-client SDK</description>
+
+    <properties>
+        <!-- Match the package's target (Java 17). Spring Boot 2.7.x runs on Java 17. -->
+        <java.version>17</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <!--
+          The LOCAL One System CAS client package.
+
+          There is no published artifact, so you install the package into your
+          local Maven repository ONCE from its own directory:
+
+              cd ../../packages/java-cas-client
+              mvn install -DskipTests
+
+          That publishes io.github.insol-2021:cas-client:2.0.0 to ~/.m2/repository, and
+          this dependency then resolves it locally. See README.md for details.
+        -->
+        <dependency>
+            <groupId>io.github.insol-2021</groupId>
+            <artifactId>cas-client</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+
+        <!-- Web layer: controllers, the embedded Tomcat server (javax.servlet). -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!--
+          The package logs via slf4j-api. Spring Boot's logging starter provides
+          a concrete slf4j binding (Logback) so those logs actually appear.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-logging</artifactId>
+        </dependency>
+
+        <!--
+          LOCAL username/password accounts (in addition to CAS SSO).
+
+          spring-boot-starter-jdbc gives us a DataSource + JdbcTemplate (and
+          HikariCP); the user store lives in a single SQLite file pointed at by
+          spring.datasource.url in application.properties.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+
+        <!-- Idiomatic SQLite JDBC driver for the JVM (the local user store). -->
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.45.3.0</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>cas-java-sample</finalName>
+        <plugins>
+            <!-- Produces a runnable fat jar: target/cas-java-sample.jar -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

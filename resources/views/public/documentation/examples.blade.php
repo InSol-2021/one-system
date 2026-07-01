@@ -1,160 +1,201 @@
 @extends('public.documentation.layout')
 
-@section('title', 'Code Examples — CAS SSO')
-@section('description', 'Ready-to-use code examples for integrating with CAS SSO across multiple platforms.')
+@section('title', 'Code examples — One System SSO')
+@section('description', 'Ready-to-use integration examples for One System single sign-on: the browser login flow, server-to-server token validation, and service-to-service token issuance.')
 
 @section('content')
-<section class="border-b border-slate-200 pb-10 mb-12">
-    <div class="max-w-3xl">
-        <p class="text-sm font-medium text-blue-600 tracking-wide uppercase mb-3">Getting Started</p>
-        <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight leading-tight mb-4">Code Examples</h1>
-        <p class="text-lg text-slate-500 leading-relaxed">Ready-to-use integration examples for every supported platform.</p>
-    </div>
+<div class="os-container !px-0 !max-w-none">
+
+{{-- Hero --}}
+<section class="border-b border-[var(--color-line)] pb-10 mb-12">
+    <p class="os-eyebrow mb-3">Getting started</p>
+    <h1 class="text-4xl font-semibold text-[var(--color-ink)] tracking-tight leading-tight mb-4">Code examples</h1>
+    <p class="text-lg text-[var(--color-muted)] leading-relaxed">Copy-and-adapt examples for the One System flow: send the user to <code class="os-code-inline">/sso/login</code>, receive a single-use token at your callback, then validate it server to server with your client secret.</p>
 </section>
 
-{{-- Platform Links --}}
+{{-- Platform links --}}
 <section class="mb-12">
-    <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-4">Integration Guides</h2>
+    <h2 class="text-xs font-semibold text-[var(--color-faint)] uppercase tracking-widest mb-4">Integration guides</h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <a href="{{ route('docs.laravel') }}" class="group flex items-center gap-3 p-4 rounded-xl border border-slate-200 hover:border-red-200 hover:bg-red-50/30 transition-all">
-            <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0"><i class="fab fa-laravel text-red-600"></i></div>
-            <div><span class="text-sm font-semibold text-slate-900">Laravel</span><p class="text-xs text-slate-500">Composer &middot; 2 min</p></div>
+        <a href="{{ route('docs.laravel') }}" class="os-card os-card-hover flex items-center gap-3 p-4">
+            <span class="os-icon-tile os-icon-tile-ink"><i class="fab fa-laravel"></i></span>
+            <span><span class="block text-sm font-semibold text-[var(--color-ink)]">Laravel</span><span class="block text-xs text-[var(--color-muted)]">Composer &middot; 2 min</span></span>
         </a>
-        <a href="{{ route('docs.dotnet') }}" class="group flex items-center gap-3 p-4 rounded-xl border border-slate-200 hover:border-blue-200 hover:bg-blue-50/30 transition-all">
-            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0"><i class="fab fa-microsoft text-blue-600"></i></div>
-            <div><span class="text-sm font-semibold text-slate-900">.NET MVC</span><p class="text-xs text-slate-500">NuGet &middot; 10 min</p></div>
+        <a href="{{ route('docs.dotnet') }}" class="os-card os-card-hover flex items-center gap-3 p-4">
+            <span class="os-icon-tile os-icon-tile-ink"><i class="fab fa-microsoft"></i></span>
+            <span><span class="block text-sm font-semibold text-[var(--color-ink)]">.NET MVC</span><span class="block text-xs text-[var(--color-muted)]">NuGet &middot; 10 min</span></span>
         </a>
-        <a href="{{ route('docs.nodejs') }}" class="group flex items-center gap-3 p-4 rounded-xl border border-slate-200 hover:border-green-200 hover:bg-green-50/30 transition-all">
-            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0"><i class="fab fa-node-js text-green-600"></i></div>
-            <div><span class="text-sm font-semibold text-slate-900">Node.js</span><p class="text-xs text-slate-500">npm &middot; 3 min</p></div>
+        <a href="{{ route('docs.nodejs') }}" class="os-card os-card-hover flex items-center gap-3 p-4">
+            <span class="os-icon-tile os-icon-tile-ink"><i class="fab fa-node-js"></i></span>
+            <span><span class="block text-sm font-semibold text-[var(--color-ink)]">Node.js</span><span class="block text-xs text-[var(--color-muted)]">npm &middot; 3 min</span></span>
         </a>
-        <a href="{{ route('docs.java') }}" class="group flex items-center gap-3 p-4 rounded-xl border border-slate-200 hover:border-orange-200 hover:bg-orange-50/30 transition-all">
-            <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0"><i class="fab fa-java text-orange-600"></i></div>
-            <div><span class="text-sm font-semibold text-slate-900">Java Spring</span><p class="text-xs text-slate-500">Maven &middot; 8 min</p></div>
+        <a href="{{ route('docs.java') }}" class="os-card os-card-hover flex items-center gap-3 p-4">
+            <span class="os-icon-tile os-icon-tile-ink"><i class="fab fa-java"></i></span>
+            <span><span class="block text-sm font-semibold text-[var(--color-ink)]">Java Spring</span><span class="block text-xs text-[var(--color-muted)]">Maven &middot; 8 min</span></span>
         </a>
-        <a href="{{ route('docs.python') }}" class="group flex items-center gap-3 p-4 rounded-xl border border-slate-200 hover:border-indigo-200 hover:bg-indigo-50/30 transition-all">
-            <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0"><i class="fab fa-python text-indigo-600"></i></div>
-            <div><span class="text-sm font-semibold text-slate-900">Python Django</span><p class="text-xs text-slate-500">pip &middot; 7 min</p></div>
+        <a href="{{ route('docs.python') }}" class="os-card os-card-hover flex items-center gap-3 p-4">
+            <span class="os-icon-tile os-icon-tile-ink"><i class="fab fa-python"></i></span>
+            <span><span class="block text-sm font-semibold text-[var(--color-ink)]">Python Django</span><span class="block text-xs text-[var(--color-muted)]">pip &middot; 7 min</span></span>
         </a>
-        <a href="{{ route('docs.javascript') }}" class="group flex items-center gap-3 p-4 rounded-xl border border-slate-200 hover:border-yellow-200 hover:bg-yellow-50/30 transition-all">
-            <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center flex-shrink-0"><i class="fab fa-js text-yellow-600"></i></div>
-            <div><span class="text-sm font-semibold text-slate-900">JavaScript</span><p class="text-xs text-slate-500">CDN &middot; 5 min</p></div>
+        <a href="{{ route('docs.javascript') }}" class="os-card os-card-hover flex items-center gap-3 p-4">
+            <span class="os-icon-tile os-icon-tile-ink"><i class="fab fa-js"></i></span>
+            <span><span class="block text-sm font-semibold text-[var(--color-ink)]">JavaScript</span><span class="block text-xs text-[var(--color-muted)]">npm &middot; 5 min</span></span>
         </a>
     </div>
 </section>
 
-{{-- Quick Start CLI Example --}}
+{{-- Flow overview --}}
 <section class="mb-12">
-    <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-4">Quick Start — cURL</h2>
-    <div class="rounded-xl border border-slate-200 overflow-hidden mb-6">
-        <div class="flex items-center px-4 py-2.5 bg-slate-50 border-b border-slate-200">
-            <span class="text-xs font-medium text-slate-600">Terminal</span>
+    <h2 class="text-xs font-semibold text-[var(--color-faint)] uppercase tracking-widest mb-4">The flow in three steps</h2>
+    <div class="os-card os-card-pad">
+        <ol class="space-y-3 text-sm text-[var(--color-ink-2)]">
+            <li class="flex items-start gap-3"><span class="os-badge os-badge-accent flex-shrink-0">1</span><span>Redirect the browser to <code class="os-code-inline">GET {CAS_BASE}/sso/login?client_id={CLIENT_ID}</code>. One System authenticates the user.</span></li>
+            <li class="flex items-start gap-3"><span class="os-badge os-badge-accent flex-shrink-0">2</span><span>The browser is redirected back to your registered <code class="os-code-inline">callback_url</code> with <code class="os-code-inline">?token={JWT}</code> appended.</span></li>
+            <li class="flex items-start gap-3"><span class="os-badge os-badge-accent flex-shrink-0">3</span><span>Your server validates the token once via <code class="os-code-inline">POST {CAS_BASE}/api/validate-token</code> with the client secret, then creates its own session.</span></li>
+        </ol>
+    </div>
+</section>
+
+{{-- Quick start cURL --}}
+<section class="mb-12">
+    <h2 class="text-xs font-semibold text-[var(--color-faint)] uppercase tracking-widest mb-4">Quick start — cURL</h2>
+    <div class="os-codeblock">
+        <div class="os-codeblock-head">
+            <span>terminal</span>
+            <span>Bash</span>
         </div>
-        <div class="bg-slate-900 p-5 overflow-x-auto">
-            <pre class="text-sm leading-relaxed font-mono text-slate-300"><code><span class="text-slate-500"># 1. Generate an SSO token</span>
-<span class="text-green-400">curl</span> -X POST https://your-cas-server.com/api/sso/token \
-  -H <span class="text-amber-300">"Content-Type: application/json"</span> \
-  -d <span class="text-amber-300">'{
-    "email": "john@example.com",
-    "password": "SecureP@ss123!",
+        <pre><code># 1. Send the user's browser here to sign in (returns a redirect to your callback)
+#    GET https://your-one-system.com/sso/login?client_id=your_client_id
+#    -> 302 https://your-app.com/cas/callback?token=eyJhbGci...
+
+# 2. At your callback, validate the token server-to-server (never in the browser)
+curl -X POST https://your-one-system.com/api/validate-token \
+  -H "Content-Type: application/json" \
+  -d '{
+    "token": "eyJhbGci...",
     "client_id": "your_client_id",
     "client_secret": "your_client_secret"
-  }'</span>
-
-<span class="text-slate-500"># 2. Validate the token</span>
-<span class="text-green-400">curl</span> -X POST https://your-cas-server.com/api/sso/validate \
-  -H <span class="text-amber-300">"Content-Type: application/json"</span> \
-  -d <span class="text-amber-300">'{"token": "eyJhbGci..."}'</span></code></pre>
-        </div>
+  }'</code></pre>
     </div>
 </section>
 
-{{-- JavaScript Fetch --}}
+{{-- JavaScript / Node server-side --}}
 <section class="mb-12">
-    <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-4">JavaScript — Fetch API</h2>
-    <div class="rounded-xl border border-slate-200 overflow-hidden">
-        <div class="flex items-center px-4 py-2.5 bg-slate-50 border-b border-slate-200">
-            <i class="fab fa-js text-yellow-500 text-sm mr-2"></i>
-            <span class="text-xs font-medium text-slate-600">auth.js</span>
+    <h2 class="text-xs font-semibold text-[var(--color-faint)] uppercase tracking-widest mb-4">Node.js — validating at the callback</h2>
+    <div class="os-codeblock">
+        <div class="os-codeblock-head">
+            <span>callback.js · server-side</span>
+            <span>JS</span>
         </div>
-        <div class="bg-slate-900 p-5 overflow-x-auto">
-            <pre class="text-sm leading-relaxed font-mono text-slate-300"><code><span class="text-violet-400">async function</span> <span class="text-green-400">generateToken</span>(email, password) {
-  <span class="text-violet-400">const</span> res = <span class="text-violet-400">await</span> <span class="text-green-400">fetch</span>(<span class="text-amber-300">'https://your-cas-server.com/api/sso/token'</span>, {
-    method: <span class="text-amber-300">'POST'</span>,
-    headers: { <span class="text-amber-300">'Content-Type'</span>: <span class="text-amber-300">'application/json'</span> },
-    body: <span class="text-green-400">JSON.stringify</span>({ email, password,
-      client_id: <span class="text-amber-300">'your_client_id'</span>,
-      client_secret: <span class="text-amber-300">'your_client_secret'</span>
-    })
-  });
-  <span class="text-violet-400">return</span> res.<span class="text-green-400">json</span>();
-}
+        <pre><code>// Express route registered as your client's callback_url.
+// The client_secret stays on the server and is never exposed to the browser.
+app.get('/cas/callback', async (req, res) =&gt; {
+  const { token } = req.query;
 
-<span class="text-violet-400">async function</span> <span class="text-green-400">validateToken</span>(token) {
-  <span class="text-violet-400">const</span> res = <span class="text-violet-400">await</span> <span class="text-green-400">fetch</span>(<span class="text-amber-300">'https://your-cas-server.com/api/sso/validate'</span>, {
-    method: <span class="text-amber-300">'POST'</span>,
-    headers: { <span class="text-amber-300">'Content-Type'</span>: <span class="text-amber-300">'application/json'</span> },
-    body: <span class="text-green-400">JSON.stringify</span>({ token })
+  const result = await fetch('https://your-one-system.com/api/validate-token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      token,
+      client_id: process.env.ONE_SYSTEM_CLIENT_ID,
+      client_secret: process.env.ONE_SYSTEM_CLIENT_SECRET,
+    }),
   });
-  <span class="text-violet-400">return</span> res.<span class="text-green-400">json</span>();
-}</code></pre>
-        </div>
+
+  const data = await result.json(); // { valid, user, expires_at }
+  if (result.status === 200 &amp;&amp; data.valid) {
+    req.session.user = data.user; // create your app's own session
+    return res.redirect('/');
+  }
+  return res.status(401).send('Invalid or expired token');
+});</code></pre>
     </div>
 </section>
 
-{{-- PHP cURL --}}
+{{-- PHP --}}
 <section class="mb-12">
-    <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-4">PHP — cURL</h2>
-    <div class="rounded-xl border border-slate-200 overflow-hidden">
-        <div class="flex items-center px-4 py-2.5 bg-slate-50 border-b border-slate-200">
-            <i class="fab fa-php text-indigo-500 text-sm mr-2"></i>
-            <span class="text-xs font-medium text-slate-600">CasAuth.php</span>
+    <h2 class="text-xs font-semibold text-[var(--color-faint)] uppercase tracking-widest mb-4">PHP — validating at the callback</h2>
+    <div class="os-codeblock">
+        <div class="os-codeblock-head">
+            <span>callback.php · server-side</span>
+            <span>PHP</span>
         </div>
-        <div class="bg-slate-900 p-5 overflow-x-auto">
-            <pre class="text-sm leading-relaxed font-mono text-slate-300"><code><span class="text-violet-400">function</span> <span class="text-green-400">generateSSOToken</span>(<span class="text-red-300">$email</span>, <span class="text-red-300">$password</span>) {
-    <span class="text-red-300">$ch</span> = <span class="text-green-400">curl_init</span>(<span class="text-amber-300">'https://your-cas-server.com/api/sso/token'</span>);
-    <span class="text-green-400">curl_setopt_array</span>(<span class="text-red-300">$ch</span>, [
-        CURLOPT_RETURNTRANSFER => <span class="text-blue-400">true</span>,
-        CURLOPT_POST           => <span class="text-blue-400">true</span>,
-        CURLOPT_HTTPHEADER     => [<span class="text-amber-300">'Content-Type: application/json'</span>],
-        CURLOPT_POSTFIELDS     => <span class="text-green-400">json_encode</span>([
-            <span class="text-amber-300">'email'</span>         => <span class="text-red-300">$email</span>,
-            <span class="text-amber-300">'password'</span>      => <span class="text-red-300">$password</span>,
-            <span class="text-amber-300">'client_id'</span>     => <span class="text-amber-300">'your_client_id'</span>,
-            <span class="text-amber-300">'client_secret'</span> => <span class="text-amber-300">'your_client_secret'</span>,
-        ]),
-    ]);
-    <span class="text-red-300">$response</span> = <span class="text-green-400">curl_exec</span>(<span class="text-red-300">$ch</span>);
-    <span class="text-green-400">curl_close</span>(<span class="text-red-300">$ch</span>);
-    <span class="text-violet-400">return</span> <span class="text-green-400">json_decode</span>(<span class="text-red-300">$response</span>, <span class="text-blue-400">true</span>);
+        <pre><code>&lt;?php
+// Read the single-use token from the callback query string.
+$token = $_GET['token'] ?? '';
+
+$ch = curl_init('https://your-one-system.com/api/validate-token');
+curl_setopt_array($ch, [
+    CURLOPT_RETURNTRANSFER =&gt; true,
+    CURLOPT_POST           =&gt; true,
+    CURLOPT_HTTPHEADER     =&gt; ['Content-Type: application/json'],
+    CURLOPT_POSTFIELDS     =&gt; json_encode([
+        'token'         =&gt; $token,
+        'client_id'     =&gt; getenv('ONE_SYSTEM_CLIENT_ID'),
+        'client_secret' =&gt; getenv('ONE_SYSTEM_CLIENT_SECRET'),
+    ]),
+]);
+$response = json_decode(curl_exec($ch), true);
+curl_close($ch);
+
+if (($response['valid'] ?? false) === true) {
+    $_SESSION['user'] = $response['user']; // { id, username, email }
+    header('Location: /');
 }</code></pre>
-        </div>
     </div>
 </section>
 
 {{-- Python --}}
-<section class="border-t border-slate-200 pt-10">
-    <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-4">Python — Requests</h2>
-    <div class="rounded-xl border border-slate-200 overflow-hidden">
-        <div class="flex items-center px-4 py-2.5 bg-slate-50 border-b border-slate-200">
-            <i class="fab fa-python text-indigo-500 text-sm mr-2"></i>
-            <span class="text-xs font-medium text-slate-600">cas_auth.py</span>
+<section class="mb-12">
+    <h2 class="text-xs font-semibold text-[var(--color-faint)] uppercase tracking-widest mb-4">Python — validating at the callback</h2>
+    <div class="os-codeblock">
+        <div class="os-codeblock-head">
+            <span>callback.py · server-side</span>
+            <span>Python</span>
         </div>
-        <div class="bg-slate-900 p-5 overflow-x-auto">
-            <pre class="text-sm leading-relaxed font-mono text-slate-300"><code><span class="text-violet-400">import</span> requests
+        <pre><code>import os
+import requests
 
-<span class="text-violet-400">def</span> <span class="text-green-400">generate_token</span>(email, password):
-    response = requests.<span class="text-green-400">post</span>(
-        <span class="text-amber-300">'https://your-cas-server.com/api/sso/token'</span>,
+def validate_token(token):
+    response = requests.post(
+        'https://your-one-system.com/api/validate-token',
         json={
-            <span class="text-amber-300">'email'</span>: email,
-            <span class="text-amber-300">'password'</span>: password,
-            <span class="text-amber-300">'client_id'</span>: <span class="text-amber-300">'your_client_id'</span>,
-            <span class="text-amber-300">'client_secret'</span>: <span class="text-amber-300">'your_client_secret'</span>,
-        }
+            'token': token,
+            'client_id': os.environ['ONE_SYSTEM_CLIENT_ID'],
+            'client_secret': os.environ['ONE_SYSTEM_CLIENT_SECRET'],
+        },
     )
-    <span class="text-violet-400">return</span> response.<span class="text-green-400">json</span>()</code></pre>
-        </div>
+    data = response.json()  # { valid, user, expires_at }
+    if response.status_code == 200 and data.get('valid'):
+        return data['user']  # create your app's own session from this
+    return None</code></pre>
     </div>
 </section>
+
+{{-- Service-to-service issuance --}}
+<section class="border-t border-[var(--color-line)] pt-10">
+    <h2 class="text-xs font-semibold text-[var(--color-faint)] uppercase tracking-widest mb-4">Service-to-service token issuance</h2>
+    <p class="text-sm text-[var(--color-muted)] mb-4">From a trusted, IP-whitelisted backend you can issue a token for a known user without a browser round trip. This returns a <code class="os-code-inline">redirect_url</code> you can hand to the user to log them straight in.</p>
+    <div class="os-codeblock">
+        <div class="os-codeblock-head">
+            <span>terminal</span>
+            <span>Bash</span>
+        </div>
+        <pre><code>curl -X POST https://your-one-system.com/api/sso/token \
+  -H "Content-Type: application/json" \
+  -d '{
+    "client_id": "your_client_id",
+    "client_secret": "your_client_secret",
+    "username": "john_doe"
+  }'
+
+# -> { "redirect_url": "https://your-app.com/cas/callback?token=eyJhbG...", "token": "eyJhbG..." }</code></pre>
+    </div>
+    <div class="os-alert mt-4">
+        <i class="fas fa-circle-info text-[var(--color-accent)] mt-0.5"></i>
+        <div>Keep <code class="os-code-inline">client_secret</code> on the server only. Store secrets such as <code class="os-code-inline">ONE_SYSTEM_CLIENT_SECRET</code> and <code class="os-code-inline">JWT_SECRET</code> in environment variables, and serve every request over HTTPS in production.</div>
+    </div>
+</section>
+
+</div>
 @endsection

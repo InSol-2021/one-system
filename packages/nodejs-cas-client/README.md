@@ -14,15 +14,17 @@ A Node.js package for seamless integration with CAS (Central Authentication Serv
 ## Installation
 
 ```bash
-npm install @insol-dev/node-cas-client
+npm install @one-system/node-cas-client
 ```
+
+**Requirements:** Node.js >= 18. The package's only runtime dependency is `axios` (^1.12.0).
 
 ## Quick Start
 
 ### 1. Initialize the Client
 
 ```javascript
-const CasClient = require('@insol-dev/node-cas-client');
+const CasClient = require('@one-system/node-cas-client');
 
 const cas = new CasClient({
   serverUrl: 'https://your-cas-server.com',
@@ -41,8 +43,8 @@ const cas = new CasClient({
 ```javascript
 const express = require('express');
 const session = require('express-session');
-const CasClient = require('@insol-dev/node-cas-client');
-const { casAuth, casRole } = require('@insol-dev/node-cas-client/middleware');
+const CasClient = require('@one-system/node-cas-client');
+const { casAuth, casRole } = require('@one-system/node-cas-client/src/middleware');
 
 const app = express();
 app.use(session({ secret: 'session-secret', resave: false, saveUninitialized: false }));
@@ -70,7 +72,7 @@ app.get('/admin', casAuth(cas), casRole(cas, 'admin'), (req, res) => {
 ```javascript
 // Login redirect
 app.get('/login', (req, res) => {
-  const loginUrl = cas.getLoginUrl('https://your-app.com/dashboard');
+  const loginUrl = cas.getLoginUrl();
   res.redirect(loginUrl);
 });
 
@@ -123,7 +125,7 @@ CAS_TIMEOUT=30000
 
 | Method | Description |
 |--------|-------------|
-| `getLoginUrl(returnUrl?)` | Generate CAS SSO login URL |
+| `getLoginUrl()` | Generate CAS SSO login URL |
 | `generateSSOToken(username)` | Generate SSO token via client credentials |
 | `validateToken(token)` | Validate token, returns user data |
 | `getUserFromToken(token)` | Get cached user data |

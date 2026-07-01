@@ -7,9 +7,12 @@ use Livewire\Component;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\IpWhitelist;
+use App\Livewire\Concerns\AuthorizesAdmin;
 
 class IpWhitelistManager extends Component
 {
+    use AuthorizesAdmin;
+
     // Component state
     public $ipEntries = [];
     public $loading = true;
@@ -39,6 +42,7 @@ class IpWhitelistManager extends Component
 
     public function mount()
     {
+        $this->authorizeAdmin();
         $this->loadIpEntries();
     }
 
@@ -76,6 +80,8 @@ class IpWhitelistManager extends Component
 
     public function createIpEntry()
     {
+        $this->authorizeAdmin();
+
         if ($this->processing) {
             return;
         }
@@ -126,6 +132,8 @@ class IpWhitelistManager extends Component
 
     public function addCurrentIp()
     {
+        $this->authorizeAdmin();
+
         if ($this->processing) {
             return;
         }
@@ -147,7 +155,7 @@ class IpWhitelistManager extends Component
                 'subnet_mask' => 'full',
                 'description' => "Auto-added current IP: {$currentIp}",
                 'is_active' => true,
-                'created_by' => session('user_id') ?: 1,
+                'created_by' => session('user_id'),
             ]);
 
             AuditLog::create([
@@ -189,6 +197,8 @@ class IpWhitelistManager extends Component
 
     public function updateIpEntry()
     {
+        $this->authorizeAdmin();
+
         $this->validate([
             'editIpAddress' => 'required|ip',
             'editSubnetMask' => 'nullable|integer|min:1|max:32',
@@ -238,6 +248,8 @@ class IpWhitelistManager extends Component
 
     public function toggleEntryStatus($entryId)
     {
+        $this->authorizeAdmin();
+
         try {
             $ipEntry = IpWhitelist::find($entryId);
 
@@ -259,6 +271,8 @@ class IpWhitelistManager extends Component
 
     public function deleteIpEntry($entryId)
     {
+        $this->authorizeAdmin();
+
         try {
             $ipEntry = IpWhitelist::find($entryId);
 

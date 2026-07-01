@@ -19,13 +19,13 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [
-        'http://localhost:4001',
-        'http://localhost:9000',
-        'http://0.0.0.0:4001',
-        'http://0.0.0.0:9000',
-        '*'
-    ],
+    'allowed_origins' => array_values(array_filter(array_map(
+        'trim',
+        explode(',', (string) env(
+            'CORS_ALLOWED_ORIGINS',
+            'http://localhost:4001,http://localhost:9000,http://0.0.0.0:4001,http://0.0.0.0:9000'
+        ))
+    ), static fn ($origin) => $origin !== '' && $origin !== '*')),
 
     'allowed_origins_patterns' => [],
 

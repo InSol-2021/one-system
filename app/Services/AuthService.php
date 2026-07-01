@@ -24,10 +24,14 @@ class AuthService
         }
 
         if (!$user) {
-            // Try lenient search
-            $user = User::where('email', $loginInput)
-                ->orWhere('username', $loginInput)
-                ->where('is_active', true)
+            // Try lenient search. Group the OR so the is_active=true filter
+            // applies to BOTH identifiers; otherwise an inactive account whose
+            // email matches could still log in.
+            $user = User::where('is_active', true)
+                ->where(function ($query) use ($loginInput) {
+                    $query->where('email', $loginInput)
+                        ->orWhere('username', $loginInput);
+                })
                 ->first();
         }
 
@@ -55,6 +59,12 @@ class AuthService
     public function completeLogin(User $user, $request)
     {
         $user->update(['last_login' => now()]);
+
+        // Prevent session fixation: rotate the session id (and CSRF token)
+        // immediately after successful credential verification, before
+        // populating the authenticated identity into the session.
+        $request->session()->regenerate();
+        $request->session()->regenerateToken();
 
         Auth::login($user);
 
@@ -84,9 +94,13 @@ class AuthService
             'is_active' => true,
         ]);
 
+        // Prevent session fixation on the new authenticated session.
+        $request->session()->regenerate();
+        $request->session()->regenerateToken();
+
         Auth::login($user);
 
-        session(['user_id' => $user->id, 'username' => $user->username]);
+        session(['user_id' => $user->id, 'username' => $user->username, 'role' => $user->role]);
 
         AuditLog::create([
             'user_id' => $user->id,
@@ -136,10 +150,23 @@ class AuthService
         $storedHash = hex2bin($parts[0]);
         $salt = $parts[1];
 
-        $hashedPassword = scrypt($password, $salt, 65536, 8, 1, 64);
+        // PHP does not ship a global scrypt() function and the project does not
+        // polyfill one. Guard against a missing implementation so a legacy
+        // (non-bcrypt) hash cannot fatal the login request — fail closed by
+        // treating verification as invalid.
+        if (!function_exists('scrypt')) {
+            Log::warning('Legacy scrypt password verification attempted but scrypt() is unavailable.');
+            return false;
+        }
+
+        try {
+            $hashedPassword = scrypt($password, $salt, 65536, 8, 1, 64);
+        } catch (\Throwable $e) {
+            Log::warning('Legacy scrypt password verification failed: ' . $e->getMessage());
+            return false;
+        }
 
         return hash_equals($storedHash, $hashedPassword);
-
     }
 
     private function logAuditEvent($userId, $action, $details, $clientSystemId = null)

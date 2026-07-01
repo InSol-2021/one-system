@@ -1,15 +1,15 @@
 # Java CAS Client
 
-A Java library for seamless integration with CAS (Central Authentication Service) SSO servers. Works with Spring Boot, Jakarta Servlet, and any Java framework.
+A Java library for seamless integration with One System CAS (Central Authentication Service) SSO servers. Works with Spring Boot, Java EE / Jakarta EE 8 servlet containers, and any Java framework on the `javax.servlet` API.
 
 ## Features
 
 - 🔐 **Secure SSO Authentication** — JWT token-based authentication
 - 🛡️ **HMAC Signature Validation** — Request signing with SHA-256
 - 👥 **Role-Based Access Control** — Servlet filter for role protection
-- ☕ **Spring Boot Compatible** — Drop-in filter registration
+- ☕ **Spring Boot Compatible** — Drop-in filter registration (Spring Boot 2.7.x)
 - 🔄 **Thread-Safe Caching** — ConcurrentHashMap token cache
-- 📦 **Java 11+** — Modern Java with OkHttp and Gson
+- 📦 **Java 17** — Built for Java 17 with OkHttp, Gson, JJWT, and SLF4J
 
 ## Installation
 
@@ -17,7 +17,7 @@ A Java library for seamless integration with CAS (Central Authentication Service
 
 ```xml
 <dependency>
-    <groupId>com.cassystem</groupId>
+    <groupId>io.github.insol-2021</groupId>
     <artifactId>cas-client</artifactId>
     <version>2.0.0</version>
 </dependency>
@@ -26,8 +26,14 @@ A Java library for seamless integration with CAS (Central Authentication Service
 ### Gradle
 
 ```groovy
-implementation 'com.cassystem:cas-client:2.0.0'
+implementation 'io.github.insol-2021:cas-client:2.0.0'
 ```
+
+## Requirements
+
+- **Java 17+** (the package compiles to Java 17 bytecode).
+- Built against the **`javax.servlet`** API (servlet-api 4.0.1). With Spring Boot, use **2.7.x** — Spring Boot 3 switched to `jakarta.servlet` and is **not** binary-compatible with `CasAuthFilter`.
+- Pulls in OkHttp 4.12, Gson 2.10, JJWT 0.12 (`jjwt-api` + runtime `jjwt-impl` / `jjwt-jackson`), and SLF4J 2.0.
 
 ## Quick Start
 
@@ -123,6 +129,17 @@ cas.logout(token);
 | `userHasRole(user, role)` | Check single role |
 | `userHasAnyRole(user, roles...)` | Check any of roles |
 | `userHasAllRoles(user, roles...)` | Check all roles |
+
+## CAS endpoints
+
+The client talks to these One System CAS endpoints (relative to the configured server URL):
+
+| Call | Endpoint | Request | Response |
+|------|----------|---------|----------|
+| `getLoginUrl()` | `GET /sso/login?client_id=...` | browser redirect | CAS redirects back to the registered `callback_url` with `?token=<JWT>` |
+| `validateToken(token)` | `POST /api/validate-token` | `{ token, client_id, client_secret }` | `{ valid: true, user: { id, username, email }, expires_at }` — token is **single-use** |
+| `generateSSOToken(username)` | `POST /api/sso/token` | `{ client_id, client_secret, username }` | `{ redirect_url, token }` |
+| `logout(token)` | `POST /api/logout` | — | clears the cache entry and notifies the server |
 
 ## License
 

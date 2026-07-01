@@ -1,0 +1,42 @@
+[package]
+name = "rust-sample"
+version = "1.0.0"
+edition = "2021"
+description = "One System CAS — minimal Rust/axum sample with CAS SSO and local SQLite auth."
+license = "MIT"
+
+[[bin]]
+name = "rust-sample"
+path = "src/main.rs"
+
+[dependencies]
+# The local CAS client crate (path dependency to the sibling package).
+rust-cas-client = { path = "../../packages/rust-cas-client" }
+
+# Web framework + async runtime.
+axum = { version = "0.7", features = ["macros"] }
+tokio = { version = "1", features = ["full"] }
+tower = "0.5"
+tower-sessions = "0.13"
+
+# Local user store (idiomatic SQLite for Rust). Bundled so no system libsqlite3
+# is needed in the slim runtime image.
+rusqlite = { version = "0.32", features = ["bundled"] }
+
+# Password hashing (salted Argon2 — the framework-standard choice in Rust).
+# `argon2` re-exports the `password_hash` traits and a `rand_core` with OsRng.
+argon2 = { version = "0.5", features = ["std"] }
+password-hash = { version = "0.5", features = ["std"] }
+
+# JSON + form bodies for the login contract.
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_urlencoded = "0.7"
+
+# HTML escaping for the rendered pages.
+askama_escape = "0.10"
+
+# Env + logging.
+dotenvy = "0.15"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }

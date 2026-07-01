@@ -7,11 +7,19 @@ use App\Models\User;
 use App\Models\ClientSystem;
 use App\Models\AuditLog;
 use App\Models\IpWhitelist;
+use App\Livewire\Concerns\AuthorizesAdmin;
 use Carbon\Carbon;
 
 class DashboardComponent extends Component
 {
+    use AuthorizesAdmin;
+
     public $selectedPeriod = '7days';
+
+    public function mount()
+    {
+        $this->authorizeAdmin();
+    }
 
     public function render()
     {

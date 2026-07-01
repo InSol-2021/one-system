@@ -1,25 +1,31 @@
 {
-  "name": "@insol-dev/node-cas-client",
-  "version": "2.0.0",
+  "name": "@one-system/node-cas-client",
+  "version": "1.0.0",
   "description": "Node.js client for CAS (Central Authentication Service) SSO integration",
   "main": "src/index.js",
-  "types": "src/index.d.ts",
+  "files": [
+    "src",
+    "README.md"
+  ],
   "scripts": {
     "test": "node test/test.js",
     "lint": "eslint src/"
   },
-  "keywords": ["cas", "sso", "authentication", "jwt", "single-sign-on"],
-  "author": "CAS System",
+  "keywords": ["cas", "sso", "authentication", "jwt", "single-sign-on", "nodejs", "one-system"],
+  "author": "One System",
   "license": "MIT",
   "dependencies": {
-    "axios": "^1.6.0",
-    "jsonwebtoken": "^9.0.0"
+    "axios": "^1.12.0"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.0.0"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/insol-dev/node-client"
+    "url": "https://github.com/insol-dev/central-authentication-server",
+    "directory": "packages/nodejs-cas-client"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

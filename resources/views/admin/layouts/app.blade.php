@@ -5,16 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'CAS Admin Panel')</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=ibm-plex-sans:400,500,600,700|ibm-plex-mono:400,500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     @livewireStyles
 
     <style>
-        *, *::before, *::after { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        [x-cloak] { display: none !important; }
 
         .loading-pulse {
             animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
@@ -29,112 +30,81 @@
             backdrop-filter: blur(2px);
         }
     </style>
-
-
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <nav class="bg-blue-800 shadow-lg" x-data="{ mobileOpen: false }">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<body class="min-h-screen flex flex-col bg-[var(--color-canvas)]">
+    <nav class="bg-[var(--color-surface)] border-b border-[var(--color-line)]" x-data="{ mobileOpen: false }">
+        <div class="os-container">
             <div class="flex justify-between h-16">
                 <div class="flex">
                     <div class="flex-shrink-0 flex items-center">
-                        <h1 class="text-xl font-bold text-white">CAS Admin</h1>
-                    </div>
-                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-                        <a href="/admin/dashboard"
-                           class="border-b-2 {{ request()->is('admin/dashboard*') || request()->is('admin') ? 'border-blue-300 text-white' : 'border-transparent text-blue-100 hover:text-white hover:border-blue-300' }} inline-flex items-center px-1 pt-1 text-sm font-medium transition-all duration-200 hover:scale-105">
-                            <span class="flex items-center space-x-1">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z"></path>
-                                </svg>
-                                <span>Dashboard</span>
+                        <a href="/admin/dashboard" class="flex items-center gap-2.5">
+                            <span class="inline-flex h-8 w-8 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--color-ink)] text-white">
+                                <i class="fa-solid fa-shield-halved text-sm"></i>
                             </span>
+                            <span class="text-base font-semibold tracking-tight text-[var(--color-ink)]">One System</span>
+                        </a>
+                    </div>
+                    <div class="hidden sm:ml-8 sm:flex sm:space-x-6">
+                        <a href="/admin/dashboard"
+                           class="inline-flex items-center gap-2 border-b-2 px-1 pt-1 text-sm font-medium transition-colors {{ request()->is('admin/dashboard*') || request()->is('admin') ? 'border-[var(--color-accent)] text-[var(--color-accent)]' : 'border-transparent text-[var(--color-muted)] hover:text-[var(--color-ink)]' }}">
+                            <i class="fa-solid fa-gauge-high w-4 text-center"></i>
+                            <span>Dashboard</span>
                         </a>
                         <a href="/admin/client-systems"
-                           class="border-b-2 {{ request()->is('admin/client-systems*') ? 'border-blue-300 text-white' : 'border-transparent text-blue-100 hover:text-white hover:border-blue-300' }} inline-flex items-center px-1 pt-1 text-sm font-medium transition-all duration-200 hover:scale-105">
-                            <span class="flex items-center space-x-1">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
-                                </svg>
-                                <span>Client Systems</span>
-                            </span>
+                           class="inline-flex items-center gap-2 border-b-2 px-1 pt-1 text-sm font-medium transition-colors {{ request()->is('admin/client-systems*') ? 'border-[var(--color-accent)] text-[var(--color-accent)]' : 'border-transparent text-[var(--color-muted)] hover:text-[var(--color-ink)]' }}">
+                            <i class="fa-solid fa-server w-4 text-center"></i>
+                            <span>Client systems</span>
                         </a>
                         <a href="/admin/users"
-                           class="border-b-2 {{ request()->is('admin/users*') ? 'border-blue-300 text-white' : 'border-transparent text-blue-100 hover:text-white hover:border-blue-300' }} inline-flex items-center px-1 pt-1 text-sm font-medium transition-all duration-200 hover:scale-105">
-                            <span class="flex items-center space-x-1">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                                </svg>
-                                <span>Users</span>
-                            </span>
+                           class="inline-flex items-center gap-2 border-b-2 px-1 pt-1 text-sm font-medium transition-colors {{ request()->is('admin/users*') ? 'border-[var(--color-accent)] text-[var(--color-accent)]' : 'border-transparent text-[var(--color-muted)] hover:text-[var(--color-ink)]' }}">
+                            <i class="fa-solid fa-users w-4 text-center"></i>
+                            <span>Users</span>
                         </a>
                         <a href="/admin/ip-whitelist"
-                           class="border-b-2 {{ request()->is('admin/ip-whitelist*') ? 'border-blue-300 text-white' : 'border-transparent text-blue-100 hover:text-white hover:border-blue-300' }} inline-flex items-center px-1 pt-1 text-sm font-medium transition-all duration-200 hover:scale-105">
-                            <span class="flex items-center space-x-1">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                                </svg>
-                                <span>IP Whitelist</span>
-                            </span>
+                           class="inline-flex items-center gap-2 border-b-2 px-1 pt-1 text-sm font-medium transition-colors {{ request()->is('admin/ip-whitelist*') ? 'border-[var(--color-accent)] text-[var(--color-accent)]' : 'border-transparent text-[var(--color-muted)] hover:text-[var(--color-ink)]' }}">
+                            <i class="fa-solid fa-shield-halved w-4 text-center"></i>
+                            <span>IP whitelist</span>
                         </a>
                         <a href="/admin/audit-logs"
-                           class="border-b-2 {{ request()->is('admin/audit-logs*') ? 'border-blue-300 text-white' : 'border-transparent text-blue-100 hover:text-white hover:border-blue-300' }} inline-flex items-center px-1 pt-1 text-sm font-medium transition-all duration-200 hover:scale-105">
-                            <span class="flex items-center space-x-1">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                </svg>
-                                <span>Audit Logs</span>
-                            </span>
+                           class="inline-flex items-center gap-2 border-b-2 px-1 pt-1 text-sm font-medium transition-colors {{ request()->is('admin/audit-logs*') ? 'border-[var(--color-accent)] text-[var(--color-accent)]' : 'border-transparent text-[var(--color-muted)] hover:text-[var(--color-ink)]' }}">
+                            <i class="fa-solid fa-file-lines w-4 text-center"></i>
+                            <span>Audit logs</span>
                         </a>
                         <a href="/admin/sso-settings"
-                           class="border-b-2 {{ request()->is('admin/sso-settings*') ? 'border-blue-300 text-white' : 'border-transparent text-blue-100 hover:text-white hover:border-blue-300' }} inline-flex items-center px-1 pt-1 text-sm font-medium transition-all duration-200 hover:scale-105">
-                            <span class="flex items-center space-x-1">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                </svg>
-                                <span>SSO Settings</span>
-                            </span>
+                           class="inline-flex items-center gap-2 border-b-2 px-1 pt-1 text-sm font-medium transition-colors {{ request()->is('admin/sso-settings*') ? 'border-[var(--color-accent)] text-[var(--color-accent)]' : 'border-transparent text-[var(--color-muted)] hover:text-[var(--color-ink)]' }}">
+                            <i class="fa-solid fa-gear w-4 text-center"></i>
+                            <span>SSO settings</span>
                         </a>
                     </div>
                 </div>
-                <div class="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
+                <div class="hidden sm:ml-6 sm:flex sm:items-center">
                     <!-- Profile Dropdown -->
-                    <div class="ml-3 relative" x-data="{ open: false }">
+                    <div class="relative" x-data="{ open: false }">
                         <div>
-                            <button @click="open = !open" class="flex items-center text-sm text-white hover:text-blue-200 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-blue-800 focus:ring-white rounded-md px-3 py-2">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                </svg>
-                                <span class="mr-1">Admin</span>
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                </svg>
+                            <button @click="open = !open" class="flex items-center gap-2 text-sm font-medium text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors focus:outline-none rounded-[var(--radius-sm)] px-2.5 py-2">
+                                <span class="inline-flex h-7 w-7 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--color-surface-2)] text-[var(--color-ink-2)] border border-[var(--color-line)]">
+                                    <i class="fa-solid fa-user text-xs"></i>
+                                </span>
+                                <span>Admin User</span>
+                                <i class="fa-solid fa-chevron-down text-xs text-[var(--color-faint)]"></i>
                             </button>
                         </div>
 
-                        <div x-show="open" @click.away="open = false" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
-                            <div class="py-1">
-                                <a href="/admin/profile" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                    </svg>
-                                    My Profile
+                        <div x-show="open" @click.away="open = false" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" x-cloak class="origin-top-right absolute right-0 mt-2 w-52 rounded-[var(--radius-md)] bg-[var(--color-surface)] border border-[var(--color-line)] shadow-[var(--shadow-md)] z-50">
+                            <div class="py-1.5">
+                                <a href="/admin/profile" class="flex items-center gap-2.5 px-4 py-2 text-sm text-[var(--color-ink-2)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-ink)] transition-colors">
+                                    <i class="fa-solid fa-user w-4 text-center text-[var(--color-muted)]"></i>
+                                    My profile
                                 </a>
-                                <a href="/admin/security-settings" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                                    </svg>
-                                    Security Settings
+                                <a href="/admin/security-settings" class="flex items-center gap-2.5 px-4 py-2 text-sm text-[var(--color-ink-2)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-ink)] transition-colors">
+                                    <i class="fa-solid fa-shield-halved w-4 text-center text-[var(--color-muted)]"></i>
+                                    Security settings
                                 </a>
-                                <div class="border-t border-gray-100"></div>
+                                <div class="my-1 border-t border-[var(--color-line)]"></div>
                                 <form method="POST" action="/auth/logout" class="block">
                                     @csrf
-                                    <button type="submit" class="flex items-center w-full px-4 py-2 text-sm text-red-700 hover:bg-red-50 transition-colors">
-                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                                        </svg>
+                                    <button type="submit" class="flex items-center gap-2.5 w-full px-4 py-2 text-sm text-[var(--color-danger)] hover:bg-[var(--color-danger-soft)] transition-colors">
+                                        <i class="fa-solid fa-right-from-bracket w-4 text-center"></i>
                                         Logout
                                     </button>
                                 </form>
@@ -145,34 +115,30 @@
 
                 <!-- Mobile hamburger button -->
                 <div class="flex items-center sm:hidden">
-                    <button @click="mobileOpen = !mobileOpen" class="inline-flex items-center justify-center p-2 rounded-md text-blue-200 hover:text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white transition-colors">
-                        <svg x-show="!mobileOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                        </svg>
-                        <svg x-show="mobileOpen" x-cloak class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
+                    <button @click="mobileOpen = !mobileOpen" class="inline-flex items-center justify-center p-2 rounded-[var(--radius-sm)] text-[var(--color-muted)] hover:text-[var(--color-ink)] hover:bg-[var(--color-surface-2)] focus:outline-none transition-colors">
+                        <i x-show="!mobileOpen" class="fa-solid fa-bars text-lg"></i>
+                        <i x-show="mobileOpen" x-cloak class="fa-solid fa-xmark text-lg"></i>
                     </button>
                 </div>
             </div>
         </div>
 
         <!-- Mobile menu panel -->
-        <div x-show="mobileOpen" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2" x-cloak class="sm:hidden bg-blue-900 border-t border-blue-700">
+        <div x-show="mobileOpen" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2" x-cloak class="sm:hidden border-t border-[var(--color-line)] bg-[var(--color-surface)]">
             <div class="pt-2 pb-3 space-y-1 px-3">
-                <a href="/admin/dashboard" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->is('admin/dashboard*') || request()->is('admin') ? 'bg-blue-700 text-white' : 'text-blue-100 hover:bg-blue-700 hover:text-white' }} transition-colors">Dashboard</a>
-                <a href="/admin/client-systems" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->is('admin/client-systems*') ? 'bg-blue-700 text-white' : 'text-blue-100 hover:bg-blue-700 hover:text-white' }} transition-colors">Client Systems</a>
-                <a href="/admin/users" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->is('admin/users*') ? 'bg-blue-700 text-white' : 'text-blue-100 hover:bg-blue-700 hover:text-white' }} transition-colors">Users</a>
-                <a href="/admin/ip-whitelist" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->is('admin/ip-whitelist*') ? 'bg-blue-700 text-white' : 'text-blue-100 hover:bg-blue-700 hover:text-white' }} transition-colors">IP Whitelist</a>
-                <a href="/admin/audit-logs" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->is('admin/audit-logs*') ? 'bg-blue-700 text-white' : 'text-blue-100 hover:bg-blue-700 hover:text-white' }} transition-colors">Audit Logs</a>
-                <a href="/admin/sso-settings" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->is('admin/sso-settings*') ? 'bg-blue-700 text-white' : 'text-blue-100 hover:bg-blue-700 hover:text-white' }} transition-colors">SSO Settings</a>
+                <a href="/admin/dashboard" class="block px-3 py-2 rounded-[var(--radius-sm)] text-base font-medium transition-colors {{ request()->is('admin/dashboard*') || request()->is('admin') ? 'bg-[var(--color-accent-soft)] text-[var(--color-accent)]' : 'text-[var(--color-ink-2)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-ink)]' }}">Dashboard</a>
+                <a href="/admin/client-systems" class="block px-3 py-2 rounded-[var(--radius-sm)] text-base font-medium transition-colors {{ request()->is('admin/client-systems*') ? 'bg-[var(--color-accent-soft)] text-[var(--color-accent)]' : 'text-[var(--color-ink-2)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-ink)]' }}">Client systems</a>
+                <a href="/admin/users" class="block px-3 py-2 rounded-[var(--radius-sm)] text-base font-medium transition-colors {{ request()->is('admin/users*') ? 'bg-[var(--color-accent-soft)] text-[var(--color-accent)]' : 'text-[var(--color-ink-2)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-ink)]' }}">Users</a>
+                <a href="/admin/ip-whitelist" class="block px-3 py-2 rounded-[var(--radius-sm)] text-base font-medium transition-colors {{ request()->is('admin/ip-whitelist*') ? 'bg-[var(--color-accent-soft)] text-[var(--color-accent)]' : 'text-[var(--color-ink-2)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-ink)]' }}">IP whitelist</a>
+                <a href="/admin/audit-logs" class="block px-3 py-2 rounded-[var(--radius-sm)] text-base font-medium transition-colors {{ request()->is('admin/audit-logs*') ? 'bg-[var(--color-accent-soft)] text-[var(--color-accent)]' : 'text-[var(--color-ink-2)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-ink)]' }}">Audit logs</a>
+                <a href="/admin/sso-settings" class="block px-3 py-2 rounded-[var(--radius-sm)] text-base font-medium transition-colors {{ request()->is('admin/sso-settings*') ? 'bg-[var(--color-accent-soft)] text-[var(--color-accent)]' : 'text-[var(--color-ink-2)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-ink)]' }}">SSO settings</a>
             </div>
-            <div class="pt-3 pb-3 border-t border-blue-700 px-4 space-y-2">
-                <a href="/admin/profile" class="block px-3 py-2 rounded-md text-base font-medium text-blue-100 hover:bg-blue-700 hover:text-white transition-colors">My Profile</a>
-                <a href="/admin/security-settings" class="block px-3 py-2 rounded-md text-base font-medium text-blue-100 hover:bg-blue-700 hover:text-white transition-colors">Security Settings</a>
+            <div class="pt-3 pb-3 border-t border-[var(--color-line)] px-4 space-y-1">
+                <a href="/admin/profile" class="block px-3 py-2 rounded-[var(--radius-sm)] text-base font-medium text-[var(--color-ink-2)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-ink)] transition-colors">My profile</a>
+                <a href="/admin/security-settings" class="block px-3 py-2 rounded-[var(--radius-sm)] text-base font-medium text-[var(--color-ink-2)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-ink)] transition-colors">Security settings</a>
                 <form method="POST" action="/auth/logout" class="block">
                     @csrf
-                    <button type="submit" class="w-full text-left px-3 py-2 rounded-md text-base font-medium text-red-300 hover:bg-red-900/50 hover:text-red-200 transition-colors">Logout</button>
+                    <button type="submit" class="w-full text-left px-3 py-2 rounded-[var(--radius-sm)] text-base font-medium text-[var(--color-danger)] hover:bg-[var(--color-danger-soft)] transition-colors">Logout</button>
                 </form>
             </div>
         </div>
@@ -186,16 +152,16 @@
         @yield('content')
     </main>
 
-    <footer class="bg-white border-t mt-auto">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div class="flex justify-between items-center text-sm text-gray-500">
+    <footer class="bg-[var(--color-surface)] border-t border-[var(--color-line)] mt-auto">
+        <div class="os-container py-4">
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-2 text-sm text-[var(--color-muted)]">
                 <div>
-                    CAS Admin Panel - Centralized Authentication System
+                    CAS admin panel — Centralized Authentication System
                 </div>
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center gap-3">
                     <span>Laravel {{ app()->version() }}</span>
-                    <span>•</span>
-                    <span>Livewire Enabled</span>
+                    <span class="text-[var(--color-faint)]">•</span>
+                    <span>Livewire enabled</span>
                 </div>
             </div>
         </div>

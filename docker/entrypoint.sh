@@ -25,10 +25,15 @@ php artisan config:cache
 echo "Running database migrations..."
 php artisan migrate --force
 
-#if [ "$APP_ENV" = "local" ] || [ "$APP_ENV" = "development" ]; then
+# Only seed automatically outside production, or when explicitly opted in via
+# RUN_SEED=true. The seeders include credential fixtures (e.g. ClientSystemSeeder)
+# that would reset client secrets to known values on every boot if run in prod.
+if [ "$APP_ENV" = "local" ] || [ "$APP_ENV" = "development" ] || [ "$RUN_SEED" = "true" ]; then
     echo "Seeding database..."
     php artisan db:seed --force
-#fi
+else
+    echo "Skipping database seeding (APP_ENV=$APP_ENV; set RUN_SEED=true to override)."
+fi
 
 echo "Creating storage symlink..."
 php artisan storage:link || true

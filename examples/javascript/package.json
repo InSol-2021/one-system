@@ -1,0 +1,16 @@
+{
+  "name": "one-system-cas-javascript-example",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Minimal sample: static HTML using the UMD CasClient browser SDK + a tiny Express backend that performs server-to-server token validation.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@one-system/js-cas-client": "file:../../packages/javascript-cas-client",
+    "better-sqlite3": "^11.3.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  }
+}

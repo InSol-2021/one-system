@@ -52,17 +52,34 @@ public class CasClient {
 
     /**
      * Generate CAS SSO login URL.
+     *
+     * <p>The CAS server resolves the redirect target from the client's registered
+     * callback URL, so only {@code client_id} is sent. The {@code returnUrl}
+     * argument is retained for API compatibility but is not part of the request.</p>
+     *
+     * <p>This is the only URL the user's BROWSER is sent to, so it is built from the
+     * public-facing base ({@link CasConfig#getPublicUrl()}) when one is configured,
+     * falling back to {@code serverUrl} otherwise. Server-to-server calls (token
+     * validation, etc.) keep using {@code serverUrl}.</p>
      */
     public String getLoginUrl(String returnUrl) {
-        String redirectUri = (returnUrl != null && !returnUrl.isEmpty()) ? returnUrl : config.getCallbackUrl();
         try {
-            return config.getServerUrl() + "/sso/login?"
-                    + "client_id=" + URLEncoder.encode(config.getClientId(), "UTF-8")
-                    + "&response_type=token"
-                    + "&redirect_uri=" + URLEncoder.encode(redirectUri, "UTF-8");
+            String publicUrl = config.getPublicUrl();
+            String base = (publicUrl != null && !publicUrl.isEmpty())
+                    ? publicUrl
+                    : config.getServerUrl();
+            return base + "/sso/login?"
+                    + "client_id=" + URLEncoder.encode(config.getClientId(), "UTF-8");
         } catch (Exception e) {
             throw new RuntimeException("Failed to encode URL", e);
         }
+    }
+
+    /**
+     * Generate CAS SSO login URL using the configured client.
+     */
+    public String getLoginUrl() {
+        return getLoginUrl(null);
     }
 
     /**
@@ -119,21 +136,21 @@ public class CasClient {
             requestData.put("client_secret", config.getClientSecret());
 
             Request.Builder builder = new Request.Builder()
-                    .url(config.getServerUrl() + "/api/sso/validate")
+                    .url(config.getServerUrl() + "/api/validate-token")
                     .post(RequestBody.create(gson.toJson(requestData), JSON))
                     .header("Content-Type", "application/json")
                     .header("X-Client-ID", config.getClientId())
                     .header("X-Timestamp", String.valueOf(timestamp));
 
             if (config.isEnableSignatureValidation()) {
-                builder.header("X-Signature", generateSignature("POST", "/api/sso/validate", requestData, timestamp));
+                builder.header("X-Signature", generateSignature("POST", "/api/validate-token", requestData, timestamp));
             }
 
             try (Response response = httpClient.newCall(builder.build()).execute()) {
                 if (response.isSuccessful() && response.body() != null) {
                     String body = response.body().string();
                     Map<String, Object> data = gson.fromJson(body, Map.class);
-                    if (data.containsKey("user")) {
+                    if (Boolean.TRUE.equals(data.get("valid")) && data.containsKey("user")) {
                         Map<String, Object> user = (Map<String, Object>) data.get("user");
                         String cacheKey = md5(token);
                         cache.put(cacheKey, new CacheEntry(user, System.currentTimeMillis() + 3600_000));

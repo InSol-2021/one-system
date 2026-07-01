@@ -1,196 +1,202 @@
 @extends('public.documentation.layout')
 
-@section('title', 'System Architecture — CAS SSO')
-@section('description', 'Technical architecture overview of the CAS Single Sign-On authentication platform.')
+@section('title', 'System architecture — One System SSO')
+@section('description', 'Technical architecture overview of the One System single sign-on authentication platform.')
 
 @section('content')
-<section class="border-b border-slate-200 pb-10 mb-12">
-    <div class="max-w-3xl">
-        <p class="text-sm font-medium text-blue-600 tracking-wide uppercase mb-3">Advanced Topics</p>
-        <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight leading-tight mb-4">System Architecture</h1>
-        <p class="text-lg text-slate-500 leading-relaxed">Technical overview of the CAS SSO platform components and data flow.</p>
+<section class="border-b border-[var(--color-line)] pb-10 mb-12">
+    <div class="">
+        <p class="os-eyebrow mb-3">Advanced topics</p>
+        <h1 class="text-4xl font-semibold text-[var(--color-ink)] tracking-tight leading-tight mb-4">System architecture</h1>
+        <p class="text-lg text-[var(--color-muted)] leading-relaxed">Technical overview of the One System SSO platform components and data flow.</p>
     </div>
 </section>
 
 <section class="mb-12">
-    <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-6">Architecture Overview</h2>
+    <h2 class="os-eyebrow text-[var(--color-muted)] mb-6">Architecture overview</h2>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
-        <div class="p-5 rounded-xl border border-slate-200">
-            <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center mb-4"><i class="fas fa-server text-blue-600 text-sm"></i></div>
-            <h3 class="text-sm font-semibold text-slate-900 mb-1.5">CAS Server</h3>
-            <p class="text-sm text-slate-500">Laravel-based authentication server. Handles user management, token generation, 2FA, and admin panel.</p>
-            <div class="mt-3 flex flex-wrap gap-1">
-                <span class="text-xs bg-slate-100 px-2 py-0.5 rounded text-slate-600">Laravel 11</span>
-                <span class="text-xs bg-slate-100 px-2 py-0.5 rounded text-slate-600">PHP 8.2</span>
+        <div class="os-card os-card-pad">
+            <div class="os-icon-tile os-icon-tile-ink mb-4"><i class="fas fa-server text-sm"></i></div>
+            <h3 class="text-sm font-semibold text-[var(--color-ink)] mb-1.5">One System server</h3>
+            <p class="text-sm text-[var(--color-muted)]">Laravel-based authentication server. Handles user management, token issuance, 2FA, and the admin panel.</p>
+            <div class="mt-3 flex flex-wrap gap-1.5">
+                <span class="os-badge">Laravel 11</span>
+                <span class="os-badge">PHP 8.2</span>
             </div>
         </div>
-        <div class="p-5 rounded-xl border border-slate-200">
-            <div class="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center mb-4"><i class="fas fa-database text-emerald-600 text-sm"></i></div>
-            <h3 class="text-sm font-semibold text-slate-900 mb-1.5">Data Layer</h3>
-            <p class="text-sm text-slate-500">PostgreSQL for persistent data. Redis for session management, caching, and rate limiting counters.</p>
-            <div class="mt-3 flex flex-wrap gap-1">
-                <span class="text-xs bg-slate-100 px-2 py-0.5 rounded text-slate-600">PostgreSQL 16</span>
-                <span class="text-xs bg-slate-100 px-2 py-0.5 rounded text-slate-600">Redis 7</span>
+        <div class="os-card os-card-pad">
+            <div class="os-icon-tile os-icon-tile-ink mb-4"><i class="fas fa-database text-sm"></i></div>
+            <h3 class="text-sm font-semibold text-[var(--color-ink)] mb-1.5">Data layer</h3>
+            <p class="text-sm text-[var(--color-muted)]">PostgreSQL for persistent data. Redis for session management, caching, and rate-limit counters.</p>
+            <div class="mt-3 flex flex-wrap gap-1.5">
+                <span class="os-badge">PostgreSQL 16</span>
+                <span class="os-badge">Redis 7</span>
             </div>
         </div>
-        <div class="p-5 rounded-xl border border-slate-200">
-            <div class="w-10 h-10 bg-violet-50 rounded-lg flex items-center justify-center mb-4"><i class="fas fa-plug text-violet-600 text-sm"></i></div>
-            <h3 class="text-sm font-semibold text-slate-900 mb-1.5">Client SDKs</h3>
-            <p class="text-sm text-slate-500">6 official client libraries. Each handles SSO token exchange and session management for its platform.</p>
-            <div class="mt-3 flex flex-wrap gap-1">
-                <span class="text-xs bg-slate-100 px-2 py-0.5 rounded text-slate-600">Laravel</span>
-                <span class="text-xs bg-slate-100 px-2 py-0.5 rounded text-slate-600">Node.js</span>
-                <span class="text-xs bg-slate-100 px-2 py-0.5 rounded text-slate-600">Python</span>
+        <div class="os-card os-card-pad">
+            <div class="os-icon-tile os-icon-tile-ink mb-4"><i class="fas fa-plug text-sm"></i></div>
+            <h3 class="text-sm font-semibold text-[var(--color-ink)] mb-1.5">Client SDKs</h3>
+            <p class="text-sm text-[var(--color-muted)]">Six official client libraries. Each handles the SSO redirect, token validation, and session management for its platform.</p>
+            <div class="mt-3 flex flex-wrap gap-1.5">
+                <span class="os-badge">Laravel</span>
+                <span class="os-badge">Node.js</span>
+                <span class="os-badge">Python</span>
             </div>
         </div>
     </div>
 </section>
 
 <section class="mb-12">
-    <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-4">Request Flow</h2>
-    <div class="space-y-0">
-        <div class="flex gap-4">
-            <div class="flex flex-col items-center"><div class="w-8 h-8 bg-slate-900 text-white rounded-full flex items-center justify-center text-xs font-bold">1</div><div class="w-px h-full bg-slate-200"></div></div>
-            <div class="pb-6"><h3 class="text-sm font-semibold text-slate-900">Client Request</h3><p class="text-xs text-slate-500">Client app sends credentials + HMAC signature to CAS API</p></div>
-        </div>
-        <div class="flex gap-4">
-            <div class="flex flex-col items-center"><div class="w-8 h-8 bg-slate-900 text-white rounded-full flex items-center justify-center text-xs font-bold">2</div><div class="w-px h-full bg-slate-200"></div></div>
-            <div class="pb-6"><h3 class="text-sm font-semibold text-slate-900">Security Middleware</h3><p class="text-xs text-slate-500">IP whitelist check &rarr; Rate limit check &rarr; HMAC verification &rarr; reCAPTCHA validation</p></div>
-        </div>
-        <div class="flex gap-4">
-            <div class="flex flex-col items-center"><div class="w-8 h-8 bg-slate-900 text-white rounded-full flex items-center justify-center text-xs font-bold">3</div><div class="w-px h-full bg-slate-200"></div></div>
-            <div class="pb-6"><h3 class="text-sm font-semibold text-slate-900">Authentication</h3><p class="text-xs text-slate-500">Credential verification against PostgreSQL &rarr; 2FA challenge (if enabled) &rarr; Lockout check</p></div>
-        </div>
-        <div class="flex gap-4">
-            <div class="flex flex-col items-center"><div class="w-8 h-8 bg-slate-900 text-white rounded-full flex items-center justify-center text-xs font-bold">4</div><div class="w-px h-full bg-slate-200"></div></div>
-            <div class="pb-6"><h3 class="text-sm font-semibold text-slate-900">Token Generation</h3><p class="text-xs text-slate-500">JWT token created with HMAC-SHA256, stored in Redis, returned to client</p></div>
-        </div>
-        <div class="flex gap-4">
-            <div class="flex flex-col items-center"><div class="w-8 h-8 bg-emerald-600 text-white rounded-full flex items-center justify-center text-xs font-bold">5</div></div>
-            <div class="pb-4"><h3 class="text-sm font-semibold text-slate-900">Audit &amp; Webhooks</h3><p class="text-xs text-slate-500">Event logged to audit table, webhook dispatched to registered endpoints</p></div>
+    <h2 class="os-eyebrow text-[var(--color-muted)] mb-4">SSO request flow</h2>
+    <div class="os-card os-card-pad">
+        <div class="space-y-0">
+            <div class="flex gap-4">
+                <div class="flex flex-col items-center"><div class="w-8 h-8 bg-[var(--color-ink)] text-white rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0">1</div><div class="w-px h-full bg-[var(--color-line)]"></div></div>
+                <div class="pb-6"><h3 class="text-sm font-semibold text-[var(--color-ink)]">Browser redirect to login</h3><p class="text-xs text-[var(--color-muted)]">The client app redirects the browser to <code class="os-code-inline">GET /sso/login?client_id=…</code></p></div>
+            </div>
+            <div class="flex gap-4">
+                <div class="flex flex-col items-center"><div class="w-8 h-8 bg-[var(--color-ink)] text-white rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0">2</div><div class="w-px h-full bg-[var(--color-line)]"></div></div>
+                <div class="pb-6"><h3 class="text-sm font-semibold text-[var(--color-ink)]">Security middleware</h3><p class="text-xs text-[var(--color-muted)]">Rate-limit check &rarr; reCAPTCHA v3 validation &rarr; CORS origin check on the login form</p></div>
+            </div>
+            <div class="flex gap-4">
+                <div class="flex flex-col items-center"><div class="w-8 h-8 bg-[var(--color-ink)] text-white rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0">3</div><div class="w-px h-full bg-[var(--color-line)]"></div></div>
+                <div class="pb-6"><h3 class="text-sm font-semibold text-[var(--color-ink)]">Authentication</h3><p class="text-xs text-[var(--color-muted)]">Credential verification against PostgreSQL &rarr; 2FA challenge (if enabled) &rarr; lockout check</p></div>
+            </div>
+            <div class="flex gap-4">
+                <div class="flex flex-col items-center"><div class="w-8 h-8 bg-[var(--color-ink)] text-white rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0">4</div><div class="w-px h-full bg-[var(--color-line)]"></div></div>
+                <div class="pb-6"><h3 class="text-sm font-semibold text-[var(--color-ink)]">Token issuance &amp; redirect</h3><p class="text-xs text-[var(--color-muted)]">A single-use HS256 JWT is signed with the server secret; the browser is 302-redirected to the registered <code class="os-code-inline">callback_url?token=…</code></p></div>
+            </div>
+            <div class="flex gap-4">
+                <div class="flex flex-col items-center"><div class="w-8 h-8 bg-[var(--color-ink)] text-white rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0">5</div><div class="w-px h-full bg-[var(--color-line)]"></div></div>
+                <div class="pb-6"><h3 class="text-sm font-semibold text-[var(--color-ink)]">Server-to-server validation</h3><p class="text-xs text-[var(--color-muted)]">The client backend posts the token, <code class="os-code-inline">client_id</code>, and <code class="os-code-inline">client_secret</code> to <code class="os-code-inline">/api/validate-token</code>. Single-use: it can be validated only once.</p></div>
+            </div>
+            <div class="flex gap-4">
+                <div class="flex flex-col items-center"><div class="w-8 h-8 bg-[var(--color-accent)] text-white rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0">6</div></div>
+                <div class="pb-2"><h3 class="text-sm font-semibold text-[var(--color-ink)]">Audit &amp; session</h3><p class="text-xs text-[var(--color-muted)]">Event logged to the audit table; the client app creates its own local session for the user</p></div>
+            </div>
         </div>
     </div>
 </section>
 
-<section class="mb-12">
-    <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-4">Database Schema</h2>
-    <div class="rounded-xl border border-slate-200 overflow-hidden">
+<section id="database-schema" class="mb-12">
+    <h2 class="os-eyebrow text-[var(--color-muted)] mb-4">Database schema</h2>
+    <div class="os-card overflow-hidden">
         <table class="w-full text-sm">
-            <thead class="bg-slate-50 border-b border-slate-200">
+            <thead class="bg-[var(--color-surface-2)] border-b border-[var(--color-line)]">
                 <tr>
-                    <th class="text-left px-5 py-3 font-semibold text-slate-600">Table</th>
-                    <th class="text-left px-5 py-3 font-semibold text-slate-600">Purpose</th>
-                    <th class="text-left px-5 py-3 font-semibold text-slate-600">Key Fields</th>
+                    <th class="text-left px-5 py-3 font-semibold text-[var(--color-ink-2)]">Table</th>
+                    <th class="text-left px-5 py-3 font-semibold text-[var(--color-ink-2)]">Purpose</th>
+                    <th class="text-left px-5 py-3 font-semibold text-[var(--color-ink-2)]">Key fields</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100">
+            <tbody class="divide-y divide-[var(--color-line)]">
                 <tr>
-                    <td class="px-5 py-3 font-mono text-xs text-slate-700">users</td>
-                    <td class="px-5 py-3 text-slate-600">User accounts and profiles</td>
-                    <td class="px-5 py-3 text-xs text-slate-500">email, password_hash, role, is_2fa_enabled</td>
+                    <td class="px-5 py-3 font-mono text-xs text-[var(--color-ink-2)]">users</td>
+                    <td class="px-5 py-3 text-[var(--color-ink-2)]">User accounts and profiles</td>
+                    <td class="px-5 py-3 text-xs text-[var(--color-muted)]">username, email, password_hash, role, is_2fa_enabled</td>
                 </tr>
                 <tr>
-                    <td class="px-5 py-3 font-mono text-xs text-slate-700">client_systems</td>
-                    <td class="px-5 py-3 text-slate-600">Registered applications</td>
-                    <td class="px-5 py-3 text-xs text-slate-500">name, url, client_id, client_secret, ip_whitelist</td>
+                    <td class="px-5 py-3 font-mono text-xs text-[var(--color-ink-2)]">client_systems</td>
+                    <td class="px-5 py-3 text-[var(--color-ink-2)]">Registered applications</td>
+                    <td class="px-5 py-3 text-xs text-[var(--color-muted)]">name, callback_url, client_id, client_secret_hash</td>
                 </tr>
                 <tr>
-                    <td class="px-5 py-3 font-mono text-xs text-slate-700">sso_tokens</td>
-                    <td class="px-5 py-3 text-slate-600">Active JWT tokens</td>
-                    <td class="px-5 py-3 text-xs text-slate-500">user_id, token_hash, expires_at, client_system_id</td>
+                    <td class="px-5 py-3 font-mono text-xs text-[var(--color-ink-2)]">sso_tokens</td>
+                    <td class="px-5 py-3 text-[var(--color-ink-2)]">Issued single-use JWTs</td>
+                    <td class="px-5 py-3 text-xs text-[var(--color-muted)]">user_id, token_hash, expires_at, used_at, client_system_id</td>
                 </tr>
                 <tr>
-                    <td class="px-5 py-3 font-mono text-xs text-slate-700">login_attempts</td>
-                    <td class="px-5 py-3 text-slate-600">Failed login tracking</td>
-                    <td class="px-5 py-3 text-xs text-slate-500">email, ip, attempts, locked_until</td>
+                    <td class="px-5 py-3 font-mono text-xs text-[var(--color-ink-2)]">login_attempts</td>
+                    <td class="px-5 py-3 text-[var(--color-ink-2)]">Failed login tracking</td>
+                    <td class="px-5 py-3 text-xs text-[var(--color-muted)]">username, ip, attempts, locked_until</td>
                 </tr>
                 <tr>
-                    <td class="px-5 py-3 font-mono text-xs text-slate-700">audit_logs</td>
-                    <td class="px-5 py-3 text-slate-600">All auth events</td>
-                    <td class="px-5 py-3 text-xs text-slate-500">user_id, action, ip, user_agent, timestamp</td>
+                    <td class="px-5 py-3 font-mono text-xs text-[var(--color-ink-2)]">audit_logs</td>
+                    <td class="px-5 py-3 text-[var(--color-ink-2)]">All auth events</td>
+                    <td class="px-5 py-3 text-xs text-[var(--color-muted)]">user_id, action, ip, user_agent, timestamp</td>
                 </tr>
             </tbody>
         </table>
     </div>
 </section>
 
-{{-- Technical Documentation — How the Code Functions --}}
+{{-- Technical documentation — how the code functions --}}
 <section class="mb-12">
-    <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-4">Technical Documentation</h2>
-    <p class="text-sm text-slate-600 mb-6">How the CAS codebase is structured and how each layer functions.</p>
+    <h2 class="os-eyebrow text-[var(--color-muted)] mb-4">Technical documentation</h2>
+    <p class="text-sm text-[var(--color-ink-2)] mb-6">How the One System codebase is structured and how each layer functions.</p>
 
     <div class="space-y-5">
-        <div class="p-5 rounded-xl border border-slate-200">
+        <div class="os-card os-card-pad">
             <div class="flex items-center gap-3 mb-3">
-                <div class="w-9 h-9 bg-blue-50 rounded-lg flex items-center justify-center"><i class="fas fa-folder-open text-blue-600 text-sm"></i></div>
-                <h3 class="text-sm font-semibold text-slate-900">Directory Structure</h3>
+                <div class="os-icon-tile os-icon-tile-ink"><i class="fas fa-folder-open text-sm"></i></div>
+                <h3 class="text-sm font-semibold text-[var(--color-ink)]">Directory structure</h3>
             </div>
-            <div class="rounded-lg bg-slate-900 p-4 overflow-x-auto">
-                <pre class="text-xs font-mono text-slate-300 leading-relaxed"><code>app/
+            <div class="os-codeblock">
+                <pre class="text-xs"><code>app/
 ├── Http/
 │   ├── Controllers/
-│   │   ├── Admin/          <span class="text-slate-500"># Admin dashboard, users, clients, audit logs</span>
-│   │   ├── Auth/           <span class="text-slate-500"># Login, logout, 2FA verification</span>
-│   │   ├── Api/            <span class="text-slate-500"># SSO token endpoints, health check</span>
-│   │   └── Public/         <span class="text-slate-500"># Documentation, downloads</span>
+│   │   ├── Admin/          <span class="text-[#94a3b8]"># Admin dashboard, users, clients, audit logs</span>
+│   │   ├── Auth/           <span class="text-[#94a3b8]"># Login, logout, 2FA verification</span>
+│   │   ├── Api/            <span class="text-[#94a3b8]"># Token issuance &amp; validation, health check</span>
+│   │   └── Public/         <span class="text-[#94a3b8]"># Documentation, downloads</span>
 │   ├── Middleware/
-│   │   ├── AdminMiddleware.php        <span class="text-slate-500"># Role-based admin access</span>
-│   │   ├── IpWhitelistMiddleware.php  <span class="text-slate-500"># IP filtering (fail-open)</span>
-│   │   └── HmacMiddleware.php         <span class="text-slate-500"># HMAC signature verification</span>
-│   └── Livewire/           <span class="text-slate-500"># Real-time admin components</span>
+│   │   ├── AdminMiddleware.php        <span class="text-[#94a3b8]"># Role-based admin access (auth required)</span>
+│   │   ├── IpWhitelistMiddleware.php  <span class="text-[#94a3b8]"># IP filtering for service-to-service routes</span>
+│   │   └── AuthenticateMiddleware.php <span class="text-[#94a3b8]"># Session auth for admin &amp; user areas</span>
+│   └── Livewire/           <span class="text-[#94a3b8]"># Real-time admin components</span>
 ├── Models/
-│   ├── User.php            <span class="text-slate-500"># User accounts with role & 2FA</span>
-│   ├── ClientSystem.php    <span class="text-slate-500"># Registered applications</span>
-│   ├── SsoToken.php        <span class="text-slate-500"># JWT token records</span>
-│   ├── AuditLog.php        <span class="text-slate-500"># Authentication event log</span>
-│   └── IpWhitelist.php     <span class="text-slate-500"># Allowed IP addresses</span>
+│   ├── User.php            <span class="text-[#94a3b8]"># User accounts with role &amp; 2FA</span>
+│   ├── ClientSystem.php    <span class="text-[#94a3b8]"># Registered applications (hashed secret)</span>
+│   ├── SsoToken.php        <span class="text-[#94a3b8]"># Single-use JWT records</span>
+│   ├── AuditLog.php        <span class="text-[#94a3b8]"># Authentication event log</span>
+│   └── IpWhitelist.php     <span class="text-[#94a3b8]"># Allowed IP addresses</span>
 └── Services/
-    └── SsoService.php      <span class="text-slate-500"># Core SSO logic (token gen/validation)</span></code></pre>
+    └── SsoService.php      <span class="text-[#94a3b8]"># Core SSO logic (token issuance/validation)</span></code></pre>
             </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div class="p-5 rounded-xl border border-slate-200">
-                <h3 class="text-sm font-semibold text-slate-900 mb-3"><i class="fas fa-cogs text-emerald-500 mr-2"></i>Middleware Pipeline</h3>
-                <p class="text-xs text-slate-500 mb-3">Every web request passes through these layers (in order):</p>
-                <ol class="space-y-2 text-xs text-slate-600">
-                    <li class="flex items-start gap-2"><span class="font-bold text-slate-900">1.</span> IP Whitelist Check — blocks unregistered IPs (if whitelist is populated)</li>
-                    <li class="flex items-start gap-2"><span class="font-bold text-slate-900">2.</span> Session/Auth — verifies the user's session</li>
-                    <li class="flex items-start gap-2"><span class="font-bold text-slate-900">3.</span> CSRF Protection — validates form tokens</li>
-                    <li class="flex items-start gap-2"><span class="font-bold text-slate-900">4.</span> Admin Middleware — restricts admin routes to role=admin</li>
+            <div class="os-card os-card-pad">
+                <h3 class="text-sm font-semibold text-[var(--color-ink)] mb-3"><i class="fas fa-gears text-[var(--color-accent)] mr-2"></i>Middleware pipeline</h3>
+                <p class="text-xs text-[var(--color-muted)] mb-3">Web requests to the admin and user areas pass through these layers (in order):</p>
+                <ol class="space-y-2 text-xs text-[var(--color-ink-2)]">
+                    <li class="flex items-start gap-2"><span class="font-semibold text-[var(--color-ink)]">1.</span> Authentication — admin and user routes now require a signed-in session</li>
+                    <li class="flex items-start gap-2"><span class="font-semibold text-[var(--color-ink)]">2.</span> CSRF protection — validates form tokens</li>
+                    <li class="flex items-start gap-2"><span class="font-semibold text-[var(--color-ink)]">3.</span> Admin middleware — restricts admin routes to <code class="os-code-inline">role=admin</code></li>
+                    <li class="flex items-start gap-2"><span class="font-semibold text-[var(--color-ink)]">4.</span> IP whitelist — applied to the service-to-service token issuance route</li>
                 </ol>
-                <p class="text-xs text-slate-500 mt-3">API routes use HMAC middleware instead of CSRF/session.</p>
+                <p class="text-xs text-[var(--color-muted)] mt-3">Token validation authenticates the caller with the <code class="os-code-inline">client_secret</code> instead of a session.</p>
             </div>
-            <div class="p-5 rounded-xl border border-slate-200">
-                <h3 class="text-sm font-semibold text-slate-900 mb-3"><i class="fas fa-bolt text-violet-500 mr-2"></i>Livewire Components</h3>
-                <p class="text-xs text-slate-500 mb-3">The admin panel uses Livewire for real-time updates:</p>
-                <ul class="space-y-2 text-xs text-slate-600">
-                    <li class="flex items-start gap-2"><i class="fas fa-check text-emerald-500 mt-0.5"></i> <strong>Dashboard Stats</strong> — live counters for users, tokens, clients</li>
-                    <li class="flex items-start gap-2"><i class="fas fa-check text-emerald-500 mt-0.5"></i> <strong>User Management</strong> — inline create/edit/delete with instant feedback</li>
-                    <li class="flex items-start gap-2"><i class="fas fa-check text-emerald-500 mt-0.5"></i> <strong>Client Systems</strong> — credential generation and copy-to-clipboard</li>
-                    <li class="flex items-start gap-2"><i class="fas fa-check text-emerald-500 mt-0.5"></i> <strong>Audit Log Viewer</strong> — paginated, filterable event log</li>
-                    <li class="flex items-start gap-2"><i class="fas fa-check text-emerald-500 mt-0.5"></i> <strong>IP Whitelist</strong> — add/remove with instant validation</li>
+            <div class="os-card os-card-pad">
+                <h3 class="text-sm font-semibold text-[var(--color-ink)] mb-3"><i class="fas fa-bolt text-[var(--color-accent)] mr-2"></i>Livewire components</h3>
+                <p class="text-xs text-[var(--color-muted)] mb-3">The admin panel uses Livewire for real-time updates:</p>
+                <ul class="space-y-2 text-xs text-[var(--color-ink-2)]">
+                    <li class="flex items-start gap-2"><i class="fas fa-check text-[var(--color-accent)] mt-0.5"></i> <strong>Dashboard stats</strong> — live counters for users, tokens, clients</li>
+                    <li class="flex items-start gap-2"><i class="fas fa-check text-[var(--color-accent)] mt-0.5"></i> <strong>User management</strong> — inline create/edit/delete with instant feedback</li>
+                    <li class="flex items-start gap-2"><i class="fas fa-check text-[var(--color-accent)] mt-0.5"></i> <strong>Client systems</strong> — credential generation and copy-to-clipboard</li>
+                    <li class="flex items-start gap-2"><i class="fas fa-check text-[var(--color-accent)] mt-0.5"></i> <strong>Audit log viewer</strong> — paginated, filterable event log</li>
+                    <li class="flex items-start gap-2"><i class="fas fa-check text-[var(--color-accent)] mt-0.5"></i> <strong>IP whitelist</strong> — add/remove with instant validation</li>
                 </ul>
             </div>
         </div>
 
-        <div class="p-5 rounded-xl border border-slate-200">
-            <h3 class="text-sm font-semibold text-slate-900 mb-3"><i class="fas fa-database text-blue-500 mr-2"></i>Models & Relationships</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-600">
+        <div class="os-card os-card-pad">
+            <h3 class="text-sm font-semibold text-[var(--color-ink)] mb-3"><i class="fas fa-database text-[var(--color-accent)] mr-2"></i>Models &amp; relationships</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-[var(--color-ink-2)]">
                 <div>
-                    <p class="font-semibold text-slate-900 mb-1">User</p>
+                    <p class="font-semibold text-[var(--color-ink)] mb-1">User</p>
                     <ul class="space-y-1 ml-3">
-                        <li>→ hasMany <code class="bg-slate-100 px-1 rounded">SsoToken</code></li>
-                        <li>→ hasMany <code class="bg-slate-100 px-1 rounded">AuditLog</code></li>
-                        <li>→ belongsToMany <code class="bg-slate-100 px-1 rounded">ClientSystem</code></li>
+                        <li>&rarr; hasMany <code class="os-code-inline">SsoToken</code></li>
+                        <li>&rarr; hasMany <code class="os-code-inline">AuditLog</code></li>
+                        <li>&rarr; belongsToMany <code class="os-code-inline">ClientSystem</code></li>
                     </ul>
                 </div>
                 <div>
-                    <p class="font-semibold text-slate-900 mb-1">ClientSystem</p>
+                    <p class="font-semibold text-[var(--color-ink)] mb-1">ClientSystem</p>
                     <ul class="space-y-1 ml-3">
-                        <li>→ hasMany <code class="bg-slate-100 px-1 rounded">SsoToken</code></li>
-                        <li>→ belongsToMany <code class="bg-slate-100 px-1 rounded">User</code></li>
-                        <li>→ hasMany <code class="bg-slate-100 px-1 rounded">IpWhitelist</code></li>
+                        <li>&rarr; hasMany <code class="os-code-inline">SsoToken</code></li>
+                        <li>&rarr; belongsToMany <code class="os-code-inline">User</code></li>
+                        <li>&rarr; hasMany <code class="os-code-inline">IpWhitelist</code></li>
                     </ul>
                 </div>
             </div>
@@ -198,146 +204,150 @@
     </div>
 </section>
 
-{{-- Package Documentation — How Each SDK Functions --}}
+{{-- Package documentation — how each SDK functions --}}
 <section class="mb-12">
-    <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-4">Package Documentation</h2>
-    <p class="text-sm text-slate-600 mb-6">How each client SDK package works internally to integrate with CAS.</p>
+    <h2 class="os-eyebrow text-[var(--color-muted)] mb-4">Package documentation</h2>
+    <p class="text-sm text-[var(--color-ink-2)] mb-6">How each client SDK package works internally to integrate with One System.</p>
 
-    <div class="p-5 rounded-xl border border-slate-200 mb-5">
-        <h3 class="text-sm font-semibold text-slate-900 mb-3"><i class="fas fa-exchange-alt text-blue-500 mr-2"></i>Common SDK Flow</h3>
-        <p class="text-xs text-slate-500 mb-4">All SDK packages follow the same core authentication pattern:</p>
+    <div class="os-card os-card-pad mb-5">
+        <h3 class="text-sm font-semibold text-[var(--color-ink)] mb-3"><i class="fas fa-right-left text-[var(--color-accent)] mr-2"></i>Common SDK flow</h3>
+        <p class="text-xs text-[var(--color-muted)] mb-4">All SDK packages follow the same core authentication pattern:</p>
         <div class="space-y-0">
             <div class="flex gap-4">
-                <div class="flex flex-col items-center"><div class="w-7 h-7 bg-slate-900 text-white rounded-full flex items-center justify-center text-xs font-bold">1</div><div class="w-px h-full bg-slate-200"></div></div>
-                <div class="pb-4"><h4 class="text-xs font-semibold text-slate-900">User Visits Protected Route</h4><p class="text-xs text-slate-500">SDK middleware intercepts the request and checks for a valid CAS session</p></div>
+                <div class="flex flex-col items-center"><div class="w-7 h-7 bg-[var(--color-ink)] text-white rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0">1</div><div class="w-px h-full bg-[var(--color-line)]"></div></div>
+                <div class="pb-4"><h4 class="text-xs font-semibold text-[var(--color-ink)]">User visits a protected route</h4><p class="text-xs text-[var(--color-muted)]">SDK middleware intercepts the request and checks for a valid local session</p></div>
             </div>
             <div class="flex gap-4">
-                <div class="flex flex-col items-center"><div class="w-7 h-7 bg-slate-900 text-white rounded-full flex items-center justify-center text-xs font-bold">2</div><div class="w-px h-full bg-slate-200"></div></div>
-                <div class="pb-4"><h4 class="text-xs font-semibold text-slate-900">Redirect to CAS Login</h4><p class="text-xs text-slate-500">If no session exists, user is redirected to CAS login page with a return URL</p></div>
+                <div class="flex flex-col items-center"><div class="w-7 h-7 bg-[var(--color-ink)] text-white rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0">2</div><div class="w-px h-full bg-[var(--color-line)]"></div></div>
+                <div class="pb-4"><h4 class="text-xs font-semibold text-[var(--color-ink)]">Redirect to One System login</h4><p class="text-xs text-[var(--color-muted)]">If no session exists, the browser is redirected to <code class="os-code-inline">/sso/login?client_id=…</code></p></div>
             </div>
             <div class="flex gap-4">
-                <div class="flex flex-col items-center"><div class="w-7 h-7 bg-slate-900 text-white rounded-full flex items-center justify-center text-xs font-bold">3</div><div class="w-px h-full bg-slate-200"></div></div>
-                <div class="pb-4"><h4 class="text-xs font-semibold text-slate-900">CAS Authenticates & Generates Token</h4><p class="text-xs text-slate-500">After successful login, CAS generates a JWT token and redirects back with the token</p></div>
+                <div class="flex flex-col items-center"><div class="w-7 h-7 bg-[var(--color-ink)] text-white rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0">3</div><div class="w-px h-full bg-[var(--color-line)]"></div></div>
+                <div class="pb-4"><h4 class="text-xs font-semibold text-[var(--color-ink)]">One System authenticates &amp; redirects back</h4><p class="text-xs text-[var(--color-muted)]">After login, a single-use JWT is appended to the registered <code class="os-code-inline">callback_url</code></p></div>
             </div>
             <div class="flex gap-4">
-                <div class="flex flex-col items-center"><div class="w-7 h-7 bg-slate-900 text-white rounded-full flex items-center justify-center text-xs font-bold">4</div><div class="w-px h-full bg-slate-200"></div></div>
-                <div class="pb-4"><h4 class="text-xs font-semibold text-slate-900">SDK Validates Token via API</h4><p class="text-xs text-slate-500">The SDK sends the token to the CAS <code class="bg-slate-100 px-1 rounded text-xs">/api/sso/validate</code> endpoint with HMAC signature</p></div>
+                <div class="flex flex-col items-center"><div class="w-7 h-7 bg-[var(--color-ink)] text-white rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0">4</div><div class="w-px h-full bg-[var(--color-line)]"></div></div>
+                <div class="pb-4"><h4 class="text-xs font-semibold text-[var(--color-ink)]">SDK validates the token via API</h4><p class="text-xs text-[var(--color-muted)]">The SDK backend posts the token, <code class="os-code-inline">client_id</code>, and <code class="os-code-inline">client_secret</code> to <code class="os-code-inline">/api/validate-token</code></p></div>
             </div>
             <div class="flex gap-4">
-                <div class="flex flex-col items-center"><div class="w-7 h-7 bg-emerald-600 text-white rounded-full flex items-center justify-center text-xs font-bold">5</div></div>
-                <div class="pb-2"><h4 class="text-xs font-semibold text-slate-900">Session Created</h4><p class="text-xs text-slate-500">SDK stores user data in the local session. User is now authenticated.</p></div>
+                <div class="flex flex-col items-center"><div class="w-7 h-7 bg-[var(--color-accent)] text-white rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0">5</div></div>
+                <div class="pb-2"><h4 class="text-xs font-semibold text-[var(--color-ink)]">Session created</h4><p class="text-xs text-[var(--color-muted)]">The SDK stores user data in the local session. The user is now authenticated.</p></div>
             </div>
         </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <a href="{{ route('docs.laravel') }}" class="group p-4 rounded-xl border border-slate-200 hover:border-red-200 hover:bg-red-50/30 transition-all">
-            <div class="flex items-center gap-2 mb-2"><i class="fab fa-laravel text-red-500"></i><span class="text-sm font-semibold text-slate-900">Laravel</span></div>
-            <p class="text-xs text-slate-500">Composer package with auto-discovery. Provides <code class="bg-slate-100 px-1 rounded">cas.auth</code> middleware, service provider, and config publishing.</p>
+        <a href="{{ route('docs.laravel') }}" class="os-card os-card-pad os-card-hover group">
+            <div class="flex items-center gap-2 mb-2"><i class="fab fa-laravel text-[var(--color-ink-2)]"></i><span class="text-sm font-semibold text-[var(--color-ink)]">Laravel</span></div>
+            <p class="text-xs text-[var(--color-muted)]">Composer package with auto-discovery. Provides <code class="os-code-inline">sso.auth</code> middleware, service provider, and config publishing.</p>
         </a>
-        <a href="{{ route('docs.nodejs') }}" class="group p-4 rounded-xl border border-slate-200 hover:border-green-200 hover:bg-green-50/30 transition-all">
-            <div class="flex items-center gap-2 mb-2"><i class="fab fa-node-js text-green-500"></i><span class="text-sm font-semibold text-slate-900">Node.js</span></div>
-            <p class="text-xs text-slate-500">Express middleware via npm. Provides <code class="bg-slate-100 px-1 rounded">casAuth()</code> middleware and <code class="bg-slate-100 px-1 rounded">CasClient</code> class.</p>
+        <a href="{{ route('docs.nodejs') }}" class="os-card os-card-pad os-card-hover group">
+            <div class="flex items-center gap-2 mb-2"><i class="fab fa-node-js text-[var(--color-ink-2)]"></i><span class="text-sm font-semibold text-[var(--color-ink)]">Node.js</span></div>
+            <p class="text-xs text-[var(--color-muted)]">Express middleware via npm. Provides <code class="os-code-inline">ssoAuth()</code> middleware and an <code class="os-code-inline">SsoClient</code> class.</p>
         </a>
-        <a href="{{ route('docs.python') }}" class="group p-4 rounded-xl border border-slate-200 hover:border-indigo-200 hover:bg-indigo-50/30 transition-all">
-            <div class="flex items-center gap-2 mb-2"><i class="fab fa-python text-indigo-500"></i><span class="text-sm font-semibold text-slate-900">Python</span></div>
-            <p class="text-xs text-slate-500">Django middleware via pip. Provides <code class="bg-slate-100 px-1 rounded">CasAuthMiddleware</code> class and management commands.</p>
+        <a href="{{ route('docs.python') }}" class="os-card os-card-pad os-card-hover group">
+            <div class="flex items-center gap-2 mb-2"><i class="fab fa-python text-[var(--color-ink-2)]"></i><span class="text-sm font-semibold text-[var(--color-ink)]">Python</span></div>
+            <p class="text-xs text-[var(--color-muted)]">Django middleware via pip. Provides an <code class="os-code-inline">SsoAuthMiddleware</code> class and management commands.</p>
         </a>
-        <a href="{{ route('docs.java') }}" class="group p-4 rounded-xl border border-slate-200 hover:border-orange-200 hover:bg-orange-50/30 transition-all">
-            <div class="flex items-center gap-2 mb-2"><i class="fab fa-java text-orange-500"></i><span class="text-sm font-semibold text-slate-900">Java</span></div>
-            <p class="text-xs text-slate-500">Spring Security filter via Maven/Gradle. <code class="bg-slate-100 px-1 rounded">CasAuthFilter</code> integrates with Spring's filter chain.</p>
+        <a href="{{ route('docs.java') }}" class="os-card os-card-pad os-card-hover group">
+            <div class="flex items-center gap-2 mb-2"><i class="fab fa-java text-[var(--color-ink-2)]"></i><span class="text-sm font-semibold text-[var(--color-ink)]">Java</span></div>
+            <p class="text-xs text-[var(--color-muted)]">Spring Security filter via Maven/Gradle. <code class="os-code-inline">SsoAuthFilter</code> integrates with Spring's filter chain.</p>
         </a>
-        <a href="{{ route('docs.dotnet') }}" class="group p-4 rounded-xl border border-slate-200 hover:border-blue-200 hover:bg-blue-50/30 transition-all">
-            <div class="flex items-center gap-2 mb-2"><i class="fab fa-microsoft text-blue-500"></i><span class="text-sm font-semibold text-slate-900">.NET / C#</span></div>
-            <p class="text-xs text-slate-500">NuGet package with <code class="bg-slate-100 px-1 rounded">CasAuthFilter</code> action filter and DI-based configuration.</p>
+        <a href="{{ route('docs.dotnet') }}" class="os-card os-card-pad os-card-hover group">
+            <div class="flex items-center gap-2 mb-2"><i class="fab fa-microsoft text-[var(--color-ink-2)]"></i><span class="text-sm font-semibold text-[var(--color-ink)]">.NET / C#</span></div>
+            <p class="text-xs text-[var(--color-muted)]">NuGet package with an <code class="os-code-inline">SsoAuthFilter</code> action filter and DI-based configuration.</p>
         </a>
-        <a href="{{ route('docs.javascript') }}" class="group p-4 rounded-xl border border-slate-200 hover:border-yellow-200 hover:bg-yellow-50/30 transition-all">
-            <div class="flex items-center gap-2 mb-2"><i class="fab fa-js text-yellow-500"></i><span class="text-sm font-semibold text-slate-900">JavaScript</span></div>
-            <p class="text-xs text-slate-500">Browser SDK via CDN or npm. Provides <code class="bg-slate-100 px-1 rounded">CasClient</code> class for SPAs and static sites.</p>
+        <a href="{{ route('docs.javascript') }}" class="os-card os-card-pad os-card-hover group">
+            <div class="flex items-center gap-2 mb-2"><i class="fab fa-js text-[var(--color-ink-2)]"></i><span class="text-sm font-semibold text-[var(--color-ink)]">JavaScript</span></div>
+            <p class="text-xs text-[var(--color-muted)]">Browser SDK via CDN or npm. Provides an <code class="os-code-inline">SsoClient</code> class that starts the redirect flow; token validation stays on your backend.</p>
         </a>
     </div>
 </section>
 
-{{-- API Documentation — How the API Functions --}}
+{{-- API documentation — how the API functions --}}
 <section class="mb-12">
-    <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-4">API Documentation</h2>
-    <p class="text-sm text-slate-600 mb-6">Summary of the CAS API endpoints. <a href="{{ route('docs.api.overview') }}" class="text-blue-600 font-medium hover:text-blue-800">View full API Reference →</a></p>
+    <h2 class="os-eyebrow text-[var(--color-muted)] mb-4">API documentation</h2>
+    <p class="text-sm text-[var(--color-ink-2)] mb-6">Summary of the One System API endpoints. <a href="{{ route('docs.api.overview') }}" class="text-[var(--color-accent)] font-medium hover:text-[var(--color-accent-strong)]">View full API reference &rarr;</a></p>
 
-    <div class="rounded-xl border border-slate-200 overflow-hidden">
+    <div class="os-card overflow-hidden">
         <table class="w-full text-sm">
-            <thead class="bg-slate-50 border-b border-slate-200">
+            <thead class="bg-[var(--color-surface-2)] border-b border-[var(--color-line)]">
                 <tr>
-                    <th class="text-left px-5 py-3 font-semibold text-slate-600">Method</th>
-                    <th class="text-left px-5 py-3 font-semibold text-slate-600">Endpoint</th>
-                    <th class="text-left px-5 py-3 font-semibold text-slate-600">Purpose</th>
-                    <th class="text-left px-5 py-3 font-semibold text-slate-600">Auth</th>
+                    <th class="text-left px-5 py-3 font-semibold text-[var(--color-ink-2)]">Method</th>
+                    <th class="text-left px-5 py-3 font-semibold text-[var(--color-ink-2)]">Endpoint</th>
+                    <th class="text-left px-5 py-3 font-semibold text-[var(--color-ink-2)]">Purpose</th>
+                    <th class="text-left px-5 py-3 font-semibold text-[var(--color-ink-2)]">Auth</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100">
+            <tbody class="divide-y divide-[var(--color-line)]">
                 <tr>
-                    <td class="px-5 py-3"><span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">POST</span></td>
-                    <td class="px-5 py-3 font-mono text-xs text-slate-700">/api/sso/token</td>
-                    <td class="px-5 py-3 text-slate-600">Generate SSO token (authenticate user)</td>
-                    <td class="px-5 py-3 text-xs text-slate-500">HMAC + Client credentials</td>
+                    <td class="px-5 py-3"><span class="os-badge os-badge-accent">GET</span></td>
+                    <td class="px-5 py-3 font-mono text-xs text-[var(--color-ink-2)]">/sso/login</td>
+                    <td class="px-5 py-3 text-[var(--color-ink-2)]">Browser SSO entry; redirects to callback with token</td>
+                    <td class="px-5 py-3 text-xs text-[var(--color-muted)]">client_id (public)</td>
                 </tr>
                 <tr>
-                    <td class="px-5 py-3"><span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">POST</span></td>
-                    <td class="px-5 py-3 font-mono text-xs text-slate-700">/api/sso/validate</td>
-                    <td class="px-5 py-3 text-slate-600">Validate an existing token</td>
-                    <td class="px-5 py-3 text-xs text-slate-500">HMAC</td>
+                    <td class="px-5 py-3"><span class="os-badge os-badge-accent">POST</span></td>
+                    <td class="px-5 py-3 font-mono text-xs text-[var(--color-ink-2)]">/api/validate-token</td>
+                    <td class="px-5 py-3 text-[var(--color-ink-2)]">Validate a single-use token (server to server)</td>
+                    <td class="px-5 py-3 text-xs text-[var(--color-muted)]">client_id + client_secret</td>
                 </tr>
                 <tr>
-                    <td class="px-5 py-3"><span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">POST</span></td>
-                    <td class="px-5 py-3 font-mono text-xs text-slate-700">/api/sso/logout</td>
-                    <td class="px-5 py-3 text-slate-600">Revoke/invalidate a token</td>
-                    <td class="px-5 py-3 text-xs text-slate-500">HMAC</td>
+                    <td class="px-5 py-3"><span class="os-badge os-badge-accent">POST</span></td>
+                    <td class="px-5 py-3 font-mono text-xs text-[var(--color-ink-2)]">/api/sso/token</td>
+                    <td class="px-5 py-3 text-[var(--color-ink-2)]">Service-to-service token issuance</td>
+                    <td class="px-5 py-3 text-xs text-[var(--color-muted)]">client_id + client_secret, IP-whitelisted</td>
                 </tr>
                 <tr>
-                    <td class="px-5 py-3"><span class="text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">GET</span></td>
-                    <td class="px-5 py-3 font-mono text-xs text-slate-700">/api/health</td>
-                    <td class="px-5 py-3 text-slate-600">Health check (server status)</td>
-                    <td class="px-5 py-3 text-xs text-slate-500">None</td>
+                    <td class="px-5 py-3"><span class="os-badge os-badge-accent">POST</span></td>
+                    <td class="px-5 py-3 font-mono text-xs text-[var(--color-ink-2)]">/api/login</td>
+                    <td class="px-5 py-3 text-[var(--color-ink-2)]">Direct login with username/password</td>
+                    <td class="px-5 py-3 text-xs text-[var(--color-muted)]">Credentials</td>
                 </tr>
                 <tr>
-                    <td class="px-5 py-3"><span class="text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">GET</span></td>
-                    <td class="px-5 py-3 font-mono text-xs text-slate-700">/api/sso/user</td>
-                    <td class="px-5 py-3 text-slate-600">Get authenticated user details</td>
-                    <td class="px-5 py-3 text-xs text-slate-500">Bearer token</td>
+                    <td class="px-5 py-3"><span class="os-badge os-badge-accent">POST</span></td>
+                    <td class="px-5 py-3 font-mono text-xs text-[var(--color-ink-2)]">/api/logout</td>
+                    <td class="px-5 py-3 text-[var(--color-ink-2)]">Invalidate the current session/token</td>
+                    <td class="px-5 py-3 text-xs text-[var(--color-muted)]">Bearer token</td>
+                </tr>
+                <tr>
+                    <td class="px-5 py-3"><span class="os-badge">GET</span></td>
+                    <td class="px-5 py-3 font-mono text-xs text-[var(--color-ink-2)]">/api/user</td>
+                    <td class="px-5 py-3 text-[var(--color-ink-2)]">Get authenticated user details</td>
+                    <td class="px-5 py-3 text-xs text-[var(--color-muted)]">Bearer token</td>
                 </tr>
             </tbody>
         </table>
     </div>
 
-    <div class="mt-4 bg-blue-50 border border-blue-200 rounded-xl p-4">
-        <div class="flex items-start gap-2">
-            <i class="fas fa-info-circle text-blue-500 mt-0.5"></i>
-            <span class="text-sm text-blue-800">All API requests (except health check) require HMAC-SHA256 signatures in the <code class="bg-blue-100 px-1 py-0.5 rounded font-mono text-xs">X-Signature</code> and <code class="bg-blue-100 px-1 py-0.5 rounded font-mono text-xs">X-Timestamp</code> headers. See <a href="{{ route('docs.security') }}" class="font-semibold underline">Security Features</a> for details.</span>
-        </div>
+    <div class="os-alert mt-4">
+        <i class="fas fa-info-circle text-[var(--color-accent)] mt-0.5"></i>
+        <span>Tokens are HS256 JWTs signed with the server's <code class="os-code-inline">JWT_SECRET</code> and are single-use &mdash; validate once via <code class="os-code-inline">/api/validate-token</code>, then create your app's own session. See the <a href="{{ route('docs.security') }}" class="font-semibold underline">security features</a> page for details.</span>
     </div>
 </section>
 
-<section class="border-t border-slate-200 pt-10">
-    <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-4">Technology Stack</h2>
+<section class="border-t border-[var(--color-line)] pt-10">
+    <h2 class="os-eyebrow text-[var(--color-muted)] mb-4">Technology stack</h2>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="p-4 rounded-xl border border-slate-200 text-center">
-            <i class="fab fa-laravel text-red-500 text-2xl mb-2"></i>
-            <p class="text-xs font-semibold text-slate-900">Laravel 11</p>
-            <p class="text-xs text-slate-400">Backend</p>
+        <div class="os-card os-card-pad text-center">
+            <i class="fab fa-laravel text-[var(--color-ink-2)] text-2xl mb-2"></i>
+            <p class="text-xs font-semibold text-[var(--color-ink)]">Laravel 11</p>
+            <p class="text-xs text-[var(--color-faint)]">Backend</p>
         </div>
-        <div class="p-4 rounded-xl border border-slate-200 text-center">
-            <i class="fas fa-database text-blue-500 text-2xl mb-2"></i>
-            <p class="text-xs font-semibold text-slate-900">PostgreSQL</p>
-            <p class="text-xs text-slate-400">Database</p>
+        <div class="os-card os-card-pad text-center">
+            <i class="fas fa-database text-[var(--color-ink-2)] text-2xl mb-2"></i>
+            <p class="text-xs font-semibold text-[var(--color-ink)]">PostgreSQL</p>
+            <p class="text-xs text-[var(--color-faint)]">Database</p>
         </div>
-        <div class="p-4 rounded-xl border border-slate-200 text-center">
-            <i class="fas fa-bolt text-red-500 text-2xl mb-2"></i>
-            <p class="text-xs font-semibold text-slate-900">Redis</p>
-            <p class="text-xs text-slate-400">Cache / Sessions</p>
+        <div class="os-card os-card-pad text-center">
+            <i class="fas fa-bolt text-[var(--color-ink-2)] text-2xl mb-2"></i>
+            <p class="text-xs font-semibold text-[var(--color-ink)]">Redis</p>
+            <p class="text-xs text-[var(--color-faint)]">Cache / sessions</p>
         </div>
-        <div class="p-4 rounded-xl border border-slate-200 text-center">
-            <i class="fab fa-docker text-blue-500 text-2xl mb-2"></i>
-            <p class="text-xs font-semibold text-slate-900">Docker</p>
-            <p class="text-xs text-slate-400">Deployment</p>
+        <div class="os-card os-card-pad text-center">
+            <i class="fab fa-docker text-[var(--color-ink-2)] text-2xl mb-2"></i>
+            <p class="text-xs font-semibold text-[var(--color-ink)]">Docker</p>
+            <p class="text-xs text-[var(--color-faint)]">Deployment</p>
         </div>
     </div>
 </section>

@@ -15,7 +15,7 @@ use App\Http\Controllers\AuthController;
 |
 */
 
-Route::post('/sso/validate', [AuthController::class, 'validateSsoToken']);
+Route::post('/sso/validate', [AuthController::class, 'validateSsoToken'])->middleware('ip.whitelist');
 
 Route::middleware('api')->group(function () {
     // Auth endpoints

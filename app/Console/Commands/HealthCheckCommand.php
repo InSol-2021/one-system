@@ -60,7 +60,7 @@ class HealthCheckCommand extends Command
         $this->info("3. Configuration:");
 
         $configs = [
-            'JWT_SECRET' => env('JWT_SECRET'),
+            'JWT_SECRET' => config('jwt.secret'),
             'DATABASE_URL' => env('DATABASE_URL') ? 'Set' : null,
             'APP_ENV' => env('APP_ENV'),
             'APP_DEBUG' => env('APP_DEBUG') ? 'true' : 'false'

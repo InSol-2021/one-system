@@ -6,10 +6,12 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\DB;
 use App\Models\AuditLog;
+use App\Livewire\Concerns\AuthorizesAdmin;
 
 class AuditLogsComponent extends Component
 {
     use WithPagination;
+    use AuthorizesAdmin;
 
     public $search = '';
     public $eventTypeFilter = '';
@@ -18,6 +20,11 @@ class AuditLogsComponent extends Component
     public $processing = false;
 
     protected $paginationTheme = 'tailwind';
+
+    public function mount()
+    {
+        $this->authorizeAdmin();
+    }
 
     public function updatingSearch()
     {

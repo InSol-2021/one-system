@@ -1,0 +1,7 @@
+node_modules
+dist
+.env
+*.log
+
+# Local SQLite user store (created at runtime).
+data/

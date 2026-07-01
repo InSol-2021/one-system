@@ -35,11 +35,24 @@ class DjangoCasMiddleware:
 
         protected_paths = getattr(settings, 'CAS_PROTECTED_PATHS', [])
         login_url = getattr(settings, 'CAS_LOGIN_URL', '/auth/login')
+        cas_client = getattr(settings, 'CAS_CLIENT', None)
 
         is_protected = any(request.path.startswith(p) for p in protected_paths)
 
         if is_protected:
             cas_user = request.session.get('cas_user')
+
+            # Check Bearer token if no session user
+            if not cas_user and cas_client:
+                auth_header = request.META.get('HTTP_AUTHORIZATION', '')
+                if auth_header.startswith('Bearer '):
+                    token = auth_header[7:]
+                    cas_user = cas_client.get_user_from_token(token)
+                    if not cas_user:
+                        cas_user = cas_client.validate_token(token)
+                    if cas_user:
+                        request.session['cas_user'] = cas_user
+
             if cas_user:
                 request.cas_user = cas_user
             else:

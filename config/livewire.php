@@ -17,6 +17,19 @@ return [
 
     /*
     |---------------------------------------------------------------------------
+    | Livewire Update Endpoint Middleware
+    |---------------------------------------------------------------------------
+    |
+    | This value sets the middleware group applied to Livewire's update endpoint
+    | (livewire/update). Running it through the "web" middleware group ensures
+    | session, CSRF, and cookie handling are applied to all Livewire requests.
+    |
+    */
+
+    'middleware' => ['web'],
+
+    /*
+    |---------------------------------------------------------------------------
     | View Path
     |---------------------------------------------------------------------------
     |

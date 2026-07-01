@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\IpWhitelistController;
 use App\Http\Controllers\User\UserDashboardController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 Route::get('/', function () {
     return view('home');
@@ -39,9 +40,11 @@ Route::get('/auth/sso/callback', [AuthController::class, 'ssoCallback'])->name('
 Route::post('/api/sso/process', [AuthController::class, 'processSSOCallback']);
 
 // User Dashboard Routes
-Route::get('/user/dashboard', [UserDashboardController::class, 'index'])->name('user.dashboard');
-Route::get('/user/profile', function() { return view('user.user-profile-livewire'); })->name('user.profile');
-Route::get('/user/profile-livewire', function() { return view('user.user-profile-livewire'); })->name('user.profile.livewire');
+Route::middleware(['cas.auth'])->group(function () {
+    Route::get('/user/dashboard', [UserDashboardController::class, 'index'])->name('user.dashboard');
+    Route::get('/user/profile', function() { return view('user.user-profile-livewire'); })->name('user.profile');
+    Route::get('/user/profile-livewire', function() { return view('user.user-profile-livewire'); })->name('user.profile.livewire');
+});
 Route::get('/api/user/dashboard', [UserDashboardController::class, 'dashboard']);
 
 
@@ -49,61 +52,62 @@ Route::post('/api/user/link-client-system', [UserDashboardController::class, 'li
 Route::post('/api/user/login-client-system/{clientSystemId}', [UserDashboardController::class, 'loginToClientSystem']);
 Route::delete('/api/user/unlink-client-system/{clientSystemId}', [UserDashboardController::class, 'unlinkClientSystem']);
 
-// Admin Dashboard
-Route::get('/admin/dashboard', function() { return view('admin.dashboard-livewire'); })->name('admin.dashboard');
-Route::get('/admin', function() { return redirect('/admin/dashboard'); });
+// Admin routes (authenticated admins only)
+Route::middleware(['cas.auth', 'cas.admin'])->group(function () {
+    // Admin Dashboard
+    Route::get('/admin/dashboard', function() { return view('admin.dashboard-livewire'); })->name('admin.dashboard');
+    Route::get('/admin', function() { return redirect('/admin/dashboard'); });
 
-// Client System Management
-Route::get('/admin/client-systems', function() { return view('admin.client-systems-livewire'); })->name('admin.client-systems.livewire');
-Route::get('/admin/client-systems-old', function() { return view('admin.client-systems'); })->name('admin.client-systems');
+    // Client System Management
+    Route::get('/admin/client-systems', function() { return view('admin.client-systems-livewire'); })->name('admin.client-systems.livewire');
 
-// Legacy API routes
-Route::get('/api/client-systems', [ClientSystemController::class, 'index']);
-Route::post('/api/client-systems', [ClientSystemController::class, 'store']);
-Route::put('/api/client-systems/{id}', [ClientSystemController::class, 'update']);
-Route::delete('/api/client-systems/{id}', [ClientSystemController::class, 'destroy']);
-Route::post('/api/client-systems/{id}/mark-credentials-viewed', [ClientSystemController::class, 'markCredentialsViewed']);
-Route::post('/api/client-systems/{id}/regenerate-credentials', [ClientSystemController::class, 'regenerateCredentials']);
+    // Legacy API routes
+    Route::get('/api/client-systems', [ClientSystemController::class, 'index']);
+    Route::post('/api/client-systems', [ClientSystemController::class, 'store']);
+    Route::put('/api/client-systems/{id}', [ClientSystemController::class, 'update']);
+    Route::delete('/api/client-systems/{id}', [ClientSystemController::class, 'destroy']);
+    Route::post('/api/client-systems/{id}/mark-credentials-viewed', [ClientSystemController::class, 'markCredentialsViewed']);
+    Route::post('/api/client-systems/{id}/regenerate-credentials', [ClientSystemController::class, 'regenerateCredentials']);
 
-// IP Whitelist Management
-Route::get('/admin/ip-whitelist', function() { return view('admin.ip-whitelist-livewire'); })->name('admin.ip-whitelist.livewire');
+    // IP Whitelist Management
+    Route::get('/admin/ip-whitelist', function() { return view('admin.ip-whitelist-livewire'); })->name('admin.ip-whitelist.livewire');
 
-// Legacy API routes for IP whitelist
-Route::get('/api/ip-whitelist', [IpWhitelistController::class, 'index']);
-Route::post('/api/ip-whitelist', [IpWhitelistController::class, 'store']);
-Route::put('/api/ip-whitelist/{id}', [IpWhitelistController::class, 'update']);
-Route::delete('/api/ip-whitelist/{id}', [IpWhitelistController::class, 'destroy']);
+    // Legacy API routes for IP whitelist
+    Route::get('/api/ip-whitelist', [IpWhitelistController::class, 'list']);
+    Route::post('/api/ip-whitelist', [IpWhitelistController::class, 'store']);
+    Route::put('/api/ip-whitelist/{id}', [IpWhitelistController::class, 'update']);
+    Route::delete('/api/ip-whitelist/{id}', [IpWhitelistController::class, 'destroy']);
 
-// User Management - Livewire Implementation
-Route::get('/admin/users', function() { return view('admin.users-livewire'); })->name('admin.users.livewire');
+    // User Management - Livewire Implementation
+    Route::get('/admin/users', function() { return view('admin.users-livewire'); })->name('admin.users.livewire');
 
-// Audit Logs - Livewire Implementation
-Route::get('/admin/audit-logs', function() { return view('admin.audit-logs-livewire'); })->name('admin.audit-logs.livewire');
+    // Audit Logs - Livewire Implementation
+    Route::get('/admin/audit-logs', function() { return view('admin.audit-logs-livewire'); })->name('admin.audit-logs.livewire');
 
-// SSO Settings - Livewire Implementation
-Route::get('/admin/sso-settings', function() { return view('admin.sso-settings-livewire'); })->name('admin.sso-settings.livewire');
+    // SSO Settings - Livewire Implementation
+    Route::get('/admin/sso-settings', function() { return view('admin.sso-settings-livewire'); })->name('admin.sso-settings.livewire');
 
-// Admin Profile - Livewire Implementation
-Route::get('/admin/profile', function() { return view('admin.profile-livewire'); })->name('admin.profile.livewire');
+    // Admin Profile - Livewire Implementation
+    Route::get('/admin/profile', function() { return view('admin.profile-livewire'); })->name('admin.profile.livewire');
 
-// Admin Security Settings - Livewire Implementation
-Route::get('/admin/security-settings', function() { return view('admin.security-settings-livewire'); })->name('admin.security-settings.livewire');
+    // Admin Security Settings - Livewire Implementation
+    Route::get('/admin/security-settings', function() { return view('admin.security-settings-livewire'); })->name('admin.security-settings.livewire');
 
-// Logout Routes
+    // Legacy API routes for audit logs (export declared before {id} to avoid wildcard shadowing)
+    Route::get('/api/audit-logs', [AuditLogController::class, 'index']);
+    Route::get('/api/audit-logs/export', [AuditLogController::class, 'export']);
+    Route::get('/api/audit-logs/{id}', [AuditLogController::class, 'show'])->whereNumber('id');
+    Route::get('/api/audit-logs-stats', [AuditLogController::class, 'stats']);
+});
+
+// Logout Routes (POST only — GET logout removed to prevent CSRF/forced logout)
 Route::post('/auth/logout', [AuthController::class, 'logout'])->name('logout');
-Route::get('/auth/logout', [AuthController::class, 'logout'])->name('logout.get');
 
 // Password Reset Routes
 Route::get('/auth/forgot-password', [ForgotPasswordController::class, 'showForgotForm'])->name('password.request');
 Route::post('/auth/forgot-password', [ForgotPasswordController::class, 'sendResetLink'])->name('password.email');
 Route::get('/auth/reset-password/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
 Route::post('/auth/reset-password', [ForgotPasswordController::class, 'resetPassword'])->name('password.update');
-
-// Legacy API routes for audit logs
-Route::get('/api/audit-logs', [AuditLogController::class, 'index']);
-Route::get('/api/audit-logs/{id}', [AuditLogController::class, 'show']);
-Route::get('/api/audit-logs/export', [AuditLogController::class, 'export']);
-Route::get('/api/audit-logs-stats', [AuditLogController::class, 'stats']);
 
 // Documentation Routes
 Route::get('/docs', [DocumentationController::class, 'index'])->name('docs');
@@ -116,6 +120,11 @@ Route::get('/docs/nodejs', [DocumentationController::class, 'nodejs'])->name('do
 Route::get('/docs/java', [DocumentationController::class, 'java'])->name('docs.java');
 Route::get('/docs/python', [DocumentationController::class, 'python'])->name('docs.python');
 Route::get('/docs/javascript', [DocumentationController::class, 'javascript'])->name('docs.javascript');
+Route::get('/docs/react', [DocumentationController::class, 'react'])->name('docs.react');
+Route::get('/docs/nextjs', [DocumentationController::class, 'nextjs'])->name('docs.nextjs');
+Route::get('/docs/angular', [DocumentationController::class, 'angular'])->name('docs.angular');
+Route::get('/docs/vue', [DocumentationController::class, 'vue'])->name('docs.vue');
+Route::get('/docs/rust', [DocumentationController::class, 'rust'])->name('docs.rust');
 Route::get('/docs/api', [DocumentationController::class, 'api'])->name('docs.api.overview');
 Route::get('/docs/security', [DocumentationController::class, 'security'])->name('docs.security');
 Route::get('/docs/deployment', [DocumentationController::class, 'deployment'])->name('docs.deployment');
@@ -151,6 +160,10 @@ $sdkPackages = [
     'java-cas-client' => 'downloads.java-package',
     'dotnet-cas-client' => 'downloads.dotnet-package',
     'javascript-cas-client' => 'downloads.javascript-package',
+    'react-cas-client' => 'downloads.react-package',
+    'nextjs-cas-client' => 'downloads.nextjs-package',
+    'angular-cas-client' => 'downloads.angular-package',
+    'vue-cas-client' => 'downloads.vue-package',
 ];
 
 foreach ($sdkPackages as $package => $routeName) {
@@ -165,23 +178,19 @@ foreach ($sdkPackages as $package => $routeName) {
 
 Route::get('/health/database', function() {
     try {
-        $userCount = DB::table('cas_user.users')->count();
-        $clientCount = DB::table('cas_admin.client_systems')->count();
+        // Connectivity probe only — do not expose entity counts publicly.
+        DB::table('cas_user.users')->limit(1)->count();
 
         return response()->json([
             'status' => 'healthy',
             'database' => 'connected',
-            'stats' => [
-                'users' => $userCount,
-                'client_systems' => $clientCount
-            ],
             'timestamp' => now()->toISOString()
         ]);
     } catch (\Exception $e) {
+        Log::error('Health check (database) failed', ['exception' => $e->getMessage()]);
         return response()->json([
             'status' => 'error',
             'database' => 'disconnected',
-            'error' => $e->getMessage(),
             'timestamp' => now()->toISOString()
         ], 500);
     }
@@ -191,22 +200,12 @@ Route::get('/health', function() {
     try {
         return response()->json([
             'status' => 'healthy',
-            'services' => [
-                'database' => 'connected',
-                'livewire' => 'active',
-                'cas_server' => 'running'
-            ],
-            'version' => '1.0.0',
             'timestamp' => now()->toISOString()
         ]);
     } catch (\Exception $e) {
+        Log::error('Health check failed', ['exception' => $e->getMessage()]);
         return response()->json([
             'status' => 'unhealthy',
-            'services' => [
-                'database' => 'error: ' . $e->getMessage(),
-                'livewire' => 'active',
-                'cas_server' => 'running'
-            ],
             'timestamp' => now()->toISOString()
         ], 500);
     }
@@ -214,73 +213,20 @@ Route::get('/health', function() {
 
 Route::get('/health/full', function() {
     try {
-        $userCount = DB::table('cas_user.users')->count();
-        $activeUsers = DB::table('cas_user.users')->where('is_active', true)->count();
-        $adminUsers = DB::table('cas_user.users')->where('role', 'admin')->count();
-
-        $clientCount = DB::table('cas_admin.client_systems')->count();
-        $activeClients = DB::table('cas_admin.client_systems')->where('is_active', true)->count();
-
-        $auditLogCount = DB::table('cas_audit.audit_logs')->count();
-        $recentAudits = DB::table('cas_audit.audit_logs')
-            ->where('created_at', '>=', now()->subDays(7))
-            ->count();
-
-        $ipWhitelistCount = DB::table('cas_admin.ip_whitelist')->count();
-        $activeIpRules = DB::table('cas_admin.ip_whitelist')->where('is_active', true)->count();
-
-        $systemInfo = [
-            'php_version' => PHP_VERSION,
-            'laravel_version' => app()->version(),
-            'memory_usage' => round(memory_get_usage(true) / 1024 / 1024, 2) . ' MB',
-            'peak_memory' => round(memory_get_peak_usage(true) / 1024 / 1024, 2) . ' MB',
-            'server_time' => now()->toISOString(),
-            'environment' => app()->environment(),
-        ];
+        // Connectivity probe only — do not expose version/memory/environment or entity counts publicly.
+        DB::table('cas_user.users')->limit(1)->count();
 
         return response()->json([
             'status' => 'healthy',
-            'timestamp' => now()->toISOString(),
-            'system' => $systemInfo,
-            'database' => [
-                'status' => 'connected',
-                'stats' => [
-                    'users' => [
-                        'total' => $userCount,
-                        'active' => $activeUsers,
-                        'admins' => $adminUsers
-                    ],
-                    'client_systems' => [
-                        'total' => $clientCount,
-                        'active' => $activeClients
-                    ],
-                    'audit_logs' => [
-                        'total' => $auditLogCount,
-                        'recent_week' => $recentAudits
-                    ],
-                    'ip_whitelist' => [
-                        'total' => $ipWhitelistCount,
-                        'active' => $activeIpRules
-                    ]
-                ]
-            ],
-            'services' => [
-                'cas_server' => 'running',
-                'livewire' => 'active',
-                'authentication' => 'operational',
-                'sso' => 'available'
-            ]
+            'database' => 'connected',
+            'timestamp' => now()->toISOString()
         ]);
     } catch (\Exception $e) {
+        Log::error('Health check (full) failed', ['exception' => $e->getMessage()]);
         return response()->json([
             'status' => 'error',
-            'timestamp' => now()->toISOString(),
-            'error' => $e->getMessage(),
-            'services' => [
-                'cas_server' => 'running',
-                'livewire' => 'active',
-                'database' => 'error'
-            ]
+            'database' => 'disconnected',
+            'timestamp' => now()->toISOString()
         ], 500);
     }
 })->name('health.full');
@@ -293,11 +239,7 @@ Route::get('/health/redis', function() {
         if (!$redisConfigured) {
             return response()->json([
                 'status' => 'not_configured',
-                'redis' => [
-                    'connection' => 'not_configured',
-                    'message' => 'Redis is not configured as cache driver',
-                    'current_cache_driver' => $cacheStore
-                ],
+                'redis' => 'not_configured',
                 'timestamp' => now()->toISOString()
             ]);
         }
@@ -313,24 +255,15 @@ Route::get('/health/redis', function() {
 
         return response()->json([
             'status' => $testPassed ? 'healthy' : 'warning',
-            'redis' => [
-                'connection' => 'connected',
-                'read_write_test' => $testPassed ? 'passed' : 'failed',
-                'cache_driver' => $cacheStore,
-                'test_key' => $testKey,
-                'note' => 'Using Laravel Cache facade for Redis testing'
-            ],
+            'redis' => $testPassed ? 'connected' : 'degraded',
             'timestamp' => now()->toISOString()
         ]);
 
     } catch (\Exception $e) {
+        Log::error('Health check (redis) failed', ['exception' => $e->getMessage()]);
         return response()->json([
             'status' => 'error',
-            'redis' => [
-                'connection' => 'failed',
-                'error' => $e->getMessage(),
-                'cache_driver' => config('cache.default', 'unknown')
-            ],
+            'redis' => 'failed',
             'timestamp' => now()->toISOString()
         ], 500);
     }

@@ -37,7 +37,7 @@ class LoginRequest extends FormRequest
                 'min:8'
             ],
             'g-recaptcha-response' => [
-                'nullable',
+                'required',
                 'recaptchav3:login,0.5'
             ]
         ];
@@ -53,7 +53,7 @@ class LoginRequest extends FormRequest
             'email.required_without' => 'Email address is required.',
             'password.required' => 'Password is required.',
             'password.min' => 'Password must be at least 8 characters long.',
-            'g-recaptcha-response.required' => 'Please complete the security verification (optional for testing).',
+            'g-recaptcha-response.required' => 'Please complete the security verification.',
             'g-recaptcha-response.recaptchav3' => 'Security verification failed. Please try again.'
         ];
     }

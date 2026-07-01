@@ -223,3 +223,28 @@ sitemap.xml
 /.fleet
 /.vscode
 /.idea.claude/
+
+# --- SDK package build artifacts (packages/*) ---
+packages/*/node_modules/
+packages/*/dist/
+packages/*/target/
+packages/*/build/
+packages/*/*.egg-info/
+packages/*/Cargo.lock
+
+# --- Sample app build artifacts / local state (examples/*) ---
+examples/*/node_modules/
+examples/*/vendor/
+examples/*/.venv/
+examples/*/venv/
+examples/*/target/
+examples/*/dist/
+examples/*/.next/
+examples/*/data/
+examples/*/*.db
+examples/laravel/database/*.sqlite
+**/__pycache__/
+*.pyc
+
+# Claude Code local project config
+.claude/

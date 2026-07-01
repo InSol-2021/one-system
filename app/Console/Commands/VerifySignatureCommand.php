@@ -19,9 +19,13 @@ class VerifySignatureCommand extends Command
             $this->info("Verifying HMAC-SHA256 Signature...");
             $this->info("=" . str_repeat("=", 50));
             
-            // Use custom secret or default
-            $secret = $customSecret ?: env('JWT_SECRET', 'your-secret-key');
-            
+            // Use custom secret or the configured JWT secret
+            $secret = $customSecret ?: config('jwt.secret');
+
+            if (empty($secret)) {
+                throw new \RuntimeException('JWT secret not configured');
+            }
+
             // Calculate expected signature
             $expectedSignature = hash_hmac('sha256', $payload, $secret);
             

@@ -1,0 +1,85 @@
+# === Secrets / environment ===
+# Never copy any env file into the image. Inject secrets at runtime via
+# env_file / orchestrator secrets instead.
+.env
+.env.*
+*.env
+
+# === Version control ===
+.git
+.gitignore
+.gitattributes
+
+# === Dependencies / build output rebuilt inside the image ===
+# composer install and npm run build run during the image build (see Dockerfile),
+# so these are regenerated in-image. Excluding them keeps host-arch native
+# binaries and stale artifacts out of the image and speeds up the build context.
+# Recursive (**/) forms also strip dependency/build output from the examples/*
+# sample apps, which share this repo root as their Docker build context.
+node_modules
+vendor
+**/node_modules
+**/vendor
+**/dist
+**/build
+**/.next
+**/.angular
+**/target
+**/obj
+**/.venv
+**/__pycache__
+
+# === Editor / OS / tooling cruft ===
+.DS_Store
+**/.DS_Store
+.idea
+.vscode
+.fleet
+.claude
+*.swp
+*.swo
+
+# === Logs / caches (regenerated at runtime) ===
+storage/logs/*
+!storage/logs/.gitignore
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/debugbar
+bootstrap/cache/*.php
+npm-debug.log
+yarn-error.log
+
+# === Tests ===
+tests
+phpunit.xml
+.phpunit.result.cache
+.phpunit.cache
+
+# === Local dev / preview / docs cruft ===
+design-preview.html
+DESIGN_SYSTEM.md
+AUDIT_REPORT.md
+PACKAGES_REVIEW.md
+README.md
+
+# === Archives / dumps ===
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.gz
+*.sql
+*.dump
+
+# === Local SQLite stores (created at runtime; never copy host DB into image) ===
+**/data/*.db
+**/*.db
+**/*.db-shm
+**/*.db-wal
+
+# === Local docker compose overrides (image is built, not composed) ===
+docker-compose*.yml
+docker-production.yml
+.dockerignore
+Dockerfile

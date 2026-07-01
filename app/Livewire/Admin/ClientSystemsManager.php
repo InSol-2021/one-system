@@ -3,11 +3,16 @@
 namespace App\Livewire\Admin;
 
 use Livewire\Component;
+use Livewire\Attributes\Locked;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Livewire\Concerns\AuthorizesAdmin;
+use App\Models\ClientSystem;
 
 class ClientSystemsManager extends Component
 {
+    use AuthorizesAdmin;
+
     // Component state
     public $clientSystems = [];
     public $loading = true;
@@ -22,6 +27,11 @@ class ClientSystemsManager extends Component
 
     // Credential display
     public $showCredentials = false;
+
+    // Freshly generated plaintext credentials, shown to the admin once for
+    // copying. Locked so the value cannot be tampered with from the browser,
+    // and cleared as soon as the modal is dismissed.
+    #[Locked]
     public $newCredentials = [
         'client_id' => '',
         'client_secret' => '',
@@ -48,6 +58,8 @@ class ClientSystemsManager extends Component
 
     public function mount()
     {
+        $this->authorizeAdmin();
+
         $this->loadClientSystems();
     }
 
@@ -105,6 +117,8 @@ class ClientSystemsManager extends Component
 
     public function createClientSystem()
     {
+        $this->authorizeAdmin();
+
         $this->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string|max:500',
@@ -116,21 +130,23 @@ class ClientSystemsManager extends Component
             $webhookSecret = bin2hex(random_bytes(32));
             $clientId = 'client_' . bin2hex(random_bytes(8));
 
-            $clientSystemId = DB::table('cas_admin.client_systems')->insertGetId([
+            // Store via the model so the mutators hash the secrets at rest.
+            // The plaintext is surfaced once to the admin via $newCredentials.
+            $clientSystem = ClientSystem::create([
                 'name' => $this->name,
                 'description' => $this->description,
                 'callback_url' => $this->callback_url,
                 'client_id' => $clientId,
                 'client_secret' => $clientSecret,
                 'webhook_secret' => $webhookSecret,
-                'allowed_scopes' => json_encode(['read', 'write']),
+                'allowed_scopes' => ['read', 'write'],
                 'is_active' => true,
                 'credentials_viewed' => false,
                 'credentials_shown' => false,
-                'server_config' => json_encode([]),
-                'created_at' => now(),
-                'updated_at' => now(),
+                'server_config' => [],
             ]);
+
+            $clientSystemId = $clientSystem->id;
 
             DB::table('cas_audit.audit_logs')->insert([
                 'user_id' => session('user_id'),
@@ -174,6 +190,8 @@ class ClientSystemsManager extends Component
 
     public function closeCredentials()
     {
+        $this->authorizeAdmin();
+
         $clientSystem = collect($this->clientSystems)->firstWhere('client_id', $this->newCredentials['client_id']);
 
         if ($clientSystem) {
@@ -236,6 +254,8 @@ class ClientSystemsManager extends Component
 
     public function updateClientSystem()
     {
+        $this->authorizeAdmin();
+
         $this->validate([
             'editName' => 'required|string|max:255',
             'editDescription' => 'nullable|string|max:500',
@@ -284,6 +304,8 @@ class ClientSystemsManager extends Component
 
     public function toggleSystemStatus($systemId)
     {
+        $this->authorizeAdmin();
+
         if ($this->processing) {
             return;
         }
@@ -346,13 +368,14 @@ class ClientSystemsManager extends Component
 
     public function regenerateCredentials()
     {
+        $this->authorizeAdmin();
+
         $this->validate([
             'regenerateReason' => 'required|string|max:500',
         ]);
 
         try {
-            $clientSystem = DB::table('cas_admin.client_systems')
-                ->find($this->regenerateSystemId);
+            $clientSystem = ClientSystem::find($this->regenerateSystemId);
 
             if (!$clientSystem) {
                 $this->showMessage('Client system not found', 'error');
@@ -362,16 +385,14 @@ class ClientSystemsManager extends Component
             $newClientSecret = bin2hex(random_bytes(32));
             $newWebhookSecret = bin2hex(random_bytes(32));
 
-            DB::table('cas_admin.client_systems')
-                ->where('id', $this->regenerateSystemId)
-                ->update([
-                    'client_secret' => $newClientSecret,
-                    'webhook_secret' => $newWebhookSecret,
-                    'credentials_shown' => false,
-                    'credentials_regenerated_at' => now(),
-                    'credentials_regenerated_by' => (int)session('user_id'),
-                    'updated_at' => now()
-                ]);
+            // Assign via the model so the mutators hash the secrets at rest;
+            // the plaintext is surfaced once to the admin via $newCredentials.
+            $clientSystem->client_secret = $newClientSecret;
+            $clientSystem->webhook_secret = $newWebhookSecret;
+            $clientSystem->credentials_shown = false;
+            $clientSystem->credentials_regenerated_at = now();
+            $clientSystem->credentials_regenerated_by = (int) session('user_id');
+            $clientSystem->save();
 
             DB::table('cas_user.sso_tokens')
                 ->where('client_system_id', $this->regenerateSystemId)
@@ -418,6 +439,8 @@ class ClientSystemsManager extends Component
 
     public function deleteClientSystem($systemId)
     {
+        $this->authorizeAdmin();
+
         if ($this->processing) {
             return;
         }

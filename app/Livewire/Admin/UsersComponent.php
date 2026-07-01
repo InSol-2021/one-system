@@ -8,10 +8,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use App\Models\User;
+use App\Livewire\Concerns\AuthorizesAdmin;
 
 class UsersComponent extends Component
 {
     use WithPagination;
+    use AuthorizesAdmin;
 
     public $search = '';
     public $roleFilter = '';
@@ -53,6 +55,11 @@ class UsersComponent extends Component
         }
 
         return $rules;
+    }
+
+    public function mount()
+    {
+        $this->authorizeAdmin();
     }
 
     public function updatingSearch()
@@ -108,6 +115,8 @@ class UsersComponent extends Component
 
     public function createUser()
     {
+        $this->authorizeAdmin();
+
         if ($this->processing) {
             return;
         }
@@ -142,6 +151,8 @@ class UsersComponent extends Component
 
     public function updateUser()
     {
+        $this->authorizeAdmin();
+
         if ($this->processing) {
             return;
         }
@@ -182,6 +193,8 @@ class UsersComponent extends Component
 
     public function deleteUser()
     {
+        $this->authorizeAdmin();
+
         if ($this->processing) {
             return;
         }

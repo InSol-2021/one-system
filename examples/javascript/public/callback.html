@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Signing you in… — One System CAS Sample</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 560px; margin: 4rem auto; padding: 0 1rem; color: #1a1a1a; }
+    .err { color: #b91c1c; }
+  </style>
+</head>
+<body>
+  <p id="status">Signing you in…</p>
+
+  <!-- Load the UMD browser SDK from the LOCAL package (served by Express). -->
+  <script src="/vendor/cas-client.js"></script>
+  <script>
+    // CAS redirected the browser here as {callback_url}?token=<jwt>.
+    //
+    // (b) handleCallback() extracts the token from the URL and POSTs { token } to our
+    //     backendValidateUrl (/api/auth/validate). The backend does the SERVER-TO-SERVER
+    //     validation with client_secret, then creates the app session. We never see the secret.
+    async function run() {
+      const cfg = await fetch('/api/config').then((r) => r.json());
+      const cas = new CasClient(cfg);
+
+      const user = await cas.handleCallback();
+      if (user) {
+        // (c) Authenticated — return to wherever login() was started from.
+        window.location.href = cas.consumeReturnUrl() || '/';
+      } else {
+        document.getElementById('status').innerHTML =
+          '<span class="err">Login failed.</span> <a href="/">Try again</a>';
+      }
+    }
+    run();
+  </script>
+</body>
+</html>

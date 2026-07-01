@@ -4,11 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'CAS Admin - Central Authentication Service')</title>
+    <title>@yield('title', 'Admin')  — One System</title>
 
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=ibm-plex-sans:400,500,600,700|ibm-plex-mono:400,500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     @livewireStyles
 
@@ -29,104 +31,102 @@
         }
 
         .custom-scrollbar::-webkit-scrollbar-track {
-            background: #f1f5f9;
+            background: var(--color-surface-2);
             border-radius: 3px;
         }
 
         .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
+            background: var(--color-line-strong);
             border-radius: 3px;
         }
 
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
+            background: var(--color-faint);
         }
     </style>
+
+    @stack('head')
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <nav class="bg-white shadow-sm border-b">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex">
-                    <div class="flex-shrink-0 flex items-center">
-                        <h1 class="text-xl font-bold text-gray-900">CAS Admin</h1>
+<body class="min-h-screen antialiased bg-[var(--color-canvas)]">
+    <div class="flex min-h-screen flex-col">
+        <nav class="sticky top-0 z-40 border-b border-[var(--color-line)] bg-[var(--color-surface)]">
+            <div class="os-container">
+                <div class="flex h-16 items-center justify-between">
+                    <div class="flex items-center gap-8">
+                        <a href="/" class="flex flex-shrink-0 items-center gap-2.5">
+                            <span class="inline-flex h-8 w-8 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--color-ink)] text-white">
+                                <i class="fa-solid fa-shield-halved text-sm"></i>
+                            </span>
+                            <span class="text-[0.95rem] font-semibold tracking-tight text-[var(--color-ink)]">CAS Admin</span>
+                        </a>
+                        <div class="hidden sm:flex sm:items-center sm:gap-1">
+                            <a href="/admin/client-systems"
+                               class="inline-flex items-center border-b-2 px-3 pt-px text-sm font-medium leading-[3.75rem] transition-colors {{ request()->is('admin/client-systems*') ? 'border-[var(--color-accent)] text-[var(--color-accent)]' : 'border-transparent text-[var(--color-muted)] hover:text-[var(--color-ink)] hover:border-[var(--color-line-strong)]' }}">
+                                Client systems
+                            </a>
+                            <a href="/admin/users"
+                               class="inline-flex items-center border-b-2 px-3 pt-px text-sm font-medium leading-[3.75rem] transition-colors {{ request()->is('admin/users*') ? 'border-[var(--color-accent)] text-[var(--color-accent)]' : 'border-transparent text-[var(--color-muted)] hover:text-[var(--color-ink)] hover:border-[var(--color-line-strong)]' }}">
+                                Users
+                            </a>
+                            <a href="/admin/audit-logs"
+                               class="inline-flex items-center border-b-2 px-3 pt-px text-sm font-medium leading-[3.75rem] transition-colors {{ request()->is('admin/audit-logs*') ? 'border-[var(--color-accent)] text-[var(--color-accent)]' : 'border-transparent text-[var(--color-muted)] hover:text-[var(--color-ink)] hover:border-[var(--color-line-strong)]' }}">
+                                Audit logs
+                            </a>
+                            <a href="/admin/ip-whitelist"
+                               class="inline-flex items-center border-b-2 px-3 pt-px text-sm font-medium leading-[3.75rem] transition-colors {{ request()->is('admin/ip-whitelist*') ? 'border-[var(--color-accent)] text-[var(--color-accent)]' : 'border-transparent text-[var(--color-muted)] hover:text-[var(--color-ink)] hover:border-[var(--color-line-strong)]' }}">
+                                IP whitelist
+                            </a>
+                        </div>
                     </div>
-                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-                        <a href="/admin/client-systems"
-                           class="border-b-2 {{ request()->is('admin/client-systems*') ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }} inline-flex items-center px-1 pt-1 text-sm font-medium">
-                            Client Systems
-                        </a>
-                        <a href="/admin/users"
-                           class="border-b-2 {{ request()->is('admin/users*') ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }} inline-flex items-center px-1 pt-1 text-sm font-medium">
-                            Users
-                        </a>
-                        <a href="/admin/audit-logs"
-                           class="border-b-2 {{ request()->is('admin/audit-logs*') ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }} inline-flex items-center px-1 pt-1 text-sm font-medium">
-                            Audit Logs
-                        </a>
-                        <a href="/admin/ip-whitelist"
-                           class="border-b-2 {{ request()->is('admin/ip-whitelist*') ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }} inline-flex items-center px-1 pt-1 text-sm font-medium">
-                            IP Whitelist
-                        </a>
-                    </div>
-                </div>
-                <div class="hidden sm:ml-6 sm:flex sm:items-center">
-                    <div class="ml-3 relative">
-                        <div class="flex items-center text-sm text-gray-500">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                            </svg>
-                            Admin User
+                    <div class="hidden sm:flex sm:items-center">
+                        <div class="flex items-center gap-2 text-sm text-[var(--color-muted)]">
+                            <i class="fa-regular fa-circle-user text-base text-[var(--color-faint)]"></i>
+                            Admin user
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </nav>
+        </nav>
 
-    <main class="flex-1">
-        @yield('content')
-    </main>
+        <main class="flex-1">
+            @yield('content')
+        </main>
 
-    <footer class="bg-white border-t mt-auto">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div class="flex justify-between items-center text-sm text-gray-500">
-                <div>
-                    Central Authentication Service (CAS) Admin Panel
-                </div>
-                <div class="flex items-center space-x-4">
-                    <span>Laravel {{ app()->version() }}</span>
-                    <span>•</span>
-                    <span>Livewire {{ \Livewire\Livewire::getVersion() }}</span>
+        <footer class="mt-auto border-t border-[var(--color-line)] bg-[var(--color-surface)]">
+            <div class="os-container py-4">
+                <div class="flex flex-col items-start justify-between gap-2 text-sm text-[var(--color-muted)] sm:flex-row sm:items-center">
+                    <div>
+                        Central Authentication Service (CAS) admin panel
+                    </div>
+                    <div class="flex items-center gap-3 text-[var(--color-faint)]">
+                        <span>Laravel {{ app()->version() }}</span>
+                        <span aria-hidden="true">&middot;</span>
+                        <span>Livewire {{ \Livewire\Livewire::getVersion() }}</span>
+                    </div>
                 </div>
             </div>
-        </div>
-    </footer>
+        </footer>
+    </div>
 
     @livewireScripts
 
     <script>
         window.showNotification = function(message, type = 'success') {
             const notification = document.createElement('div');
-            notification.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg text-white transform transition-transform duration-300 ${
-                type === 'success' ? 'bg-green-500' : 'bg-red-500'
+            notification.className = `fixed top-4 right-4 z-50 flex items-center gap-2 rounded-[var(--radius-sm)] border px-4 py-3 text-sm font-medium shadow-[var(--shadow-md)] transform transition-transform duration-300 ${
+                type === 'success'
+                    ? 'bg-[var(--color-success-soft)] border-[#bbf7d0] text-[var(--color-success)]'
+                    : 'bg-[var(--color-danger-soft)] border-[#fecaca] text-[var(--color-danger)]'
             }`;
             notification.innerHTML = `
-                <div class="flex items-center">
-                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                        ${type === 'success'
-                            ? '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>'
-                            : '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>'
-                        }
-                    </svg>
-                    <span>${message}</span>
-                </div>
+                <i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i>
+                <span>${message}</span>
             `;
 
             document.body.appendChild(notification);
 
             setTimeout(() => {
-                notification.style.transform = 'translateX(100%)';
+                notification.style.transform = 'translateX(120%)';
                 setTimeout(() => {
                     if (notification.parentNode) {
                         notification.parentNode.removeChild(notification);

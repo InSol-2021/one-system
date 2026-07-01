@@ -1,0 +1,3 @@
+# Local-auth SQLite database, created + seeded at runtime by LocalUserStore.
+app.db
+*.sqlite
