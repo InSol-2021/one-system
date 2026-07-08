@@ -8,8 +8,11 @@
     <Authors>CAS System</Authors>
     <Description>.NET client for CAS (Central Authentication Service) SSO integration</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/insol-dev/dotnet-client</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/InSol-2021/one-system</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/InSol-2021/one-system</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <PackageTags>cas;sso;authentication;jwt;single-sign-on</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
   <ItemGroup>
     <!-- ASP.NET Core types used by the middleware/client (IServiceCollection,
@@ -17,5 +20,8 @@
          that consumes these needs the shared framework reference. -->
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="System.Text.Json" Version="8.0.5" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 </Project>
