@@ -63,12 +63,17 @@
 
 <section id="installation" class="mb-12">
     <h2 class="text-xl font-bold text-[var(--color-ink)] mb-2">2. Add the crate</h2>
-    <p class="text-[var(--color-muted)] mb-4">Add <code class="os-code-inline">rust-cas-client</code> as a path dependency to the sibling package in this repo. Its only runtime dependencies are <code class="os-code-inline">reqwest</code>, <code class="os-code-inline">serde</code>, <code class="os-code-inline">serde_json</code>, <code class="os-code-inline">url</code>, and <code class="os-code-inline">thiserror</code>.</p>
+    <p class="text-[var(--color-muted)] mb-4">Add <code class="os-code-inline">rust-cas-client</code> from <a href="https://crates.io/crates/rust-cas-client" class="text-[var(--color-accent)] hover:text-[var(--color-accent-strong)]">crates.io</a> as a normal registry dependency &mdash; either edit <code class="os-code-inline">Cargo.toml</code> directly or run <code class="os-code-inline">cargo add rust-cas-client</code>. Its only runtime dependencies are <code class="os-code-inline">reqwest</code>, <code class="os-code-inline">serde</code>, <code class="os-code-inline">serde_json</code>, <code class="os-code-inline">url</code>, and <code class="os-code-inline">thiserror</code>.</p>
+    <div class="os-codeblock mb-3">
+        <div class="os-codeblock-head"><span>Install</span></div>
+        <pre><code><span style="{{ $com }}"># or add the line below to Cargo.toml manually</span>
+<span style="{{ $fn }}">cargo</span> add rust-cas-client</code></pre>
+    </div>
     <div class="os-codeblock">
         <div class="os-codeblock-head"><span>Cargo.toml</span></div>
-        <pre><code><span style="{{ $com }}"># The local CAS client crate (path dependency to the sibling package).</span>
+        <pre><code><span style="{{ $com }}"># The CAS client crate, resolved from the public crates.io registry.</span>
 [dependencies]
-<span style="{{ $var }}">rust-cas-client</span> = { path = <span style="{{ $str }}">"../../packages/rust-cas-client"</span> }
+<span style="{{ $var }}">rust-cas-client</span> = <span style="{{ $str }}">"1.0"</span>
 
 <span style="{{ $com }}"># A web framework + async runtime to drive the flow (axum shown here).</span>
 <span style="{{ $var }}">axum</span> = { version = <span style="{{ $str }}">"0.7"</span> }

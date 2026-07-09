@@ -3,7 +3,7 @@
 A small but REAL Angular app that supports TWO ways to sign in:
 
 - **Local accounts** — its OWN username/password store backed by SQLite.
-- **CAS single sign-on** — the [`@cas-system/angular-cas-client`](../../packages/angular-cas-client) SDK.
+- **CAS single sign-on** — the [`@cas-system/angular-cas-client`](https://www.npmjs.com/package/@cas-system/angular-cas-client) SDK.
 
 Either path establishes the SAME app session, so the guarded `/profile` page and
 the nav bar work identically afterwards.
@@ -84,21 +84,30 @@ you control. This sample provides that backend in **`server/server.js`** (Expres
 
 ---
 
-## How the local SDK is linked (no publishing)
+## How the SDK is installed
 
-Two cooperating mechanisms:
+`@cas-system/angular-cas-client` is a normal npm dependency, installed from
+the **public npm registry**:
 
-1. **`package.json`** depends on the package by path:
-   `"@cas-system/angular-cas-client": "file:../../packages/angular-cas-client"`.
-   `npm install` symlinks it into `node_modules/@cas-system/angular-cas-client`.
-2. The package's own `package.json` points `main`/`types` at **raw TypeScript**
-   (`src/index.ts`), so Angular compiles the SDK **from source**. To make that
-   work across the symlink, this sample sets:
-   - `"preserveSymlinks": true` in `angular.json` (so the SDK's `@angular/*`
-     peer imports resolve against **this** app's `node_modules`), and
-   - the SDK source glob in `tsconfig.app.json`'s `include`.
+```bash
+npm install
+```
 
-No separate build step for the package, no registry publish.
+`package.json` declares it with a real semver range:
+`"@cas-system/angular-cas-client": "^1.0.0"`. `npm install` downloads the
+published tarball into `node_modules/@cas-system/angular-cas-client` — no
+symlink, no local path.
+
+The published package's `main`/`types` still point at **raw TypeScript**
+(`src/index.ts`) rather than a compiled build, so Angular compiles the SDK
+**from source** exactly as before. That's why `tsconfig.app.json`'s
+`include` still lists the SDK's source glob
+(`node_modules/@cas-system/angular-cas-client/src/**/*.ts`) — removing it
+breaks the build with "File ... is missing from the TypeScript compilation."
+Everything else that existed only to work around the old `file:` symlink
+(the `preserveSymlinks` option in `angular.json`, the stale `comment` key in
+`package.json`) has been removed, since there's no symlink to preserve
+anymore.
 
 ---
 
@@ -134,7 +143,7 @@ cp .env.example .env
 ## Install & run
 
 ```bash
-npm install        # installs deps + symlinks the local SDK
+npm install        # installs deps, incl. @cas-system/angular-cas-client from npm
 npm run build      # compiles Angular + the SDK source into dist/
 npm start          # serves the built app + API on http://localhost:9110
 ```
@@ -159,8 +168,11 @@ CAS redirect to land on the dev server instead of the built app.
 
 ## Run with Docker
 
-The image is built from the **`one-system/` repo root** as context, because the
-build needs the sibling local SDK at `packages/angular-cas-client`.
+The image is built from the **`one-system/` repo root** as context (the
+Dockerfile's `COPY` paths are rooted there, matching the root
+`docker-compose.yml`'s `context: ..`). `@cas-system/angular-cas-client` is
+installed from the npm registry during the build — no sibling package
+directory is required in the build context.
 
 ```bash
 # from the one-system/ directory:
@@ -197,7 +209,7 @@ examples/angular/
 │   ├── server.js                     # Express: /api/config, /api/auth/validate, /login, static host
 │   └── db.js                         # SQLite local user store (seed + verify)
 ├── data/app.db                       # SQLite file (created at runtime; git-ignored)
-├── angular.json                      # preserveSymlinks: true; proxyConfig: proxy.conf.cjs
+├── angular.json                      # proxyConfig: proxy.conf.cjs
 ├── tsconfig.json / tsconfig.app.json # includes SDK source for compilation
 ├── proxy.conf.cjs                    # dev-server → backend proxy (/api + POST /login)
 ├── proxy.conf.json                   # legacy /api-only proxy (kept for reference)

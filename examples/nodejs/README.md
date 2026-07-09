@@ -1,7 +1,7 @@
 # One System CAS — Node.js / Express sample
 
 A real little Express app that proves the
-[`@cas-system/node-cas-client`](../../packages/nodejs-cas-client) package works
+[`@cas-system/node-cas-client`](https://www.npmjs.com/package/@cas-system/node-cas-client) package works
 end-to-end against a One System CAS SSO server **and** carries its OWN local
 username/password accounts (backed by SQLite). A user can sign in **either** way.
 
@@ -69,16 +69,18 @@ which this app relies solely on its own session cookie.
   - **client_secret** = your `CAS_CLIENT_SECRET`
   - **callback_url** = `http://localhost:9102/callback` (must match `CAS_CALLBACK_URL` exactly)
 
-## How it depends on the local package
+## How it depends on the package
 
-`package.json` links the package by relative path (no publishing required):
+`package.json` declares a normal npm dependency, resolved from the public npm
+registry:
 
 ```json
-"@cas-system/node-cas-client": "file:../../packages/nodejs-cas-client"
+"@cas-system/node-cas-client": "^1.0.0"
 ```
 
-`npm install` symlinks/copies the local package into `node_modules`, so the
-sample uses the real package source.
+Running `npm install` downloads the published
+[`@cas-system/node-cas-client`](https://www.npmjs.com/package/@cas-system/node-cas-client)
+package (built output, no monorepo source required) into `node_modules`.
 
 > **Import paths used in this sample**
 > - `require('@cas-system/node-cas-client')` → the `CasClient` class (package `main`).
@@ -116,8 +118,9 @@ SSO**.
 
 ## Run with Docker
 
-The Dockerfile pulls in the local package, so build from the **repo root**
-(`one-system/`) and pass the example's Dockerfile:
+The Dockerfile installs the package straight from the npm registry (no
+monorepo source required), but the build context is still the **repo root**
+(`one-system/`) to match the other samples — pass the example's Dockerfile:
 
 ```bash
 # from the one-system/ directory:

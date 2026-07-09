@@ -13,7 +13,7 @@
 // The token is single-use, so we validate exactly once here, then route on.
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useCasAuth } from '@one-system/vue-cas-client';
+import { useCasAuth } from '@cas-system/vue-cas-client';
 
 const router = useRouter();
 const { handleCallback, error } = useCasAuth();

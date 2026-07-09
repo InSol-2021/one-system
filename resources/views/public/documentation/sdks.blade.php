@@ -23,12 +23,12 @@
                 <div class="os-icon-tile os-icon-tile-ink"><i class="fab fa-laravel"></i></div>
                 <div>
                     <h3 class="text-sm font-semibold text-[var(--color-ink)]">Laravel client</h3>
-                    <p class="text-xs text-[var(--color-faint)] font-mono">one-system/laravel-sso-client</p>
+                    <p class="text-xs text-[var(--color-faint)] font-mono">cas-system/laravel-client</p>
                 </div>
-                <span class="os-badge ml-auto">v2.1.0</span>
+                <span class="os-badge ml-auto">v1.0.0</span>
             </div>
             <div class="os-codeblock mb-3">
-                <pre><code>composer require one-system/laravel-sso-client</code></pre>
+                <pre><code>composer require cas-system/laravel-client</code></pre>
             </div>
             <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--color-muted)]">
                 <span>Laravel 10+</span>
@@ -37,7 +37,7 @@
                 <span>&middot;</span>
                 <a href="{{ route('docs.laravel') }}" class="text-[var(--color-accent)] hover:text-[var(--color-accent-strong)] font-medium">View guide &rarr;</a>
                 <span>&middot;</span>
-                <a href="/downloads/one-system-client-package.zip" class="text-[var(--color-accent)] hover:text-[var(--color-accent-strong)] font-medium">Download .zip &darr;</a>
+                <a href="https://packagist.org/packages/cas-system/laravel-client" class="text-[var(--color-accent)] hover:text-[var(--color-accent-strong)] font-medium">View on Packagist &rarr;</a>
             </div>
         </div>
 
@@ -47,12 +47,12 @@
                 <div class="os-icon-tile os-icon-tile-ink"><i class="fab fa-node-js"></i></div>
                 <div>
                     <h3 class="text-sm font-semibold text-[var(--color-ink)]">Node.js SDK</h3>
-                    <p class="text-xs text-[var(--color-faint)] font-mono">@cas-system/node-sso-client</p>
+                    <p class="text-xs text-[var(--color-faint)] font-mono">@cas-system/node-cas-client</p>
                 </div>
-                <span class="os-badge ml-auto">v2.0.3</span>
+                <span class="os-badge ml-auto">v1.0.0</span>
             </div>
             <div class="os-codeblock mb-3">
-                <pre><code>npm install @cas-system/node-sso-client</code></pre>
+                <pre><code>npm install @cas-system/node-cas-client</code></pre>
             </div>
             <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--color-muted)]">
                 <span>Node 18+</span>
@@ -71,12 +71,12 @@
                 <div class="os-icon-tile os-icon-tile-ink"><i class="fab fa-python"></i></div>
                 <div>
                     <h3 class="text-sm font-semibold text-[var(--color-ink)]">Python SDK</h3>
-                    <p class="text-xs text-[var(--color-faint)] font-mono">one-system-sso-client</p>
+                    <p class="text-xs text-[var(--color-faint)] font-mono">cas-system-client</p>
                 </div>
-                <span class="os-badge ml-auto">v2.0.1</span>
+                <span class="os-badge ml-auto">v2.0.0</span>
             </div>
             <div class="os-codeblock mb-3">
-                <pre><code>pip install one-system-sso-client</code></pre>
+                <pre><code>pip install cas-system-client</code></pre>
             </div>
             <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--color-muted)]">
                 <span>Python 3.9+</span>
@@ -95,12 +95,12 @@
                 <div class="os-icon-tile os-icon-tile-ink"><i class="fab fa-microsoft"></i></div>
                 <div>
                     <h3 class="text-sm font-semibold text-[var(--color-ink)]">.NET client</h3>
-                    <p class="text-xs text-[var(--color-faint)] font-mono">OneSystem.SsoClient</p>
+                    <p class="text-xs text-[var(--color-faint)] font-mono">CasSystem.Client</p>
                 </div>
                 <span class="os-badge ml-auto">v2.0.0</span>
             </div>
             <div class="os-codeblock mb-3">
-                <pre><code>dotnet add package OneSystem.SsoClient</code></pre>
+                <pre><code>dotnet add package CasSystem.Client</code></pre>
             </div>
             <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--color-muted)]">
                 <span>.NET 8+</span>
@@ -119,12 +119,12 @@
                 <div class="os-icon-tile os-icon-tile-ink"><i class="fab fa-java"></i></div>
                 <div>
                     <h3 class="text-sm font-semibold text-[var(--color-ink)]">Java SDK</h3>
-                    <p class="text-xs text-[var(--color-faint)] font-mono">com.onesystem:sso-client</p>
+                    <p class="text-xs text-[var(--color-faint)] font-mono">io.github.insol-dev:cas-client</p>
                 </div>
                 <span class="os-badge ml-auto">v2.0.0</span>
             </div>
             <div class="os-codeblock mb-3">
-                <pre><code>&lt;dependency&gt;com.onesystem:sso-client:2.0.0&lt;/dependency&gt;</code></pre>
+                <pre><code>&lt;dependency&gt;io.github.insol-dev:cas-client:2.0.0&lt;/dependency&gt;</code></pre>
             </div>
             <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--color-muted)]">
                 <span>Java 17+</span>
@@ -143,12 +143,12 @@
                 <div class="os-icon-tile os-icon-tile-ink"><i class="fab fa-js"></i></div>
                 <div>
                     <h3 class="text-sm font-semibold text-[var(--color-ink)]">JavaScript SDK</h3>
-                    <p class="text-xs text-[var(--color-faint)] font-mono">@cas-system/js-sso-client</p>
+                    <p class="text-xs text-[var(--color-faint)] font-mono">@cas-system/js-cas-client</p>
                 </div>
-                <span class="os-badge ml-auto">v2.0.0</span>
+                <span class="os-badge ml-auto">v1.0.0</span>
             </div>
             <div class="os-codeblock mb-3">
-                <pre><code>&lt;script src="https://cdn.one-system.example.com/js/v2.js"&gt;&lt;/script&gt;</code></pre>
+                <pre><code>npm install @cas-system/js-cas-client</code></pre>
             </div>
             <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--color-muted)]">
                 <span>Browser / SPA</span>
@@ -158,6 +158,124 @@
                 <a href="{{ route('docs.javascript') }}" class="text-[var(--color-accent)] hover:text-[var(--color-accent-strong)] font-medium">View guide &rarr;</a>
                 <span>&middot;</span>
                 <a href="/downloads/javascript-cas-client.zip" class="text-[var(--color-accent)] hover:text-[var(--color-accent-strong)] font-medium">Download .zip &darr;</a>
+            </div>
+        </div>
+
+        {{-- Angular --}}
+        <div class="os-card os-card-pad os-card-hover">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="os-icon-tile os-icon-tile-ink"><i class="fab fa-angular"></i></div>
+                <div>
+                    <h3 class="text-sm font-semibold text-[var(--color-ink)]">Angular SDK</h3>
+                    <p class="text-xs text-[var(--color-faint)] font-mono">@cas-system/angular-cas-client</p>
+                </div>
+                <span class="os-badge ml-auto">v1.0.0</span>
+            </div>
+            <div class="os-codeblock mb-3">
+                <pre><code>npm install @cas-system/angular-cas-client</code></pre>
+            </div>
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--color-muted)]">
+                <span>Angular 18+</span>
+                <span>&middot;</span>
+                <span>Guard / interceptor / services</span>
+                <span>&middot;</span>
+                <a href="{{ route('docs.angular') }}" class="text-[var(--color-accent)] hover:text-[var(--color-accent-strong)] font-medium">View guide &rarr;</a>
+            </div>
+        </div>
+
+        {{-- React --}}
+        <div class="os-card os-card-pad os-card-hover">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="os-icon-tile os-icon-tile-ink"><i class="fab fa-react"></i></div>
+                <div>
+                    <h3 class="text-sm font-semibold text-[var(--color-ink)]">React SDK</h3>
+                    <p class="text-xs text-[var(--color-faint)] font-mono">@cas-system/react-cas-client</p>
+                </div>
+                <span class="os-badge ml-auto">v1.0.0</span>
+            </div>
+            <div class="os-codeblock mb-3">
+                <pre><code>npm install @cas-system/react-cas-client</code></pre>
+            </div>
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--color-muted)]">
+                <span>React 18+</span>
+                <span>&middot;</span>
+                <span>Provider / hooks / components</span>
+                <span>&middot;</span>
+                <a href="{{ route('docs.react') }}" class="text-[var(--color-accent)] hover:text-[var(--color-accent-strong)] font-medium">View guide &rarr;</a>
+                <span>&middot;</span>
+                <a href="https://www.npmjs.com/package/@cas-system/react-cas-client" class="text-[var(--color-accent)] hover:text-[var(--color-accent-strong)] font-medium">View on npm &rarr;</a>
+            </div>
+        </div>
+
+        {{-- Next.js --}}
+        <div class="os-card os-card-pad os-card-hover">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="os-icon-tile os-icon-tile-ink"><i class="fas fa-n"></i></div>
+                <div>
+                    <h3 class="text-sm font-semibold text-[var(--color-ink)]">Next.js SDK</h3>
+                    <p class="text-xs text-[var(--color-faint)] font-mono">@cas-system/nextjs-cas-client</p>
+                </div>
+                <span class="os-badge ml-auto">v1.0.0</span>
+            </div>
+            <div class="os-codeblock mb-3">
+                <pre><code>npm install @cas-system/nextjs-cas-client</code></pre>
+            </div>
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--color-muted)]">
+                <span>Next.js 14+ (App Router)</span>
+                <span>&middot;</span>
+                <span>Middleware / handlers / hooks</span>
+                <span>&middot;</span>
+                <a href="{{ route('docs.nextjs') }}" class="text-[var(--color-accent)] hover:text-[var(--color-accent-strong)] font-medium">View guide &rarr;</a>
+                <span>&middot;</span>
+                <a href="https://www.npmjs.com/package/@cas-system/nextjs-cas-client" class="text-[var(--color-accent)] hover:text-[var(--color-accent-strong)] font-medium">View on npm &rarr;</a>
+            </div>
+        </div>
+
+        {{-- Vue --}}
+        <div class="os-card os-card-pad os-card-hover">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="os-icon-tile os-icon-tile-ink"><i class="fab fa-vuejs"></i></div>
+                <div>
+                    <h3 class="text-sm font-semibold text-[var(--color-ink)]">Vue SDK</h3>
+                    <p class="text-xs text-[var(--color-faint)] font-mono">@cas-system/vue-cas-client</p>
+                </div>
+                <span class="os-badge ml-auto">v1.0.0</span>
+            </div>
+            <div class="os-codeblock mb-3">
+                <pre><code>npm install @cas-system/vue-cas-client</code></pre>
+            </div>
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--color-muted)]">
+                <span>Vue 3.4+</span>
+                <span>&middot;</span>
+                <span>Plugin / composables / router guard</span>
+                <span>&middot;</span>
+                <a href="{{ route('docs.vue') }}" class="text-[var(--color-accent)] hover:text-[var(--color-accent-strong)] font-medium">View guide &rarr;</a>
+                <span>&middot;</span>
+                <a href="https://www.npmjs.com/package/@cas-system/vue-cas-client" class="text-[var(--color-accent)] hover:text-[var(--color-accent-strong)] font-medium">View on npm &rarr;</a>
+            </div>
+        </div>
+
+        {{-- Rust --}}
+        <div class="os-card os-card-pad os-card-hover">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="os-icon-tile os-icon-tile-ink"><i class="fab fa-rust"></i></div>
+                <div>
+                    <h3 class="text-sm font-semibold text-[var(--color-ink)]">Rust SDK</h3>
+                    <p class="text-xs text-[var(--color-faint)] font-mono">rust-cas-client</p>
+                </div>
+                <span class="os-badge ml-auto">v1.0.0</span>
+            </div>
+            <div class="os-codeblock mb-3">
+                <pre><code>cargo add rust-cas-client</code></pre>
+            </div>
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--color-muted)]">
+                <span>Rust 2021 edition</span>
+                <span>&middot;</span>
+                <span>Async (reqwest / tokio)</span>
+                <span>&middot;</span>
+                <a href="{{ route('docs.rust') }}" class="text-[var(--color-accent)] hover:text-[var(--color-accent-strong)] font-medium">View guide &rarr;</a>
+                <span>&middot;</span>
+                <a href="https://crates.io/crates/rust-cas-client" class="text-[var(--color-accent)] hover:text-[var(--color-accent-strong)] font-medium">View on crates.io &rarr;</a>
             </div>
         </div>
     </div>
@@ -208,7 +326,7 @@
                 </tr>
                 <tr>
                     <td class="px-5 py-3 font-medium text-[var(--color-ink)]">Java</td>
-                    <td class="px-5 py-3 text-[var(--color-ink-2)]">Java 17 / Spring 3</td>
+                    <td class="px-5 py-3 text-[var(--color-ink-2)]">Java 17 / Spring Boot 2.7</td>
                     <td class="px-5 py-3 text-[var(--color-muted)]">Maven / Gradle</td>
                     <td class="px-5 py-3 text-[var(--color-muted)]">v2.0+</td>
                 </tr>
@@ -216,6 +334,36 @@
                     <td class="px-5 py-3 font-medium text-[var(--color-ink)]">JavaScript</td>
                     <td class="px-5 py-3 text-[var(--color-ink-2)]">ES2020+</td>
                     <td class="px-5 py-3 text-[var(--color-muted)]">CDN / npm</td>
+                    <td class="px-5 py-3 text-[var(--color-muted)]">v2.0+</td>
+                </tr>
+                <tr>
+                    <td class="px-5 py-3 font-medium text-[var(--color-ink)]">Angular</td>
+                    <td class="px-5 py-3 text-[var(--color-ink-2)]">Angular 18</td>
+                    <td class="px-5 py-3 text-[var(--color-muted)]">npm</td>
+                    <td class="px-5 py-3 text-[var(--color-muted)]">v2.0+</td>
+                </tr>
+                <tr>
+                    <td class="px-5 py-3 font-medium text-[var(--color-ink)]">React</td>
+                    <td class="px-5 py-3 text-[var(--color-ink-2)]">React 18.2</td>
+                    <td class="px-5 py-3 text-[var(--color-muted)]">npm</td>
+                    <td class="px-5 py-3 text-[var(--color-muted)]">v2.0+</td>
+                </tr>
+                <tr>
+                    <td class="px-5 py-3 font-medium text-[var(--color-ink)]">Next.js</td>
+                    <td class="px-5 py-3 text-[var(--color-ink-2)]">Next.js 14 / Node 18.17</td>
+                    <td class="px-5 py-3 text-[var(--color-muted)]">npm</td>
+                    <td class="px-5 py-3 text-[var(--color-muted)]">v2.0+</td>
+                </tr>
+                <tr>
+                    <td class="px-5 py-3 font-medium text-[var(--color-ink)]">Vue</td>
+                    <td class="px-5 py-3 text-[var(--color-ink-2)]">Vue 3.4</td>
+                    <td class="px-5 py-3 text-[var(--color-muted)]">npm</td>
+                    <td class="px-5 py-3 text-[var(--color-muted)]">v2.0+</td>
+                </tr>
+                <tr>
+                    <td class="px-5 py-3 font-medium text-[var(--color-ink)]">Rust</td>
+                    <td class="px-5 py-3 text-[var(--color-ink-2)]">Rust 2021 edition</td>
+                    <td class="px-5 py-3 text-[var(--color-muted)]">Cargo</td>
                     <td class="px-5 py-3 text-[var(--color-muted)]">v2.0+</td>
                 </tr>
             </tbody>

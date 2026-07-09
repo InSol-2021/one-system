@@ -15,19 +15,7 @@
     "incremental": true,
     "plugins": [{ "name": "next" }],
     "paths": {
-      "@/*": ["./src/*"],
-      "@cas-system/nextjs-cas-client": [
-        "./node_modules/@cas-system/nextjs-cas-client/src/index.ts"
-      ],
-      "@cas-system/nextjs-cas-client/handlers": [
-        "./node_modules/@cas-system/nextjs-cas-client/src/handlers/index.ts"
-      ],
-      "@cas-system/nextjs-cas-client/middleware": [
-        "./node_modules/@cas-system/nextjs-cas-client/src/middleware.ts"
-      ],
-      "@cas-system/nextjs-cas-client/server": [
-        "./node_modules/@cas-system/nextjs-cas-client/src/server/index.ts"
-      ]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

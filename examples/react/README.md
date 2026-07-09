@@ -1,7 +1,7 @@
 # One System CAS — React sample
 
 The smallest end-to-end React app that proves
-[`@cas-system/react-cas-client`](../../packages/react-cas-client) works against a
+[`@cas-system/react-cas-client`](https://www.npmjs.com/package/@cas-system/react-cas-client) works against a
 running One System CAS server. It demonstrates the full lifecycle:
 
 1. **(a) Trigger CAS login** — `<CasLoginButton>` / `login()` redirect to `{CAS_BASE}/sso/login`.
@@ -55,22 +55,33 @@ The SDK's flow (see the package README): `<CasProvider>` → `validateTokenViaBa
 
 ---
 
-## How it depends on the local package
+## How it depends on the package
 
-`package.json` links the SDK locally — no publishing:
+`package.json` declares the SDK as a normal npm dependency, resolved from the public registry:
 
 ```json
-"@cas-system/react-cas-client": "file:../../packages/react-cas-client"
+"@cas-system/react-cas-client": "^1.0.0"
 ```
 
-The package's `package.json` `exports` point at `dist/`, which isn't pre-built. Rather than
-require a build step in the package, **`vite.config.js` aliases the import to the package's
-TypeScript source** (`../../packages/react-cas-client/src/index.ts`) — Vite compiles its
-TS + JSX on the fly. So `npm install && npm run dev` just works.
+Install it the same way as any other npm package:
 
-> Prefer the built artifact? Run `cd ../../packages/react-cas-client && npm install && npm run build`,
-> then delete the `resolve.alias` entry in `vite.config.js`. Both approaches keep the local
-> `file:` dependency.
+```bash
+npm install
+```
+
+There is no local `file:` link, no monorepo alias, and no build step required in this
+repository for the SDK — the published package is expected to ship its own built `dist/`
+output (per its `package.json` `main`/`module`/`exports` fields).
+
+> **Known issue (as of `1.0.0`):** the tarball currently published to npm for
+> `@cas-system/react-cas-client@1.0.0` does **not** actually contain `dist/` (verified with
+> `npm pack @cas-system/react-cas-client@1.0.0` — the tarball only has `LICENSE`,
+> `package.json`, and `README.md`), even though its `package.json` points `main`/`module`/
+> `exports`/`types` at `dist/index.js` / `dist/index.mjs` / `dist/index.d.ts`. As a result,
+> `npm run build` in this sample currently fails with:
+> `[commonjs--resolver] Failed to resolve entry for package "@cas-system/react-cas-client". The package may have incorrect main/module/exports specified in its package.json.`
+> This needs to be fixed upstream (re-publish the package with `dist/` included). There is
+> intentionally no local workaround/alias in this sample for it — see `vite.config.js`.
 
 ---
 
@@ -141,8 +152,10 @@ Open `http://localhost:9107`.
 
 ## Docker
 
-The image must be built from the **monorepo root** (so the local `file:` package is in
-context). From this directory:
+The Dockerfile only needs its own directory's sources (`package.json`, `server.js`, `src/`) —
+the SDK is installed from the npm registry inside the image, not copied in from the monorepo.
+The build is still invoked with the monorepo root as the build context (matching
+`docker-compose.yml`'s `context: ..`), so run it from this directory as:
 
 ```bash
 docker build -f Dockerfile -t cas-react-sample ../..
@@ -168,6 +181,6 @@ docker run --rm -p 9107:9107 --env-file .env -v cas-react-data:/app/data cas-rea
 | `src/main.jsx` | Fetches `/api/config`, mounts `<CasProvider>`. |
 | `src/App.jsx` | CAS login button + local-account link, user card (`useCasAuth`/`useCasUser` or `/api/me`), protected block, logout. |
 | `server.js` | Express backend: `/api/config`, `/api/auth/validate` (server-to-server CAS), local auth (`/login`, `/logout`, `/api/me`) backed by SQLite + sessions, static SPA. |
-| `vite.config.js` | React plugin, SDK source alias, dev proxy for `/api`, `/login`, `/logout`. |
+| `vite.config.js` | React plugin, dev proxy for `/api`, `/login`, `/logout`. |
 | `.env.example` | Config template (CAS + local-auth vars). |
 | `Dockerfile` | Single-server production image (compiles `better-sqlite3`, writable `/app/data`). |

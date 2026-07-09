@@ -1,10 +1,8 @@
 # Minimal image for the Python/Flask CAS sample.
 #
-# IMPORTANT - build context:
-# This sample depends on the LOCAL package at packages/python-cas-client, which
-# lives OUTSIDE this directory. So the Docker build context must be the repo's
-# "one-system" root (the dir that contains both packages/ and examples/), and
-# you point at this Dockerfile with -f. From the one-system root:
+# The sample's only dependency on the CAS SDK is the published `cas-system-client`
+# package from PyPI (see requirements.txt), so the build context just needs this
+# directory's own files. Build/run from the one-system root (or this directory):
 #
 #   docker build -f examples/python/Dockerfile -t cas-python-sample .
 #   docker run --rm -p 9104:9104 --env-file examples/python/.env cas-python-sample
@@ -17,15 +15,10 @@ ENV PYTHONUNBUFFERED=1 \
 
 WORKDIR /app
 
-# Copy the LOCAL package source first so its layer caches independently.
-COPY packages/python-cas-client /packages/python-cas-client
-
 # Copy the sample app.
 COPY examples/python/ /app/
 
-# Install the sample's deps. requirements.txt references the local package via
-# the relative path ../../packages/python-cas-client, which resolves to
-# /packages/python-cas-client given the layout above.
+# Install the sample's deps, including cas-system-client from PyPI.
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Writable directory for the local SQLite user store (./data/app.db). The app

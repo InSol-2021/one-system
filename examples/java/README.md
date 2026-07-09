@@ -96,17 +96,12 @@ Copy `.env.example` to `.env` and adjust:
 `application.properties` reads each value as `${ENV_VAR:default}`, so the app
 also starts with localhost defaults if no env is set.
 
-## Install the local package (one-time)
+## Installing the package
 
-There is no published artifact. Install the local `java-cas-client` package into
-your local Maven repository once, then this sample resolves it normally:
-
-```bash
-cd ../../packages/java-cas-client
-mvn install -DskipTests
-```
-
-This publishes `io.github.insol-dev:cas-client:2.0.0` to `~/.m2/repository`.
+`io.github.insol-dev:cas-client` is declared as a normal Maven dependency in
+`pom.xml` and is resolved straight from Maven Central - no local install step
+is required. `mvn package` (or `mvn spring-boot:run`) downloads it like any
+other dependency.
 
 ## Run (local)
 
@@ -127,9 +122,9 @@ Then open **http://localhost:9105** and click *Login with CAS SSO*.
 
 ## Run with Docker
 
-The Docker build needs the package source, so the **build context is the
-`one-system/` repo root** (the Dockerfile installs the package, then builds the
-sample):
+The **build context is the `one-system/` repo root**; the Dockerfile builds
+the sample directly, resolving `io.github.insol-dev:cas-client:2.0.0` from
+Maven Central:
 
 ```bash
 # from one-system/ (the repo root)

@@ -10,8 +10,8 @@ name = "rust-sample"
 path = "src/main.rs"
 
 [dependencies]
-# The local CAS client crate (path dependency to the sibling package).
-rust-cas-client = { path = "../../packages/rust-cas-client" }
+# The CAS client crate, resolved from crates.io.
+rust-cas-client = "1.0"
 
 # Web framework + async runtime.
 axum = { version = "0.7", features = ["macros"] }

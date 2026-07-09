@@ -11,9 +11,8 @@
     "serve:ng": "ng serve --port 4200",
     "dev:backend": "node server/server.js"
   },
-  "comment": "The CAS SDK is referenced locally via the file: dependency below AND a tsconfig path mapping (see tsconfig.json). The package's main/types point at raw TypeScript (src/index.ts), so Angular compiles it from source.",
   "dependencies": {
-    "@cas-system/angular-cas-client": "file:../../packages/angular-cas-client",
+    "@cas-system/angular-cas-client": "^1.0.0",
     "@angular/animations": "^18.2.0",
     "@angular/common": "^18.2.0",
     "@angular/compiler": "^18.2.0",

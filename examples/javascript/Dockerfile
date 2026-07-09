@@ -1,13 +1,13 @@
 # Minimal image for the One System CAS JavaScript sample.
 #
-# NOTE on the local package dependency:
-#   package.json depends on the SDK via "file:../../packages/javascript-cas-client".
-#   That path lives OUTSIDE this folder, so build with the repo root as context:
+# The SDK dependency ("@cas-system/js-cas-client") is a normal published npm
+# package, resolved from the public registry — no local package needed in the
+# build context.
 #
 #     docker build -f examples/javascript/Dockerfile -t cas-sample-js .
 #
-#   (Run from the `one-system/` directory so both the example and the package
-#    are inside the build context.)
+#   (Run from the `one-system/` directory so the example is inside the build
+#    context.)
 FROM node:18-alpine
 
 WORKDIR /app
@@ -15,10 +15,7 @@ WORKDIR /app
 # better-sqlite3 is a native addon — alpine needs a build toolchain to compile it.
 RUN apk add --no-cache python3 make g++
 
-# Bring in the local package the example links to (the "file:" dependency target).
-COPY packages/javascript-cas-client ./packages/javascript-cas-client
-
-# Install example dependencies (resolves the file: link to the package above,
+# Install example dependencies (resolves @cas-system/js-cas-client from npm,
 # and compiles better-sqlite3 for the local username/password store).
 COPY examples/javascript/package.json ./examples/javascript/package.json
 WORKDIR /app/examples/javascript

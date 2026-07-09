@@ -17,7 +17,7 @@ import { LocalSessionService } from '../services/local-session.service';
     <div class="card">
       <h1>One System CAS — Angular Sample</h1>
       <p class="subtitle">
-        End-to-end demo of <code>&#64;one-system/angular-cas-client</code> with
+        End-to-end demo of <code>&#64;cas-system/angular-cas-client</code> with
         the app's OWN local accounts alongside CAS single sign-on.
       </p>
 

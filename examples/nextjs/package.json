@@ -10,7 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@cas-system/nextjs-cas-client": "file:../../packages/nextjs-cas-client",
+    "@cas-system/nextjs-cas-client": "^1.0.0",
     "better-sqlite3": "^11.8.1",
     "next": "^14.2.5",
     "react": "^18.3.1",

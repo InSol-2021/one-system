@@ -3,7 +3,7 @@
 // The SAME reactive state covers BOTH auth paths, because a local login mirrors
 // its user into the SDK's sessionStorage (see views/Login.vue).
 import { RouterLink, RouterView } from 'vue-router';
-import { useCasAuth } from '@one-system/vue-cas-client';
+import { useCasAuth } from '@cas-system/vue-cas-client';
 
 const { isAuthenticated, user, login, logout } = useCasAuth();
 

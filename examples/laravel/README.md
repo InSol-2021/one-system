@@ -44,21 +44,18 @@ package README's "Manual Authentication" section shows. The client never decodes
 the HS256 JWT itself; it always validates via the package, which POSTs to the CAS
 server with the `client_id` + `client_secret`.
 
-## How it depends on the local package (no publishing)
+## How it depends on the package
 
-`composer.json` declares a **path repository** pointing at the local package:
+`composer.json` declares **`cas-system/laravel-client`** as a normal Composer
+dependency, resolved from the public Packagist registry:
 
 ```json
-"repositories": [
-  { "type": "path", "url": "../../packages/laravel-cas-client-package",
-    "options": { "symlink": true } }
-],
-"require": { "cas-system/laravel-client": "*" }
+"require": { "cas-system/laravel-client": "^1.0.0" }
 ```
 
-`../../packages/laravel-cas-client-package` is itself a symlink into the monorepo;
-Composer follows it and symlinks the package into `vendor/`. The package is used
-**read-only** — this sample never modifies it.
+`composer install` downloads the published package (currently `1.0.0`) into
+`vendor/cas-system/laravel-client` like any other third-party dependency — there
+is no local path repository and no monorepo symlink involved.
 
 ## Files of interest
 
@@ -119,8 +116,8 @@ Either path shows your user on `/`.
 
 ## Run with Docker
 
-The image needs the local package in its build context, so build from the
-`one-system/` directory:
+The package is installed from Packagist during the image build, so the build
+context only needs the example itself; build from the `one-system/` directory:
 
 ```bash
 # from the repo's one-system/ directory

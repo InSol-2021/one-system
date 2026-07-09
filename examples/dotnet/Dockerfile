@@ -1,10 +1,10 @@
 # ---------------------------------------------------------------------------
 # Dockerfile for the One System CAS .NET sample.
 #
-# IMPORTANT: the app uses a ProjectReference to the LOCAL package at
-#   ../../packages/dotnet-cas-client/CasSystem.Client.csproj
-# so the build needs BOTH directories in the build context. Build with the
-# repo root ("one-system/") as context:
+# The app depends on the published CasSystem.Client NuGet package, so only
+# this sample's own directory is needed in the build context. Build with the
+# repo root ("one-system/") as context (kept for consistency with the other
+# samples / docker-compose.yml):
 #
 #   docker build -f examples/dotnet/Dockerfile -t cas-dotnet-sample .
 #   docker run --rm -p 9106:9106 --env-file examples/dotnet/.env cas-dotnet-sample
@@ -16,8 +16,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
 WORKDIR /src
 
-# Copy the local package and the sample (paths relative to the repo-root context).
-COPY packages/dotnet-cas-client/ ./packages/dotnet-cas-client/
+# Copy the sample (paths relative to the repo-root context).
 COPY examples/dotnet/ ./examples/dotnet/
 
 WORKDIR /src/examples/dotnet

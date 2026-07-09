@@ -13,18 +13,13 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
 
-# The sample depends on the local package via a composer "path" repository at
-# ../../packages/laravel-cas-client-package. For the image to resolve that path,
-# build from the repo root so the packages/ dir is in the build context:
+# The sample depends on the published cas-system/laravel-client package from
+# Packagist (see composer.json), so only the example itself needs to be in the
+# build context:
 #
 #   docker build -f one-system/examples/laravel/Dockerfile -t cas-laravel-sample one-system
 #
-# The Dockerfile copies both the example and the package into the image.
 COPY examples/laravel /app
-COPY packages/laravel-cas-client-package /packages/laravel-cas-client-package
-
-# Re-point the composer path repo to the copied package location inside the image.
-RUN sed -i 's#"url": "../../packages/laravel-cas-client-package"#"url": "/packages/laravel-cas-client-package"#' composer.json
 
 # Install PHP dependencies (no dev) and prime the autoloader.
 RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader

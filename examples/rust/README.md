@@ -3,8 +3,8 @@
 A minimal Rust web app (axum, port **9111**) that demonstrates **two** ways to
 sign in, sharing one session:
 
-1. **CAS SSO** via the local [`rust-cas-client`](../../packages/rust-cas-client)
-   crate (single-use JWT validated server-to-server).
+1. **CAS SSO** via the [`rust-cas-client`](https://crates.io/crates/rust-cas-client)
+   crate, installed from crates.io (single-use JWT validated server-to-server).
 2. **Local accounts** backed by a SQLite store (rusqlite, Argon2-hashed
    passwords), seeded with two demo users on first run.
 
@@ -74,14 +74,20 @@ Copy `.env.example` to `.env` and adjust. Variables:
 
 ```bash
 cp .env.example .env
-cargo run        # builds the rust-cas-client path dependency too
+cargo run        # fetches rust-cas-client from crates.io on first build
 # open http://localhost:9111
 ```
 
+`rust-cas-client` is declared as a normal Cargo dependency in `Cargo.toml`
+(`rust-cas-client = "1.0"`), resolved from the public crates.io registry —
+no local path or workspace link is involved.
+
 ## Run with Docker
 
-The build context is the repo **root** because the sample links its SDK from the
-sibling `packages/` directory:
+The build context is the repo **root** (kept consistent with the other
+examples / the root `docker-compose.yml`), even though this Dockerfile only
+copies `examples/rust/` — cargo resolves `rust-cas-client` from crates.io
+during the image build, so nothing from `packages/` needs to be in context:
 
 ```bash
 # from the one-system/ root

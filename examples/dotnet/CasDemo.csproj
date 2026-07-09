@@ -10,10 +10,9 @@
 
   <ItemGroup>
     <!--
-      Depend on the LOCAL package via a ProjectReference (no publishing / NuGet).
-      The relative path points at the package's .csproj inside the monorepo.
+      Depend on the published CasSystem.Client package from NuGet.
     -->
-    <ProjectReference Include="../../packages/dotnet-cas-client/CasSystem.Client.csproj" />
+    <PackageReference Include="CasSystem.Client" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup>

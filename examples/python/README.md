@@ -1,7 +1,7 @@
 # One System CAS &mdash; Python / Flask sample
 
-A runnable Flask app that proves the local **`cas-system-client`** package
-(`packages/python-cas-client`) works end-to-end against the One System CAS
+A runnable Flask app that proves the published **[`cas-system-client`](https://pypi.org/project/cas-system-client/)**
+package (installed from PyPI) works end-to-end against the One System CAS
 server, AND ships its own **local username/password accounts** (SQLite) so a user
 can sign in **either** way:
 
@@ -108,21 +108,18 @@ cp .env.example .env
 
 ## Install & run (local)
 
-The sample depends on the local package via a **pip path install** (no publishing).
-`requirements.txt` references `../../packages/python-cas-client` directly.
+The sample depends on the CAS SDK as a normal PyPI package. `requirements.txt`
+declares `cas-system-client>=2.0.0`, resolved from the public registry
+(<https://pypi.org/project/cas-system-client/>) &mdash; no local path or editable
+install is needed.
 
 ```bash
 # from examples/python/
 python3 -m venv .venv
 source .venv/bin/activate
 
-# Installs Flask, python-dotenv, and the local cas-client package by path.
+# Installs Flask, python-dotenv, and cas-system-client from PyPI.
 pip install -r requirements.txt
-
-# (If the relative path in requirements.txt is awkward for your setup, install
-#  the package editable instead, then run the app:)
-#   pip install -e ../../packages/python-cas-client
-#   pip install Flask python-dotenv
 
 cp .env.example .env   # then edit values
 python app.py
@@ -132,12 +129,11 @@ Open <http://localhost:9104> and click **Login with CAS**.
 
 ## Run with Docker
 
-Because the sample installs the local package from a sibling directory, the
-Docker **build context must be the `one-system` repo root** (the directory that
-contains both `packages/` and `examples/`):
+The sample installs its CAS SDK dependency from PyPI, so the Docker build only
+needs this directory's own files:
 
 ```bash
-# from the one-system root:
+# from examples/python/ (or the one-system root, pointing at this Dockerfile):
 docker build -f examples/python/Dockerfile -t cas-python-sample .
 docker run --rm -p 9104:9104 --env-file examples/python/.env cas-python-sample
 ```

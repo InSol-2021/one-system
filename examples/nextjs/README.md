@@ -1,7 +1,7 @@
 # One System CAS — Next.js sample
 
 The smallest end-to-end Next.js (App Router) app demonstrating the
-[`@cas-system/nextjs-cas-client`](../../packages/nextjs-cas-client) SDK:
+[`@cas-system/nextjs-cas-client`](https://www.npmjs.com/package/@cas-system/nextjs-cas-client) SDK:
 
 1. **Trigger CAS login** — `<CasLoginButton>` / `useCasAuth().login()`, or just
    navigating to a protected route (the middleware redirects to CAS).
@@ -66,21 +66,28 @@ Flow:
   The validation call is detected by the `client_validation` field and/or an
   `Accept: application/json` header.
 
-## Package linking (local, no publishing)
+## Package install (published, from npm)
 
-`package.json` depends on the package via a local path:
+`package.json` declares the package as a normal npm dependency, resolved from
+the public registry:
 
 ```json
-"@cas-system/nextjs-cas-client": "file:../../packages/nextjs-cas-client"
+"@cas-system/nextjs-cas-client": "^1.0.0"
 ```
 
-`npm install` symlinks the package directory into `node_modules`, including its
-TypeScript `src/`. The package's published `exports` map points at a built
-`dist/`, so to avoid relying on a build step `next.config.mjs` aliases each
-subpath export (`/handlers`, `/middleware`, `/server`, and root) directly to the
-package's `src/` and lists it in `transpilePackages`. Next.js compiles the
-package source as part of the app — you do **not** need to build the package
-separately.
+Just run `npm install` — npm downloads the published package (currently
+`1.0.0`) straight from the npm registry into `node_modules`, built `dist/` and
+all. No local linking, symlinks, or path dependencies are involved.
+
+Note: the published `1.0.0` package's `exports` map advertises `import`
+(ESM/`.mjs`) builds for every subpath that aren't actually shipped in the
+tarball — only the CommonJS-named `dist/*.js` files exist. Because of this,
+`next.config.mjs` has a small `webpack.resolve.alias` block that points each
+subpath (`/handlers`, `/middleware`, `/server`, root) at the `dist/*.js` files
+that actually exist in the installed `node_modules/@cas-system/nextjs-cas-client`
+package (resolved via `require.resolve`, not a hardcoded path) — this is a
+workaround for that upstream packaging bug, not a link to monorepo source, and
+can be removed once the package fixes its `exports` map.
 
 ## Prerequisites
 
@@ -136,9 +143,10 @@ npm run start    # http://localhost:9108
 
 ## Docker
 
-The image uses Next.js standalone output to stay small. Because the app depends
-on the **local** package one level up, build from the repo's `one-system/` root
-so the build context includes both:
+The image uses Next.js standalone output to stay small. The app depends on the
+**published** `@cas-system/nextjs-cas-client` npm package (installed inside the
+image via `npm install`, same as any other dependency), so the build only
+needs this example directory in its context:
 
 ```bash
 # from the one-system/ directory:
@@ -150,20 +158,3 @@ docker run --rm -p 9108:9108 --env-file examples/nextjs/.env.local cas-nextjs-sa
 ## Assigned port
 
 This sample runs on **port 9108** (dev, start, and Docker all use it).
-
-## Known issue (package bug, not this sample)
-
-At the time of writing, the package's cookie signing in
-`packages/nextjs-cas-client/src/server/auth.ts` calls
-`crypto.subtle.sign('HMAC', encoder.encode(payload), key)` with the **2nd and
-3rd arguments swapped** (the WebCrypto signature is `sign(algorithm, key,
-data)`). Under the Node.js runtime this throws
-`TypeError: ... 2nd argument is not of type CryptoKey`, so the callback returns
-**HTTP 500** and the session cookie is never written — login cannot complete.
-The same bug shows up as a TypeScript error when building the package
-(`TS2345 … not assignable to parameter of type 'CryptoKey'`).
-
-This sample is written against the package's real public API and is otherwise
-complete; it will work end-to-end once the package swaps those two arguments to
-`crypto.subtle.sign('HMAC', key, encoder.encode(payload))`.
-```

@@ -88,18 +88,21 @@ prod) — no CORS, and it drops cleanly into the unified single-server deploymen
 ```bash
 # from one-system/examples/vue
 cp .env.example .env          # then edit values (esp. CAS_CLIENT_SECRET)
-npm install                   # links the local package via file:../../packages/vue-cas-client
+npm install                   # installs @cas-system/vue-cas-client from the public npm registry
 ```
 
-The dependency on the SDK is a local path link in `package.json`:
+The SDK is a normal npm dependency in `package.json`, resolved from the public
+registry:
 
 ```json
-"@cas-system/vue-cas-client": "file:../../packages/vue-cas-client"
+"@cas-system/vue-cas-client": "^1.0.0"
 ```
 
-The package ships raw TypeScript + `.vue` source (its `main` is `src/index.ts`),
-so Vite compiles it on the fly. `vite.config.js` excludes it from dependency
-pre-bundling so esbuild doesn't choke on the in-package `.vue` component.
+The published package ships raw TypeScript + `.vue` source (its `main` is
+`src/index.ts`), so Vite compiles it on the fly like any other workspace
+source dependency — no extra alias/dedupe/`optimizeDeps` configuration is
+needed for it since it now installs as a normal (non-symlinked) `node_modules`
+package and its peer deps (`vue`, `vue-router`, `pinia`) hoist normally.
 
 ## Run
 
@@ -132,8 +135,8 @@ NODE_ENV=production npm start
 
 ## Docker
 
-This sample's `file:` dependency lives outside this folder, so build with the
-`one-system/` directory as the context:
+Build with the `one-system/` directory as the context (a convention shared
+with the other samples):
 
 ```bash
 # from the one-system/ directory

@@ -2,10 +2,10 @@
 #
 # Minimal multi-stage image for the Next.js CAS sample.
 #
-# IMPORTANT: this sample depends on the LOCAL package at
-#   ../../packages/nextjs-cas-client
-# via "file:../../packages/nextjs-cas-client". So the Docker BUILD CONTEXT must
-# include both the example and the package. Build from the repo's one-system/ root:
+# This sample depends on the PUBLISHED npm package
+# "@cas-system/nextjs-cas-client" (a normal registry dependency in
+# package.json), so the build context only needs to contain the example
+# itself. Build from either the repo's one-system/ root or this directory:
 #
 #   docker build -f examples/nextjs/Dockerfile -t cas-nextjs-sample one-system/
 #   # (run from the directory that CONTAINS one-system/, or adjust paths)
@@ -23,9 +23,6 @@ WORKDIR /build
 # better-sqlite3 is a native addon — compiling it from source during
 # `npm install` needs python3 + a C/C++ toolchain on Alpine.
 RUN apk add --no-cache python3 make g++
-
-# Copy the local package first (the example's file: dependency points at it).
-COPY packages/nextjs-cas-client ./packages/nextjs-cas-client
 
 # Copy the example app.
 COPY examples/nextjs ./examples/nextjs

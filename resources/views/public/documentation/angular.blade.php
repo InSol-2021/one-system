@@ -54,7 +54,7 @@
 <section id="overview" class="mb-12">
     <h2 class="text-xl font-bold text-[var(--color-ink)] mb-4">1. Overview</h2>
     <p class="text-[var(--color-ink-2)] leading-relaxed mb-4">
-        The <code class="os-code-inline">&commat;one-system/angular-cas-client</code> SDK
+        The <code class="os-code-inline">&commat;cas-system/angular-cas-client</code> SDK
         wires an Angular app into the CAS Single Sign-On flow with a route guard, an HTTP interceptor and reactive
         services. The browser never holds the client secret — it only kicks off the login redirect and forwards the
         returned token to <strong>your backend</strong> for validation.
@@ -78,17 +78,17 @@
 {{-- 2. INSTALLATION --}}
 <section id="installation" class="mb-12">
     <h2 class="text-xl font-bold text-[var(--color-ink)] mb-4">2. Installation</h2>
-    <p class="text-[var(--color-ink-2)] leading-relaxed mb-4">Install from npm:</p>
+    <p class="text-[var(--color-ink-2)] leading-relaxed mb-4">Install the published package from the public npm registry:</p>
     <div class="os-codeblock mb-6">
         <div class="os-codeblock-head"><span>Terminal</span></div>
-        <pre><code>npm install @cas-system/angular-cas-client</code></pre>
+        <pre><code>npm install @cas-system/angular-cas-client@1.0.0</code></pre>
     </div>
-    <p class="text-[var(--color-ink-2)] leading-relaxed mb-4">Or, to develop against the package straight from the monorepo, reference it by <strong>local path</strong> in your <code class="os-code-inline">package.json</code> and install:</p>
+    <p class="text-[var(--color-ink-2)] leading-relaxed mb-4">Or add it to your <code class="os-code-inline">package.json</code> with a semver range and let <code class="os-code-inline">npm install</code> resolve it from the registry:</p>
     <div class="os-codeblock mb-6">
         <div class="os-codeblock-head"><span>package.json</span></div>
         <pre><code>{
   <span style="{{ $var }}">"dependencies"</span>: {
-    <span style="{{ $var }}">"@cas-system/angular-cas-client"</span>: <span style="{{ $str }}">"file:../packages/angular-cas-client"</span>
+    <span style="{{ $var }}">"@cas-system/angular-cas-client"</span>: <span style="{{ $str }}">"^1.0.0"</span>
   }
 }</code></pre>
     </div>

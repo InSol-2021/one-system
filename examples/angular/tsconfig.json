@@ -19,13 +19,15 @@
     "useDefineForClassFields": false,
     "lib": ["ES2022", "dom"]
 
-    // ── Local CAS SDK link ─────────────────────────────────────────────
-    // No tsconfig "paths" mapping is needed. The `file:` dependency in
-    // package.json symlinks the package into node_modules/@cas-system/
-    // angular-cas-client, and that package's main/types already point at
-    // raw TypeScript (src/index.ts). Angular therefore compiles the SDK
-    // from source AND resolves its @angular/* peer imports against THIS
-    // example's node_modules — no publishing, no separate build step.
+    // ── CAS SDK dependency ───────────────────────────────────────────────
+    // No tsconfig "paths" mapping is needed. `@cas-system/angular-cas-client`
+    // is a normal npm dependency (see package.json) resolved from the public
+    // registry into node_modules/@cas-system/angular-cas-client. The
+    // published package's main/types still point at raw TypeScript
+    // (src/index.ts), so Angular compiles it from source exactly as before —
+    // see the explicit "include" glob in tsconfig.app.json for that. The
+    // only thing that changed is WHERE the source comes from (npm registry
+    // download vs. a local file: symlink), not that it's source at all.
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

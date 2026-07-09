@@ -78,9 +78,9 @@
 <section id="installation" class="mb-12">
     <h2 class="text-xl font-bold text-[var(--color-ink)] mb-4">2. {{ $vueGuide['sections']['setup'] }}</h2>
     <p class="text-[var(--color-ink-2)] leading-relaxed mb-4">
-        Install from the registry, or reference the package by local path while it lives in your monorepo at
-        <code class="os-code-inline">packages/vue-cas-client</code>. It requires <code class="os-code-inline">vue ≥ 3.4</code>;
-        <code class="os-code-inline">vue-router ≥ 4.4</code> and <code class="os-code-inline">pinia ≥ 2.2</code> are optional peers.
+        Install <code class="os-code-inline">@cas-system/vue-cas-client</code> from the public npm registry. It
+        requires <code class="os-code-inline">vue ≥ 3.4</code>; <code class="os-code-inline">vue-router ≥ 4.4</code>
+        and <code class="os-code-inline">pinia ≥ 2.2</code> are optional peers.
     </p>
     <div class="os-codeblock mb-6">
         <div class="os-codeblock-head"><span>Terminal — package manager</span></div>
@@ -94,10 +94,10 @@ yarn add @cas-system/vue-cas-client
 pnpm add @cas-system/vue-cas-client</code></pre>
     </div>
     <div class="os-codeblock">
-        <div class="os-codeblock-head"><span>package.json — local path (monorepo)</span></div>
+        <div class="os-codeblock-head"><span>package.json</span></div>
         <pre><code>{
   "dependencies": {
-    "@cas-system/vue-cas-client": "file:../packages/vue-cas-client"
+    "@cas-system/vue-cas-client": "^1.0.0"
   }
 }</code></pre>
     </div>

@@ -12,7 +12,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@cas-system/vue-cas-client": "file:../../packages/vue-cas-client",
+    "@cas-system/vue-cas-client": "^1.0.0",
     "better-sqlite3": "^11.8.1",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",

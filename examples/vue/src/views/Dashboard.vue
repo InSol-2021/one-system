@@ -4,7 +4,7 @@
 //
 // useCasAuth() -> authenticated user + logout action.
 // useCasUser() -> reactive roles / role-check helpers.
-import { useCasAuth, useCasUser } from '@one-system/vue-cas-client';
+import { useCasAuth, useCasUser } from '@cas-system/vue-cas-client';
 
 const { user, logout } = useCasAuth();
 const { roles } = useCasUser();

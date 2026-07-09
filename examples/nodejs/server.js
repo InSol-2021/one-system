@@ -43,8 +43,9 @@ const session = require('express-session');
 const { initDb } = require('./db');
 
 // ---------------------------------------------------------------------------
-// Import the LOCAL package (linked via "file:../../packages/nodejs-cas-client"
-// in package.json). The package's main export is the CasClient class.
+// Import the published package (declared as "@cas-system/node-cas-client": "^1.0.0"
+// in package.json, resolved from the npm registry). The package's main export
+// is the CasClient class.
 // ---------------------------------------------------------------------------
 const CasClient = require('@cas-system/node-cas-client');
 

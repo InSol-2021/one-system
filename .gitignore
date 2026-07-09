@@ -248,3 +248,7 @@ examples/laravel/database/*.sqlite
 
 # Claude Code local project config
 .claude/
+packages/*/bin/
+packages/*/obj/
+examples/*/bin/
+examples/*/obj/

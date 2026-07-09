@@ -5,7 +5,7 @@
 // "Signed in" here means either path: a local username/password session OR a
 // CAS SSO session (both populate the same reactive auth state).
 import { computed } from 'vue';
-import { CasProtectedView, useCasAuth } from '@one-system/vue-cas-client';
+import { CasProtectedView, useCasAuth } from '@cas-system/vue-cas-client';
 
 const { user, login } = useCasAuth();
 
@@ -20,7 +20,7 @@ const isLocalSession = computed(
     <h1>Vue CAS Client Sample</h1>
     <p class="muted">
       Minimal Vite + Vue 3 app demonstrating
-      <code>@one-system/vue-cas-client</code> end-to-end: SSO login, server-side
+      <code>@cas-system/vue-cas-client</code> end-to-end: SSO login, server-side
       token validation, authenticated user, and logout.
     </p>
 

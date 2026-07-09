@@ -20,7 +20,7 @@ server-side, then exchanged for a normal ASP.NET Core session cookie.
 
 ## What package API it uses
 
-All from `CasSystem.Client` (referenced locally — see below):
+All from `CasSystem.Client` (installed from NuGet — see below):
 
 | API | Where |
 |-----|-------|
@@ -31,16 +31,18 @@ All from `CasSystem.Client` (referenced locally — see below):
 | `CasClient.LogoutAsync()` | `/auth/logout` |
 | `CasAuthMiddleware` (protectedPaths, loginUrl) | protects `/dashboard` |
 
-## Local package dependency (no publishing)
+## Package dependency (NuGet)
 
-`CasDemo.csproj` references the package directly via a relative **ProjectReference**:
+`CasDemo.csproj` declares a normal **PackageReference**, resolved from the
+public NuGet registry:
 
 ```xml
-<ProjectReference Include="../../packages/dotnet-cas-client/CasSystem.Client.csproj" />
+<PackageReference Include="CasSystem.Client" Version="2.0.0" />
 ```
 
-No NuGet publish step is needed — `dotnet restore`/`build` compiles the package
-from source alongside the sample.
+`dotnet restore` (or `dotnet build`, which restores implicitly) pulls the
+published `CasSystem.Client` package straight from nuget.org — no local
+project build step is needed.
 
 ## Prerequisites
 
@@ -84,8 +86,10 @@ Then open <http://localhost:9106> and click **Login with CAS**.
 
 ## Run with Docker
 
-The Dockerfile needs both this sample and the local package in the build
-context, so build from the **`one-system/` repo root**:
+The Dockerfile pulls `CasSystem.Client` from NuGet during `dotnet restore`, so
+only this sample's own directory is needed in the build context. Build from
+the **`one-system/` repo root** (kept consistent with the other samples /
+`docker-compose.yml`):
 
 ```bash
 # from one-system/

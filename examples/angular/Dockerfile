@@ -1,13 +1,9 @@
 # ── Stage 1: build the Angular SPA ──────────────────────────────────────────
-# We need the LOCAL SDK package on disk during the build because tsconfig.json
-# maps "@one-system/angular-cas-client" to ../../packages/angular-cas-client/src.
-# The build context must therefore be the repo's `one-system/` root (see README
-# / docker run notes), so both examples/angular and packages/ are available.
+# @cas-system/angular-cas-client is a normal npm dependency resolved from the
+# public registry (see package.json) — no local SDK source is needed in the
+# build context.
 FROM node:20-alpine AS build
 WORKDIR /build
-
-# Copy the local SDK package first (path referenced by the example).
-COPY packages/angular-cas-client ./packages/angular-cas-client
 
 # Copy the example app.
 WORKDIR /build/examples/angular

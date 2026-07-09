@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-// The CAS provider from the local @one-system/react-cas-client package.
-// (Resolved to the package's TS source via the Vite alias -- see vite.config.js.)
-import { CasProvider } from '@one-system/react-cas-client';
+// The CAS provider from the published @cas-system/react-cas-client package
+// (installed from npm -- see package.json).
+import { CasProvider } from '@cas-system/react-cas-client';
 import App from './App.jsx';
 import './styles.css';
 

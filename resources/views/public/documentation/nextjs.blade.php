@@ -75,17 +75,17 @@
 
 <section id="installation" class="mb-12">
     <h2 class="text-xl font-bold text-[var(--color-ink)] mb-4">2. Installation</h2>
-    <p class="text-[var(--color-ink-2)] leading-relaxed mb-4">Install from the registry once published, or reference the package from a local path while developing against this repository.</p>
+    <p class="text-[var(--color-ink-2)] leading-relaxed mb-4">Install the published package from the npm registry.</p>
     <div class="os-codeblock mb-6">
-        <div class="os-codeblock-head"><span>Terminal — from the registry</span></div>
+        <div class="os-codeblock-head"><span>Terminal — from the npm registry</span></div>
         <pre><code>npm install @cas-system/nextjs-cas-client
 <span style="{{ $com }}"># peer deps: next >= 14, react >= 18, react-dom >= 18</span></code></pre>
     </div>
     <div class="os-codeblock">
-        <div class="os-codeblock-head"><span>package.json — from a local path</span></div>
+        <div class="os-codeblock-head"><span>package.json</span></div>
         <pre><code>{
   <span style="{{ $str }}">"dependencies"</span>: {
-    <span style="{{ $str }}">"@cas-system/nextjs-cas-client"</span>: <span style="{{ $str }}">"file:../central-authentication-server/packages/nextjs-cas-client"</span>
+    <span style="{{ $str }}">"@cas-system/nextjs-cas-client"</span>: <span style="{{ $str }}">"^1.0.0"</span>
   }
 }</code></pre>
     </div>

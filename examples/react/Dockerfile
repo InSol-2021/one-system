@@ -4,24 +4,21 @@
 # In production a SINGLE Node/Express process (server.js) serves both the built
 # SPA (./dist) and the /api endpoints, so there is no separate web server.
 #
-# Build context note: this sample depends on the LOCAL package via
-# "file:../../packages/react-cas-client", so the image MUST be built with the
-# monorepo root (the directory that contains both packages/ and examples/) as
-# the build context. All COPY paths below are relative to that root.
+# The sample depends on the published "@cas-system/react-cas-client" package
+# from the npm registry (see package.json), so no monorepo package sources
+# need to be present in the build context for this stage.
 #
 # From this directory (examples/react):
 #
 #     docker build -f Dockerfile -t cas-react-sample ../..
 #
-# ...where ../.. is the monorepo root used as the build context.
+# ...where ../.. is the monorepo root used as the build context (unchanged so
+# docker-compose.yml's "context: .." keeps working).
 # ---------------------------------------------------------------------------
 FROM node:20-alpine AS build
 WORKDIR /app
 
-# Bring in the local package the sample links to (relative "file:" dependency).
-COPY packages/react-cas-client /packages/react-cas-client
-
-# Install deps + build the SPA.
+# Install deps (resolved from the npm registry) + build the SPA.
 COPY examples/react/package.json ./package.json
 RUN npm install
 COPY examples/react/ ./
@@ -35,8 +32,9 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 # Install ONLY the runtime deps. We deliberately do not reuse the sample's
-# package.json here, because it declares the local "file:" SDK dependency that
-# is irrelevant at runtime (the SDK was already compiled into ./dist by Vite).
+# package.json here, because it declares the SDK (@cas-system/react-cas-client)
+# as a devtime/build-time dependency that is irrelevant at runtime (the SDK
+# was already compiled into ./dist by Vite).
 #
 # better-sqlite3 is a NATIVE module, so building it from source on Alpine needs
 # python3/make/g++. We install those toolchain packages only to compile it, then

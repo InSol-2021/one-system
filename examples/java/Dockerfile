@@ -1,9 +1,9 @@
 # ----------------------------------------------------------------------------
 # One System CAS - Java (Spring Boot) sample - minimal multi-stage image.
 #
-# IMPORTANT: build context must be the repo's `one-system/` root, NOT this
-# folder, because the build needs the local java-cas-client package source.
-# From one-system/:
+# The build context is still the repo's `one-system/` root (see
+# docker-compose.yml), but this Dockerfile no longer needs anything from
+# packages/ - the CAS client SDK is resolved from Maven Central at build time.
 #
 #   docker build -f examples/java/Dockerfile -t one-system-cas-java .
 #   docker run --rm -p 9105:9105 --env-file examples/java/.env one-system-cas-java
@@ -13,12 +13,8 @@
 FROM maven:3.9-eclipse-temurin-17 AS build
 WORKDIR /build
 
-# 1) Install the LOCAL CAS client package into the build's Maven repo.
-#    (no published artifact -> we install com.cassystem:cas-client:2.0.0 here)
-COPY packages/java-cas-client /build/java-cas-client
-RUN mvn -q -f /build/java-cas-client/pom.xml install -DskipTests
-
-# 2) Build the sample fat jar against that locally-installed package.
+# Build the sample fat jar; io.github.insol-dev:cas-client:2.0.0 is resolved
+# straight from Maven Central.
 COPY examples/java/pom.xml /build/sample/pom.xml
 COPY examples/java/src /build/sample/src
 RUN mvn -q -f /build/sample/pom.xml package -DskipTests

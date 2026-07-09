@@ -31,7 +31,7 @@
             <span class="os-badge">Composer package</span>
             <span class="os-badge">Laravel 10 / 11 / 12</span>
             <span class="os-badge">PHP 7.2 – 8.x</span>
-            <span class="os-badge-accent os-badge">cas-system/laravel-client</span>
+            <span class="os-badge-accent os-badge">cas-system/laravel-client 1.0.0</span>
         </div>
     </div>
 </section>

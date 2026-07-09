@@ -4,7 +4,7 @@ import {
   useCasUser,
   CasLoginButton,
   CasProtectedRoute,
-} from '@one-system/react-cas-client';
+} from '@cas-system/react-cas-client';
 
 /**
  * The whole sample lives in this one component to keep things minimal.
@@ -12,7 +12,7 @@ import {
  * It now demonstrates TWO independent ways to sign in:
  *
  *   1. CAS Single-Sign-On (the original flow), driven by the
- *      @one-system/react-cas-client SDK:
+ *      @cas-system/react-cas-client SDK:
  *        (a) trigger CAS login        -> <CasLoginButton /> (or login())
  *        (b) handle the ?token= callback -> done by <CasProvider> on mount
  *        (c) show the authenticated user -> useCasAuth() / useCasUser()
@@ -60,7 +60,7 @@ export default function App() {
     <main className="card">
       <h1>One System · React sample</h1>
       <p className="subtitle">
-        Vite + React using <code>@one-system/react-cas-client</code>, with a
+        Vite + React using <code>@cas-system/react-cas-client</code>, with a
         local username/password account option.
       </p>
 

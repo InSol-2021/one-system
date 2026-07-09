@@ -107,13 +107,13 @@ yarn add @cas-system/react-cas-client
 pnpm add @cas-system/react-cas-client</code></pre>
     </div>
     <p class="text-[var(--color-muted)] leading-relaxed mb-4">
-        Working from a local checkout of the monorepo? Reference the package by path instead:
+        Or declare it as a normal dependency in <code class="os-code-inline">package.json</code>:
     </p>
     <div class="os-codeblock">
-        <div class="os-codeblock-head"><span>package.json</span><span>local path</span></div>
+        <div class="os-codeblock-head"><span>package.json</span><span>registry dependency</span></div>
         <pre><code>{
   <span class="text-[var(--color-accent-line)]">"dependencies"</span>: {
-    <span class="text-[var(--color-accent-line)]">"@cas-system/react-cas-client"</span>: <span style="{{ $str }}">"file:../packages/react-cas-client"</span>
+    <span class="text-[var(--color-accent-line)]">"@cas-system/react-cas-client"</span>: <span style="{{ $str }}">"^1.0.0"</span>
   }
 }</code></pre>
     </div>

@@ -1,10 +1,10 @@
 # Multi-stage image for the One System CAS Rust / axum sample.
 #
-# IMPORTANT — build context:
-# This sample depends on the LOCAL crate at packages/rust-cas-client (a path
-# dependency, OUTSIDE this directory). So the Docker build context MUST be the
-# repo's "one-system" root (the dir containing both packages/ and examples/),
-# and you point at this Dockerfile with -f. From the one-system root:
+# The sample depends on the published `rust-cas-client` crate from crates.io
+# (a normal registry dependency — see Cargo.toml), so the build only needs
+# this sample's own sources. The Docker build context is still the repo's
+# "one-system" root (kept consistent with the other examples / compose file),
+# so you still point at this Dockerfile with -f:
 #
 #   docker build -f examples/rust/Dockerfile -t one-system-sample-rust .
 #   docker run --rm -p 9111:9111 --env-file examples/rust/.env one-system-sample-rust
@@ -16,8 +16,7 @@ FROM rust:1-slim AS builder
 
 WORKDIR /build
 
-# Copy the local crate and the sample so the path dependency resolves.
-COPY packages/rust-cas-client/ /build/packages/rust-cas-client/
+# Copy the sample sources. rust-cas-client is fetched from crates.io by cargo.
 COPY examples/rust/ /build/examples/rust/
 
 # Build the sample (release). rusqlite is built with the "bundled" feature, so

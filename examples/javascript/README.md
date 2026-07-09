@@ -69,16 +69,18 @@ The browser SDK's `validateTokenViaBackend(token)` POSTs `{ "token": "<jwt>" }` 
 and calls the CAS server. The JWT is **single-use** — validated exactly once, then the
 backend mints its own `sid` session cookie.
 
-## How it depends on the local package
+## How it depends on the package
 
-`package.json` links the SDK locally — no publishing:
+`@cas-system/js-cas-client` is a normal npm dependency, published on the public npm
+registry and installed with `npm install`:
 
 ```json
-"@cas-system/js-cas-client": "file:../../packages/javascript-cas-client"
+"@cas-system/js-cas-client": "^1.0.0"
 ```
 
-`server.js` resolves the actual UMD file with `require.resolve('@cas-system/js-cas-client')`
-and serves it at `/vendor/cas-client.js`, so the browser loads the exact local package file.
+`server.js` resolves the installed UMD file with `require.resolve('@cas-system/js-cas-client')`
+and serves it at `/vendor/cas-client.js`, so the browser loads the exact file that ships in the
+published package.
 
 ## Prerequisites
 
@@ -117,8 +119,9 @@ returned signed in. Click **Logout** to clear the session.
 
 ## Run with Docker
 
-The `file:` dependency points outside this folder, so build from the `one-system/` root
-(so both the example and the package are in the build context):
+`@cas-system/js-cas-client` is resolved from the npm registry during the image build, so no
+sibling package needs to be in the build context. Build from the `one-system/` root anyway,
+since that's where the example's parent directory layout expects `docker build` to be run from:
 
 ```bash
 # from the one-system/ directory:

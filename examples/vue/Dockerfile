@@ -1,9 +1,9 @@
 # ---------------------------------------------------------------------------
 # Dockerfile for the Vue CAS client sample.
 #
-# IMPORTANT: build with the repo's `one-system/` directory as the build
-# CONTEXT, because this sample depends on a sibling package via
-# `file:../../packages/vue-cas-client`, which lives OUTSIDE this folder:
+# Build with the repo's `one-system/` directory as the build CONTEXT (this is
+# just a convention shared with the other samples; nothing in this Dockerfile
+# actually reaches outside examples/vue anymore):
 #
 #   docker build -f examples/vue/Dockerfile -t vue-cas-sample .
 #   docker run --rm -p 9109:9109 --env-file examples/vue/.env vue-cas-sample
@@ -18,10 +18,8 @@ WORKDIR /app
 # Build toolchain for native addons (better-sqlite3 compiles from source).
 RUN apk add --no-cache python3 make g++
 
-# Copy the local package first (the file: dependency target).
-COPY packages/vue-cas-client ./packages/vue-cas-client
-
-# Copy the sample's manifests and install (resolves the file: link).
+# Copy the sample's manifests and install (resolves @cas-system/vue-cas-client
+# from the public npm registry).
 COPY examples/vue/package.json ./examples/vue/package.json
 WORKDIR /app/examples/vue
 RUN npm install
