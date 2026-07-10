@@ -72,22 +72,21 @@ Flow:
 the public registry:
 
 ```json
-"@cas-system/nextjs-cas-client": "^1.0.0"
+"@cas-system/nextjs-cas-client": "^1.0.1"
 ```
 
 Just run `npm install` — npm downloads the published package (currently
-`1.0.0`) straight from the npm registry into `node_modules`, built `dist/` and
+`1.0.1`) straight from the npm registry into `node_modules`, built `dist/` and
 all. No local linking, symlinks, or path dependencies are involved.
 
-Note: the published `1.0.0` package's `exports` map advertises `import`
-(ESM/`.mjs`) builds for every subpath that aren't actually shipped in the
-tarball — only the CommonJS-named `dist/*.js` files exist. Because of this,
-`next.config.mjs` has a small `webpack.resolve.alias` block that points each
-subpath (`/handlers`, `/middleware`, `/server`, root) at the `dist/*.js` files
-that actually exist in the installed `node_modules/@cas-system/nextjs-cas-client`
-package (resolved via `require.resolve`, not a hardcoded path) — this is a
-workaround for that upstream packaging bug, not a link to monorepo source, and
-can be removed once the package fixes its `exports` map.
+Note: `1.0.1` fixed the packaging bug that `1.0.0` shipped with — `1.0.0`'s
+`exports` map advertised ESM/`.mjs` builds for every subpath that were never
+actually emitted, so Next's webpack resolver failed with "Module not found" on
+every import. `1.0.1` ships a proper dual build (`dist/esm/*.js` +
+`dist/cjs/*.js`, each with its own `package.json` `"type"` marker) whose
+`exports` map only points at artifacts that exist, so no build-config workaround
+is needed. The `webpack.resolve.alias` block that `next.config.mjs` used to
+carry has been removed.
 
 ## Prerequisites
 

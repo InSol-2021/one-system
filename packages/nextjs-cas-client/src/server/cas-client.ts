@@ -13,7 +13,7 @@ import type {
   CasUser,
   CasValidateResponse,
   CasTokenResponse,
-} from '../types';
+} from '../types.js';
 
 // ---------------------------------------------------------------------------
 // Helpers

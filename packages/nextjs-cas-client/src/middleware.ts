@@ -20,9 +20,9 @@
  * ```
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import type { CasMiddlewareConfig } from './types';
-import { getCasSessionFromRequest } from './server/auth';
+import { NextRequest, NextResponse } from 'next/server.js';
+import type { CasMiddlewareConfig } from './types.js';
+import { getCasSessionFromRequest } from './server/auth.js';
 
 /**
  * Check whether `pathname` starts with any of the given prefixes.

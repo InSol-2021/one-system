@@ -7,14 +7,14 @@
  * `clientSecret` / cookie signing secret and must never run in the browser.
  */
 
-export { CasClient } from './cas-client';
+export { CasClient } from './cas-client.js';
 export {
   getCasSession,
   setCasSession,
   clearCasSession,
   withCasAuth,
   getCasSessionFromRequest,
-} from './auth';
+} from './auth.js';
 
 export type {
   CasConfig,
@@ -22,4 +22,4 @@ export type {
   CasUser,
   CasSessionData,
   CasHandlerConfig,
-} from '../types';
+} from '../types.js';

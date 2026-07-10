@@ -21,7 +21,7 @@
  */
 
 import React, { useEffect } from 'react';
-import { useCasAuthContext } from '../CasProvider';
+import { useCasAuthContext } from '../CasProvider.js';
 
 /** Props for {@link CasProtectedRoute}. */
 export interface CasProtectedRouteProps {

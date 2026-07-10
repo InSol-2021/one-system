@@ -23,8 +23,8 @@
  */
 
 import { useCallback, useMemo } from 'react';
-import type { CasUser } from '../types';
-import { useCasAuthContext } from '../CasProvider';
+import type { CasUser } from '../types.js';
+import { useCasAuthContext } from '../CasProvider.js';
 
 /** Return type of {@link useCasUser}. */
 export interface UseCasUserReturn {

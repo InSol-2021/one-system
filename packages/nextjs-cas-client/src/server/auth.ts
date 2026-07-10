@@ -14,8 +14,8 @@
  */
 
 import type { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies';
-import type { CasUser, CasSessionData } from '../types';
-import { NextRequest, NextResponse } from 'next/server';
+import type { CasUser, CasSessionData } from '../types.js';
+import { NextRequest, NextResponse } from 'next/server.js';
 
 // ---------------------------------------------------------------------------
 // Constants

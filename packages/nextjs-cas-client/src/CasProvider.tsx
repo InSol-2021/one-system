@@ -31,7 +31,7 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import type { CasAuthContext, CasUser } from './types';
+import type { CasAuthContext, CasUser } from './types.js';
 
 // ---------------------------------------------------------------------------
 // Context

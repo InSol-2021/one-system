@@ -22,8 +22,8 @@
  * ```
  */
 
-import type { CasAuthContext } from '../types';
-import { useCasAuthContext } from '../CasProvider';
+import type { CasAuthContext } from '../types.js';
+import { useCasAuthContext } from '../CasProvider.js';
 
 /**
  * Access CAS authentication state and actions.

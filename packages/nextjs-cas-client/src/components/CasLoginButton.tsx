@@ -20,7 +20,7 @@
  */
 
 import React from 'react';
-import { useCasAuthContext } from '../CasProvider';
+import { useCasAuthContext } from '../CasProvider.js';
 
 /** Props for {@link CasLoginButton}. */
 export interface CasLoginButtonProps

@@ -1,30 +1,50 @@
 {
   "name": "@cas-system/nextjs-cas-client",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Next.js CAS (Central Authentication System) Client SDK \u2014 App Router, Server Components, Middleware, and Client Hooks",
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/cjs/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
     },
     "./server": {
-      "types": "./dist/server/index.d.ts",
-      "import": "./dist/server/index.mjs",
-      "require": "./dist/server/index.js"
+      "import": {
+        "types": "./dist/esm/server/index.d.ts",
+        "default": "./dist/esm/server/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/server/index.d.ts",
+        "default": "./dist/cjs/server/index.js"
+      }
     },
     "./middleware": {
-      "types": "./dist/middleware.d.ts",
-      "import": "./dist/middleware.mjs",
-      "require": "./dist/middleware.js"
+      "import": {
+        "types": "./dist/esm/middleware.d.ts",
+        "default": "./dist/esm/middleware.js"
+      },
+      "require": {
+        "types": "./dist/cjs/middleware.d.ts",
+        "default": "./dist/cjs/middleware.js"
+      }
     },
     "./handlers": {
-      "types": "./dist/handlers/index.d.ts",
-      "import": "./dist/handlers/index.mjs",
-      "require": "./dist/handlers/index.js"
+      "import": {
+        "types": "./dist/esm/handlers/index.d.ts",
+        "default": "./dist/esm/handlers/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/handlers/index.d.ts",
+        "default": "./dist/cjs/handlers/index.js"
+      }
     }
   },
   "files": [
@@ -32,10 +52,10 @@
     "README.md"
   ],
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
+    "build": "npm run clean && tsc -p tsconfig.esm.json && tsc -p tsconfig.cjs.json && node scripts/finalize-dist.mjs",
+    "dev": "tsc -p tsconfig.esm.json --watch",
     "lint": "tsc --noEmit",
-    "clean": "rm -rf dist",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "prepublishOnly": "npm run build"
   },
   "peerDependencies": {

@@ -25,11 +25,11 @@
  * ```
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import type { CasHandlerConfig } from '../types';
-import { CasClient } from '../server/cas-client';
-import { getCasSession, clearCasSession } from '../server/auth';
+import { NextRequest, NextResponse } from 'next/server.js';
+import { cookies } from 'next/headers.js';
+import type { CasHandlerConfig } from '../types.js';
+import { CasClient } from '../server/cas-client.js';
+import { getCasSession, clearCasSession } from '../server/auth.js';
 
 /**
  * Create a POST handler for `/api/cas/logout`.

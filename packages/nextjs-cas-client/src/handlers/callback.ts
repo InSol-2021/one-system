@@ -28,11 +28,11 @@
  * ```
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import type { CasHandlerConfig } from '../types';
-import { CasClient } from '../server/cas-client';
-import { setCasSession } from '../server/auth';
+import { NextRequest, NextResponse } from 'next/server.js';
+import { cookies } from 'next/headers.js';
+import type { CasHandlerConfig } from '../types.js';
+import { CasClient } from '../server/cas-client.js';
+import { setCasSession } from '../server/auth.js';
 
 /**
  * Create a GET handler for `/api/cas/callback`.

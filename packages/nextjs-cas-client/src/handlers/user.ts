@@ -14,9 +14,9 @@
  * ```
  */
 
-import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { getCasSession } from '../server/auth';
+import { NextResponse } from 'next/server.js';
+import { cookies } from 'next/headers.js';
+import { getCasSession } from '../server/auth.js';
 
 /**
  * Create a GET handler for `/api/cas/user`.

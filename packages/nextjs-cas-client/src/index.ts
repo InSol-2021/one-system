@@ -8,19 +8,19 @@
  */
 
 // Provider + context hook
-export { CasProvider, useCasAuthContext } from './CasProvider';
-export type { CasProviderProps } from './CasProvider';
+export { CasProvider, useCasAuthContext } from './CasProvider.js';
+export type { CasProviderProps } from './CasProvider.js';
 
 // Hooks
-export { useCasAuth } from './hooks/useCasAuth';
-export { useCasUser } from './hooks/useCasUser';
-export type { UseCasUserReturn } from './hooks/useCasUser';
+export { useCasAuth } from './hooks/useCasAuth.js';
+export { useCasUser } from './hooks/useCasUser.js';
+export type { UseCasUserReturn } from './hooks/useCasUser.js';
 
 // Components
-export { CasLoginButton } from './components/CasLoginButton';
-export type { CasLoginButtonProps } from './components/CasLoginButton';
-export { CasProtectedRoute } from './components/CasProtectedRoute';
-export type { CasProtectedRouteProps } from './components/CasProtectedRoute';
+export { CasLoginButton } from './components/CasLoginButton.js';
+export type { CasLoginButtonProps } from './components/CasLoginButton.js';
+export { CasProtectedRoute } from './components/CasProtectedRoute.js';
+export type { CasProtectedRouteProps } from './components/CasProtectedRoute.js';
 
 // Shared types
 export type {
@@ -31,4 +31,4 @@ export type {
   CasMiddlewareConfig,
   CasAuthContext,
   CasHandlerConfig,
-} from './types';
+} from './types.js';
