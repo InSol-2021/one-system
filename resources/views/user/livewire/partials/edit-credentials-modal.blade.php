@@ -27,7 +27,7 @@
                         <label for="modalUsername" class="os-label">Username or email</label>
                         <input type="text"
                                id="modalUsername"
-                               wire:model.defer="modalUsername"
+                               wire:model="modalUsername"
                                class="os-input"
                                placeholder="Enter your username or email for this system"
                                autocomplete="username"
@@ -45,7 +45,7 @@
                         <div class="relative">
                             <input :type="showPassword ? 'text' : 'password'"
                                    id="modalPassword"
-                                   wire:model.defer="modalPassword"
+                                   wire:model="modalPassword"
                                    class="os-input pr-11"
                                    placeholder="Leave blank for single sign-on">
                             <button type="button"
