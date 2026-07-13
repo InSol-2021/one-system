@@ -237,21 +237,33 @@ export class CasClientService {
   }
 
   /**
-   * Log out: clears `sessionStorage`, notifies CAS with a credentialed POST,
-   * and redirects back to the client application.
+   * End only this client application's session and redirect locally.
+   *
+   * The central One System SSO session is intentionally preserved, so signing
+   * out of one connected application does not sign the user out everywhere.
+   *
+   * @param redirectUrl - URL to land on after logout completes.
+   */
+  logout(redirectUrl?: string): void {
+    this.clearSession();
+
+    if (typeof window !== 'undefined') {
+      const finalRedirect = new URL(redirectUrl ?? '/', window.location.origin).toString();
+      window.location.assign(finalRedirect);
+    }
+  }
+
+  /**
+   * End this client session and the shared One System SSO session.
    *
    * CAS logout is POST-only to prevent forced logout through a cross-site GET.
    * The local redirect runs in `finally`, so users are never stranded on an
    * API error response if the CAS notification is unavailable.
    *
-   * @param redirectUrl - URL to land on after logout completes.
+   * @param redirectUrl - URL to land on after global logout completes.
    */
-  async logout(redirectUrl?: string): Promise<void> {
-    if (typeof sessionStorage !== 'undefined') {
-      sessionStorage.removeItem(TOKEN_STORAGE_KEY);
-      sessionStorage.removeItem(USER_STORAGE_KEY);
-      sessionStorage.removeItem('cas_return_url');
-    }
+  async logoutEverywhere(redirectUrl?: string): Promise<void> {
+    this.clearSession();
 
     if (typeof window === 'undefined') {
       return;
@@ -270,6 +282,14 @@ export class CasClientService {
       });
     } finally {
       window.location.assign(finalRedirect);
+    }
+  }
+
+  private clearSession(): void {
+    if (typeof sessionStorage !== 'undefined') {
+      sessionStorage.removeItem(TOKEN_STORAGE_KEY);
+      sessionStorage.removeItem(USER_STORAGE_KEY);
+      sessionStorage.removeItem('cas_return_url');
     }
   }
 

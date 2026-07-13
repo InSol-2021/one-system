@@ -250,7 +250,8 @@ Low-level service for direct CAS interactions.
 | `getToken()`                      | `string \| null`            | Retrieve the stored JWT token                            |
 | `getUser()`                       | `CasUser \| null`           | Retrieve the stored user object                          |
 | `isAuthenticated()`               | `boolean`                   | Check if a session exists                                |
-| `logout(redirectUrl?)`            | `Promise<void>`             | Clear local state, POST CAS logout, then redirect         |
+| `logout(redirectUrl?)`            | `void`                      | Clear only this application's session, then redirect      |
+| `logoutEverywhere(redirectUrl?)`  | `Promise<void>`             | Clear local state, POST CAS logout, then redirect          |
 | `userHasRole(role)`               | `boolean`                   | Check a single role                                      |
 | `userHasAnyRole(roles)`           | `boolean`                   | Check if user has any of the listed roles                |
 | `userHasAllRoles(roles)`          | `boolean`                   | Check if user has all listed roles                       |
@@ -267,7 +268,8 @@ High-level reactive wrapper with `Observable` streams.
 | `currentUser`        | `CasUser \| null`             | Synchronous snapshot of the current user         |
 | `isAuthenticated`    | `boolean`                     | Synchronous auth check                          |
 | `login(returnUrl?)`  | `void`                        | Redirect to CAS login                           |
-| `logout(redirectUrl?)` | `Promise<void>`             | Clear local state, POST CAS logout, then redirect |
+| `logout(redirectUrl?)` | `void`                      | Clear only this application's session, then redirect |
+| `logoutEverywhere(redirectUrl?)` | `Promise<void>`   | Also end the shared One System SSO session |
 | `checkAuth()`        | `void`                        | Re-hydrate user from sessionStorage             |
 | `handleCallback()`   | `Observable<CasUser \| null>` | Process callback and update reactive state      |
 

@@ -75,14 +75,16 @@ export class CasAuthService {
     this.casClient.login(returnUrl);
   }
 
-  /**
-   * Log the user out: clears local state and redirects to CAS logout.
-   *
-   * @param redirectUrl - URL to redirect to once logout is complete.
-   */
-  logout(redirectUrl?: string): Promise<void> {
+  /** End only this client application's session. */
+  logout(redirectUrl?: string): void {
     this.userSubject.next(null);
-    return this.casClient.logout(redirectUrl);
+    this.casClient.logout(redirectUrl);
+  }
+
+  /** End this client session and the shared One System SSO session. */
+  logoutEverywhere(redirectUrl?: string): Promise<void> {
+    this.userSubject.next(null);
+    return this.casClient.logoutEverywhere(redirectUrl);
   }
 
   /**
