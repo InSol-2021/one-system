@@ -21,7 +21,7 @@
                 </button>
             </div>
 
-            <form wire:submit.prevent="saveCredentials">
+            <form wire:submit="saveCredentials">
                 <div class="space-y-6 px-6 py-6">
                     <div>
                         <label for="modalUsername" class="os-label">Username or email</label>

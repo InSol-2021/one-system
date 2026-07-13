@@ -5,6 +5,7 @@ namespace App\Livewire\User;
 use App\Services\ClientCredentialValidator;
 use Livewire\Component;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Models\ClientSystem;
 use App\Models\UserClientSystem;
@@ -290,7 +291,12 @@ class UserDashboard extends Component
             $this->showMessage($message, 'success');
 
         } catch (\Exception $e) {
-            $this->showMessage('Failed to link client system: ' . $e->getMessage(), 'error');
+            Log::error('Client-system linking failed', [
+                'user_id' => $userId,
+                'client_system_id' => $this->selectedSystemId,
+                'exception' => $e,
+            ]);
+            $this->showMessage('Failed to link the client system. Please try again.', 'error');
         } finally {
             $this->processing = false;
         }
